@@ -1,0 +1,33 @@
+#si 50
+#nm 31
+energy=-97;biomass=40;fitness=77;lowestEnergy=-97;highestEnergy=954;meanEnergy=309.883;meanBiomass=25.195;nGenes=52;nSites=63
+energy=-113;biomass=140;fitness=102;lowestEnergy=-113;highestEnergy=993;meanEnergy=402.069;meanBiomass=69.706;nGenes=55;nSites=73
+energy=-5;biomass=260;fitness=128;lowestEnergy=-5;highestEnergy=980;meanEnergy=360.805;meanBiomass=150.703;nGenes=53;nSites=86
+energy=-39;biomass=110;fitness=154;lowestEnergy=-39;highestEnergy=996;meanEnergy=420.987;meanBiomass=65.714;nGenes=50;nSites=78
+energy=-107;biomass=70;fitness=177;lowestEnergy=-107;highestEnergy=989;meanEnergy=379.746;meanBiomass=14.915;nGenes=51;nSites=92
+energy=-2;biomass=170;fitness=207;lowestEnergy=-2;highestEnergy=1001;meanEnergy=341.952;meanBiomass=94.444;nGenes=45;nSites=89
+energy=-41;biomass=190;fitness=255;lowestEnergy=-41;highestEnergy=978;meanEnergy=319.090;meanBiomass=72.275;nGenes=52;nSites=111
+energy=-12;biomass=170;fitness=279;lowestEnergy=-12;highestEnergy=990;meanEnergy=361.796;meanBiomass=66.989;nGenes=49;nSites=115
+energy=-31;biomass=220;fitness=327;lowestEnergy=-31;highestEnergy=1016;meanEnergy=322.832;meanBiomass=105.107;nGenes=46;nSites=109
+energy=-32;biomass=150;fitness=362;lowestEnergy=-32;highestEnergy=1044;meanEnergy=357.956;meanBiomass=34.061;nGenes=45;nSites=96
+energy=-2;biomass=10;fitness=439;lowestEnergy=-2;highestEnergy=1000;meanEnergy=302.232;meanBiomass=1.344;nGenes=44;nSites=117
+energy=-41;biomass=60;fitness=452;lowestEnergy=-41;highestEnergy=996;meanEnergy=307.542;meanBiomass=22.080;nGenes=40;nSites=111
+energy=-43;biomass=380;fitness=522;lowestEnergy=-43;highestEnergy=983;meanEnergy=296.960;meanBiomass=123.391;nGenes=43;nSites=116
+energy=-29;biomass=640;fitness=797;lowestEnergy=-29;highestEnergy=990;meanEnergy=228.753;meanBiomass=361.619;nGenes=39;nSites=99
+energy=-46;biomass=650;fitness=1202;lowestEnergy=-46;highestEnergy=995;meanEnergy=248.387;meanBiomass=309.176;nGenes=35;nSites=101
+energy=79;biomass=1570;fitness=3570;lowestEnergy=0;highestEnergy=996;meanEnergy=244.334;meanBiomass=957.621;nGenes=35;nSites=106
+energy=188;biomass=1380;fitness=3380;lowestEnergy=0;highestEnergy=1014;meanEnergy=238.423;meanBiomass=608.981;nGenes=34;nSites=97
+energy=-6;biomass=1190;fitness=1852;lowestEnergy=-6;highestEnergy=972;meanEnergy=241.518;meanBiomass=659.741;nGenes=34;nSites=81
+energy=-88;biomass=1070;fitness=1802;lowestEnergy=-88;highestEnergy=1003;meanEnergy=282.416;meanBiomass=536.598;nGenes=32;nSites=92
+energy=269;biomass=1200;fitness=3200;lowestEnergy=0;highestEnergy=987;meanEnergy=247.231;meanBiomass=555.597;nGenes=30;nSites=72
+energy=171;biomass=1540;fitness=3540;lowestEnergy=0;highestEnergy=1005;meanEnergy=230.602;meanBiomass=788.876;nGenes=31;nSites=92
+energy=283;biomass=1590;fitness=3590;lowestEnergy=0;highestEnergy=994;meanEnergy=245.103;meanBiomass=681.164;nGenes=31;nSites=99
+energy=260;biomass=2040;fitness=4040;lowestEnergy=0;highestEnergy=1014;meanEnergy=277.173;meanBiomass=953.093;nGenes=25;nSites=77
+energy=298;biomass=1960;fitness=3960;lowestEnergy=0;highestEnergy=1020;meanEnergy=256.663;meanBiomass=1036.857;nGenes=26;nSites=88
+energy=339;biomass=1430;fitness=3430;lowestEnergy=0;highestEnergy=995;meanEnergy=260.546;meanBiomass=665.897;nGenes=25;nSites=90
+energy=271;biomass=2070;fitness=4070;lowestEnergy=0;highestEnergy=1050;meanEnergy=265.194;meanBiomass=1052.679;nGenes=23;nSites=77
+energy=119;biomass=1690;fitness=3690;lowestEnergy=0;highestEnergy=1000;meanEnergy=281.519;meanBiomass=854.473;nGenes=24;nSites=61
+energy=350;biomass=1820;fitness=3820;lowestEnergy=0;highestEnergy=1009;meanEnergy=289.690;meanBiomass=1005.042;nGenes=21;nSites=38
+energy=223;biomass=1760;fitness=3760;lowestEnergy=0;highestEnergy=1021;meanEnergy=254.251;meanBiomass=920.935;nGenes=21;nSites=37
+energy=384;biomass=1880;fitness=3880;lowestEnergy=0;highestEnergy=995;meanEnergy=296.725;meanBiomass=992.799;nGenes=20;nSites=44
+energy=326;biomass=2090;fitness=4090;lowestEnergy=0;highestEnergy=1013;meanEnergy=292.191;meanBiomass=1053.768;nGenes=19;nSites=37
