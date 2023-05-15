@@ -68,7 +68,7 @@ public class ProgramFrame extends JFrame implements ActionListener {
 		vfEasy.addActionListener(this);
 		vfMedium.addActionListener(this);
 
-		ises = new ISES(this, false);
+		ises = new ISES(false);
 		ui = new UI(this);
 		timer = new Timer(20, this);
 		collectingData = false;
@@ -103,7 +103,7 @@ public class ProgramFrame extends JFrame implements ActionListener {
 	public void reset() {
 		timer.stop();
 		repeating = false;
-		ises = new ISES(this, ui.collectDataSelected());
+		ises = new ISES(ui.collectDataSelected());
 		ui.reset();
 	}
 

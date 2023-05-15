@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import ises.Thing;
-import ises.gui.ProgramFrame;
 import ises.model.cellular.Model;
 import ises.model.network.GRN;
 import ises.sim.Simulator;
@@ -22,7 +21,6 @@ public class ISES extends Thing {
 	protected boolean running, done, collectingData;
 
 	protected String modelStatus, gaSimStatus;
-	protected ProgramFrame progFrame;
 	protected GRN currGRN;
 
 	protected Vector<GRN> sampleGRNs;
@@ -48,11 +46,6 @@ public class ISES extends Thing {
 		sampleModels = new ArrayList<Model>(numModels + 5);
 
 		ga.preEvolve(); // neutral evolution for Params.neutralGen generations
-	}
-
-	public ISES(ProgramFrame c, boolean collData) {
-		this(collData);
-		progFrame = c;
 	}
 
 	public Model getCurrBest() {
