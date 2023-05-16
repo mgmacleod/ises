@@ -13,10 +13,10 @@ public class GA extends Thing {
 	protected LinkedList<Model> pop, offspring;
 	protected int gen, modelCount, grnCount, foodCount;
 	protected ISES ises;
-	protected boolean running, done, collectingData;
+	protected boolean running, done;
 	protected Model best, worst;
 
-	public GA(ISES is, boolean collData) {
+	public GA(ISES is) {
 		ises = is;
 		pop = new LinkedList<Model>();
 		offspring = new LinkedList<Model>();
@@ -26,7 +26,6 @@ public class GA extends Thing {
 		grnCount = Params.iSampleGRN;
 		running = false;
 		done = false;
-		collectingData = collData;
 
 		for (int i = 0; i < Params.popSize; i++) {
 			pop.add(new Model(i));
@@ -104,10 +103,6 @@ public class GA extends Thing {
 
 	}
 
-	public void setCollectingData(boolean cd) {
-		collectingData = cd;
-	}
-
 	public boolean isRunning() {
 		return running;
 	}
@@ -169,16 +164,15 @@ public class GA extends Thing {
 		ises.setCurrBest(new Model(best));
 		ises.setCurrWorst(new Model(worst));
 
-		if (collectingData) {
-			if (modelCount == Params.iSampleModel) {
-				modelCount = 0;
-				ises.storeCurrBest();
-			}
+		// sample data
+		if (modelCount == Params.iSampleModel) {
+			modelCount = 0;
+			ises.storeCurrBest();
+		}
 
-			if (grnCount == Params.iSampleGRN) {
-				grnCount = 0;
-				ises.storeCurrGRN();
-			}
+		if (grnCount == Params.iSampleGRN) {
+			grnCount = 0;
+			ises.storeCurrGRN();
 		}
 
 		int n = Params.popSize / 2;

@@ -35,11 +35,7 @@ public class ISES {
 	private ArrayList<Model> sampleModels;
 
 	public ISES() {
-		this(true);
-	}
-
-	public ISES(boolean collData) {
-		ga = new GA(this, collData);
+		ga = new GA(this);
 		sim = new Simulator(this);
 		running = false;
 		done = false;
@@ -173,11 +169,6 @@ public class ISES {
 
 	public void setDone(boolean done) {
 		this.done = done;
-	}
-
-	public void setCollectingData(boolean cd) {
-		ga.setCollectingData(cd);
-
 	}
 
 	public void simulatePop() {
