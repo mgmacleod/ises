@@ -1,12 +1,16 @@
-package ises.sim;
+package ises.sys;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 import ises.Thing;
 import ises.model.cellular.Model;
 import ises.rest.entities.SimulationConfiguration;
 
+@Service
+@Scope("prototype")
 public class Simulator extends Thing {
 	private static final Logger logger = LoggerFactory.getLogger(Simulator.class);
 
@@ -15,7 +19,10 @@ public class Simulator extends Thing {
 	private boolean running;
 	private SimulationConfiguration config;
 
-	public Simulator(SimulationConfiguration config) {
+	public Simulator() {
+	}
+
+	public void initializeForRun(SimulationConfiguration config) {
 		this.config = config;
 		running = false;
 	}

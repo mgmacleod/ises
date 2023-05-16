@@ -7,24 +7,24 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.annotation.RequestScope;
 
 import ises.rest.entities.SimulationConfiguration;
-import ises.sys.ISES;
+import ises.sys.Evolver;
 
 @RestController
 @RequestScope
 public class SimulationController {
 
-	private final ISES ises;
+	private final Evolver evolver;
 	private final AsyncTaskExecutor executor;
 
-	public SimulationController(ISES ises, AsyncTaskExecutor executor) {
-		this.ises = ises;
+	public SimulationController(Evolver evolver, AsyncTaskExecutor executor) {
+		this.evolver = evolver;
 		this.executor = executor;
 	}
 
 	@PostMapping("/simulation/run")
 	public String runSimulation(@RequestBody SimulationConfiguration config) {
-		ises.init(config);
-		executor.execute(ises);
+		evolver.initializeForRun(config);
+		executor.execute(evolver);
 
 		return "Running";
 	}
