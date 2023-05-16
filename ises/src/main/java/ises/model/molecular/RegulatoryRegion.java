@@ -2,18 +2,21 @@ package ises.model.molecular;
 
 import java.util.ArrayList;
 
-import ises.sys.Params;
+import ises.rest.entities.SimulationConfiguration;
 
 public class RegulatoryRegion extends ModelComponent {
 
 	protected ArrayList<BindingSite> sites;
 	protected Gene gene;
 	protected int regState;
+	private SimulationConfiguration config;
 
-	public RegulatoryRegion() {
+	private RegulatoryRegion(SimulationConfiguration config) {
+		this.config = config;
 	}
 
-	public RegulatoryRegion(Gene g) {
+	public RegulatoryRegion(Gene g, SimulationConfiguration config) {
+		this(config);
 		sites = new ArrayList<BindingSite>();
 		gene = g;
 		regState = 0;
@@ -22,16 +25,17 @@ public class RegulatoryRegion extends ModelComponent {
 		int r = randInt(4);
 
 		for (int i = 0; i < r; i++)
-			sites.add(new BindingSite(gene, i));
+			sites.add(new BindingSite(gene, i, config));
 
 	}
 
-	public RegulatoryRegion(RegulatoryRegion rr, Gene g) {
+	public RegulatoryRegion(RegulatoryRegion rr, Gene g, SimulationConfiguration config) {
+		this(config);
 		gene = g;
 		sites = new ArrayList<BindingSite>();
 
 		for (BindingSite bs : rr.sites)
-			this.sites.add(new BindingSite(bs, g));
+			this.sites.add(new BindingSite(bs, g, config));
 
 	}
 
@@ -59,7 +63,7 @@ public class RegulatoryRegion extends ModelComponent {
 		if (sites.isEmpty())
 			return;
 
-		if (Math.random() < Params.mDelBS)
+		if (Math.random() < config.getmDelBS())
 			sites.remove(bs);
 	}
 
@@ -68,8 +72,8 @@ public class RegulatoryRegion extends ModelComponent {
 
 		}
 
-		if (Math.random() < Params.mDupBS) {
-			BindingSite dup = new BindingSite(bs);
+		if (Math.random() < config.getmDupBS()) {
+			BindingSite dup = new BindingSite(bs, config);
 			sites.add(dup);
 		}
 
@@ -117,8 +121,8 @@ public class RegulatoryRegion extends ModelComponent {
 
 	public void mutate() {
 
-		if (sites.isEmpty() && random() < Params.mDupBS) {
-			sites.add(new BindingSite(gene, 0));
+		if (sites.isEmpty() && random() < config.getmDupBS()) {
+			sites.add(new BindingSite(gene, 0, config));
 			return;
 		}
 

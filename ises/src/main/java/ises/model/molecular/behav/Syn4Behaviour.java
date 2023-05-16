@@ -2,6 +2,7 @@ package ises.model.molecular.behav;
 
 import ises.model.cellular.Model;
 import ises.model.molecular.Gene;
+import ises.rest.entities.SimulationConfiguration;
 
 public class Syn4Behaviour extends OutputBehaviour {
 
@@ -9,8 +10,8 @@ public class Syn4Behaviour extends OutputBehaviour {
 		super();
 	}
 
-	public Syn4Behaviour(Model m, Gene g) {
-		super(m, g);
+	public Syn4Behaviour(Model m, Gene g, SimulationConfiguration config) {
+		super(m, g, config);
 	}
 
 	public void translate() {

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import ises.model.cellular.Model;
 import ises.model.network.GRN;
+import ises.rest.entities.SimulationConfiguration;
 import ises.sim.Simulator;
 import ises.stats.ShapeDistribution;
 
@@ -33,20 +34,25 @@ public class ISES {
 
 	private Vector<GRN> sampleGRNs;
 	private ArrayList<Model> sampleModels;
+	private SimulationConfiguration config;
 
 	public ISES() {
-		ga = new GA(this);
-		sim = new Simulator();
+	}
+
+	public void init(SimulationConfiguration config) {
+		this.config = config;
+		ga = new GA(this, config);
+		sim = new Simulator(config);
 		running = false;
 		done = false;
 
-		int numGRN = Params.maxGen / Params.iSampleGRN;
+		int numGRN = config.getMaxGen() / config.getiSampleGRN();
 		if (numGRN < 0)
 			numGRN = 0;
 
 		sampleGRNs = new Vector<GRN>(numGRN + 5);
 
-		int numModels = Params.maxGen / Params.iSampleModel;
+		int numModels = config.getMaxGen() / config.getiSampleModel();
 		if (numModels < 0)
 			numModels = 0;
 
@@ -131,7 +137,7 @@ public class ISES {
 			filename = "." + sep + "data" + sep + "shapeDistros.txt";
 			PrintWriter shapeDistrosFile = new PrintWriter(new FileWriter(filename));
 
-			modelStatsFile.println("#si " + Params.iSampleModel);
+			modelStatsFile.println("#si " + config.getiSampleModel());
 			modelStatsFile.println("#nm " + sampleModels.size());
 			for (String s : modelStats) {
 				modelStatsFile.println(s);
@@ -192,7 +198,7 @@ public class ISES {
 
 	public void run() {
 		logger.info("Starting run");
-		ga.preEvolve(); // neutral evolution for Params.neutralGen generations
+		ga.preEvolve(); // neutral evolution for config.neutralGen generations
 		start();
 
 		while (running) {
@@ -221,6 +227,10 @@ public class ISES {
 				+ "# binding sites: " + currWorst.getNumSites() + "\n" + "# genes: " + currWorst.getNumGenes() + "\n\n";
 
 		return modelStatus;
+	}
+
+	public void setConfig(SimulationConfiguration config) {
+		this.config = config;
 	}
 
 }

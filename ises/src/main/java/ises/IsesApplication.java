@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import ises.rest.entities.SimulationConfiguration;
 import ises.sys.ISES;
 
 @SpringBootApplication
@@ -17,6 +18,7 @@ public class IsesApplication {
 	@Bean
 	CommandLineRunner runner(ISES ises) {
 		return (args) -> {
+			ises.init(new SimulationConfiguration());
 			ises.run();
 		};
 	}

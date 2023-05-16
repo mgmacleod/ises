@@ -5,7 +5,7 @@ import ises.model.cellular.Model;
 import ises.model.cellular.Proteome;
 import ises.model.molecular.BindingSite;
 import ises.model.molecular.ProteinSpecies;
-import ises.sys.Params;
+import ises.rest.entities.SimulationConfiguration;
 
 public class ShapeDistribution {
 	protected int[] freqs;
@@ -15,6 +15,7 @@ public class ShapeDistribution {
 	protected int numPopulated, numUnpopulated;
 	protected double popUnpopRatio;
 	protected double meanShape, meanFreq, sdShape, sdFreq;
+	private SimulationConfiguration config; // TODO initialize this sucker!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 	public ShapeDistribution(Genome genome) {
 		initFreqs();
@@ -70,7 +71,7 @@ public class ShapeDistribution {
 			sum += freqs[i];
 		}
 
-		meanFreq = sum / (double) Params.sMax;
+		meanFreq = sum / (double) config.getsMax();
 	}
 
 	public void calcMeanShape() {
@@ -106,7 +107,7 @@ public class ShapeDistribution {
 			sos += (diff * diff);
 		}
 
-		double var = sos / (double) Params.sMax;
+		double var = sos / (double) config.getsMax();
 		sdFreq = Math.sqrt(var);
 	}
 
@@ -262,8 +263,8 @@ public class ShapeDistribution {
 	}
 
 	public void initFreqs() {
-		freqs = new int[Params.sMax];
-		for (int shape = 0; shape < Params.sMax; shape++) {
+		freqs = new int[config.getsMax()];
+		for (int shape = 0; shape < config.getsMax(); shape++) {
 			freqs[shape] = 0;
 		}
 	}
@@ -275,7 +276,7 @@ public class ShapeDistribution {
 	}
 
 	public void initPFreqs() {
-		pFreqs = new double[Params.sMax];
+		pFreqs = new double[config.getsMax()];
 		for (int i = 0; i < freqs.length; i++) {
 			pFreqs[i] = (freqs[i] / (double) numEntries);
 		}

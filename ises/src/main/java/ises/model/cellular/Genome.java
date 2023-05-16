@@ -9,14 +9,15 @@ import ises.model.network.GRN;
 import ises.model.network.InputNode;
 import ises.model.network.OutputNode;
 import ises.model.network.RegNode;
-import ises.sys.Params;
+import ises.rest.entities.SimulationConfiguration;
 
 public class Genome extends ModelComponent {
 
-	protected Gene fod1, fod2, fod3, fod4, fod5, fod6, fod7, fod8, fod9, nrg1, nrg2, rcp1, rcp2;
-	protected ArrayList<Gene> inputGenes, regGenes, outputGenes, allGenes;
-	protected ArrayList<BindingSite> sites;
-	protected Model model;
+	private Gene fod1, fod2, fod3, fod4, fod5, fod6, fod7, fod8, fod9, nrg1, nrg2, rcp1, rcp2;
+	private ArrayList<Gene> inputGenes, regGenes, outputGenes, allGenes;
+	private ArrayList<BindingSite> sites;
+	private Model model;
+	private SimulationConfiguration config;
 
 	/**
 	 * A 'replication' constructor; copies the parent to produce a child
@@ -24,35 +25,36 @@ public class Genome extends ModelComponent {
 	 * @param parent
 	 * @param m
 	 */
-	public Genome(Genome parent, Model m) {
+	public Genome(Genome parent, Model m, SimulationConfiguration config) {
+		this.config = config;
 		this.inputGenes = new ArrayList<Gene>();
 		this.regGenes = new ArrayList<Gene>();
 		this.outputGenes = new ArrayList<Gene>();
 		this.allGenes = new ArrayList<Gene>();
 
 		// fod genes
-		this.fod1 = new Gene(parent.fod1, m);
-		this.fod2 = new Gene(parent.fod2, m);
-		this.fod3 = new Gene(parent.fod3, m);
-		this.fod4 = new Gene(parent.fod4, m);
-		this.fod5 = new Gene(parent.fod5, m);
-		this.fod6 = new Gene(parent.fod6, m);
-		this.fod7 = new Gene(parent.fod7, m);
-		this.fod8 = new Gene(parent.fod8, m);
-		this.fod9 = new Gene(parent.fod9, m);
+		this.fod1 = new Gene(parent.fod1, m, config);
+		this.fod2 = new Gene(parent.fod2, m, config);
+		this.fod3 = new Gene(parent.fod3, m, config);
+		this.fod4 = new Gene(parent.fod4, m, config);
+		this.fod5 = new Gene(parent.fod5, m, config);
+		this.fod6 = new Gene(parent.fod6, m, config);
+		this.fod7 = new Gene(parent.fod7, m, config);
+		this.fod8 = new Gene(parent.fod8, m, config);
+		this.fod9 = new Gene(parent.fod9, m, config);
 
 		// signalling genes
-		this.nrg1 = new Gene(parent.nrg1, m);
-		this.nrg2 = new Gene(parent.nrg2, m);
-		this.rcp1 = new Gene(parent.rcp1, m);
-		this.rcp2 = new Gene(parent.rcp2, m);
+		this.nrg1 = new Gene(parent.nrg1, m, config);
+		this.nrg2 = new Gene(parent.nrg2, m, config);
+		this.rcp1 = new Gene(parent.rcp1, m, config);
+		this.rcp2 = new Gene(parent.rcp2, m, config);
 
 		for (Gene g : parent.getOutputGenes()) {
-			this.outputGenes.add(new Gene(g, m));
+			this.outputGenes.add(new Gene(g, m, config));
 		}
 
 		for (Gene g : parent.getRegGenes()) {
-			this.regGenes.add(new Gene(g, m));
+			this.regGenes.add(new Gene(g, m, config));
 		}
 
 		this.sites = new ArrayList<BindingSite>(parent.getNumSites());
@@ -61,7 +63,8 @@ public class Genome extends ModelComponent {
 		addAllSites();
 	}
 
-	public Genome(Model m) {
+	public Genome(Model m, SimulationConfiguration config) {
+		this.config = config;
 		model = m;
 
 		inputGenes = new ArrayList<Gene>();
@@ -71,37 +74,37 @@ public class Genome extends ModelComponent {
 		sites = new ArrayList<BindingSite>();
 
 		// create fod genes
-		fod1 = new Gene(m, "fod1", false);
-		fod2 = new Gene(m, "fod2", false);
-		fod3 = new Gene(m, "fod3", false);
-		fod4 = new Gene(m, "fod4", false);
-		fod5 = new Gene(m, "fod5", false);
-		fod6 = new Gene(m, "fod6", false);
-		fod7 = new Gene(m, "fod7", false);
-		fod8 = new Gene(m, "fod8", false);
-		fod9 = new Gene(m, "fod9", false);
+		fod1 = new Gene(m, "fod1", false, config);
+		fod2 = new Gene(m, "fod2", false, config);
+		fod3 = new Gene(m, "fod3", false, config);
+		fod4 = new Gene(m, "fod4", false, config);
+		fod5 = new Gene(m, "fod5", false, config);
+		fod6 = new Gene(m, "fod6", false, config);
+		fod7 = new Gene(m, "fod7", false, config);
+		fod8 = new Gene(m, "fod8", false, config);
+		fod9 = new Gene(m, "fod9", false, config);
 
 		// create nrg genes
-		nrg1 = new Gene(m, "nrg1", false);
-		nrg2 = new Gene(m, "nrg2", false);
+		nrg1 = new Gene(m, "nrg1", false, config);
+		nrg2 = new Gene(m, "nrg2", false, config);
 
 		// create rcp genes
-		rcp1 = new Gene(m, "rcp1", false);
-		rcp2 = new Gene(m, "rcp2", false);
+		rcp1 = new Gene(m, "rcp1", false, config);
+		rcp2 = new Gene(m, "rcp2", false, config);
 
 		// create syn genes
-		outputGenes.add(new Gene(m, "syn1", true));
-		outputGenes.add(new Gene(m, "syn2", true));
-		outputGenes.add(new Gene(m, "syn3", true));
-		outputGenes.add(new Gene(m, "syn4", true));
+		outputGenes.add(new Gene(m, "syn1", true, config));
+		outputGenes.add(new Gene(m, "syn2", true, config));
+		outputGenes.add(new Gene(m, "syn3", true, config));
+		outputGenes.add(new Gene(m, "syn4", true, config));
 
 		// create rsp genes
-		outputGenes.add(new Gene(m, "rsp1", true));
-		outputGenes.add(new Gene(m, "rsp2", true));
+		outputGenes.add(new Gene(m, "rsp1", true, config));
+		outputGenes.add(new Gene(m, "rsp2", true, config));
 
 		// generate regulatory genes
-		for (int i = 1; i <= Params.initGenomeSize; i++) {
-			regGenes.add(new Gene(m, "reg" + i, true));
+		for (int i = 1; i <= config.getInitGenomeSize(); i++) {
+			regGenes.add(new Gene(m, "reg" + i, true, config));
 		}
 
 		addGenesToLists();
@@ -261,7 +264,7 @@ public class Genome extends ModelComponent {
 		if (regGenes.isEmpty())
 			return false;
 
-		if (Math.random() < Params.mDelGene) {
+		if (Math.random() < config.getmDelGene()) {
 			regGenes.remove(g);
 			allGenes.remove(g);
 			return true;
@@ -271,10 +274,10 @@ public class Genome extends ModelComponent {
 	}
 
 	public void duplicateGene(Gene g) {
-		if (Math.random() > Params.mDupGene)
+		if (Math.random() > config.getmDupGene())
 			return;
 
-		Gene ng = new Gene(g);
+		Gene ng = new Gene(g, config);
 		regGenes.add(ng);
 		allGenes.add(ng);
 
@@ -379,7 +382,7 @@ public class Genome extends ModelComponent {
 
 		if (sites.isEmpty()) {
 			Gene g = randomRegulatedGene();
-			BindingSite bs = new BindingSite(g, 0);
+			BindingSite bs = new BindingSite(g, 0, config);
 			g.getRegRegion().addSite(bs);
 		}
 
@@ -399,15 +402,15 @@ public class Genome extends ModelComponent {
 	}
 
 	public void duplicateSite(BindingSite bs) {
-		if (random() < Params.mDupBS) {
+		if (random() < config.getmDupBS()) {
 			Gene g = randomRegulatedGene();
-			BindingSite bs2 = new BindingSite(bs, g);
+			BindingSite bs2 = new BindingSite(bs, g, config);
 			g.addSite(bs2);
 		}
 	}
 
 	public void deleteSite(BindingSite bs) {
-		if (random() < Params.mDelBS) {
+		if (random() < config.getmDelBS()) {
 			Gene g = bs.getGene();
 			g.removeSite(bs);
 		}
@@ -455,7 +458,7 @@ public class Genome extends ModelComponent {
 	public void translateRegulatedGenes() {
 		for (Gene g : regGenes) {
 
-			if (g.getRegState() == 0 && random() < Params.kBasal) {
+			if (g.getRegState() == 0 && random() < config.getkBasal()) {
 				g.activate();
 			}
 
@@ -466,7 +469,7 @@ public class Genome extends ModelComponent {
 
 		for (Gene g : outputGenes) {
 
-			if (g.getRegState() == 0 && random() < Params.kBasal) {
+			if (g.getRegState() == 0 && random() < config.getkBasal()) {
 				g.activate();
 			}
 

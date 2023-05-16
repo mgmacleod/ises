@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import ises.Thing;
 import ises.model.cellular.Model;
-import ises.sys.Params;
+import ises.rest.entities.SimulationConfiguration;
 
 public class Simulator extends Thing {
 	private static final Logger logger = LoggerFactory.getLogger(Simulator.class);
@@ -13,8 +13,10 @@ public class Simulator extends Thing {
 	private Model currModel;
 	private int currTime, stressCounter;
 	private boolean running;
+	private SimulationConfiguration config;
 
-	public Simulator() {
+	public Simulator(SimulationConfiguration config) {
+		this.config = config;
 		running = false;
 	}
 
@@ -41,7 +43,7 @@ public class Simulator extends Thing {
 		currTime = 1;
 		stressCounter = 0;
 
-		while (currTime <= Params.maxTime && currModel.isAlive()) {
+		while (currTime <= config.getMaxTime() && currModel.isAlive()) {
 			calcStressLevels();
 			calcFoodAvail();
 
@@ -72,46 +74,46 @@ public class Simulator extends Thing {
 
 	private void calcFoodAvail() {
 		double rand = random();
-		if (rand < Params.kFood1) {
+		if (rand < config.getkFood1()) {
 			currModel.food1Available();
 		}
 
-		if (Math.random() < Params.kFood2) {
+		if (Math.random() < config.getkFood2()) {
 			currModel.food2Available();
 		}
 
-		if (Math.random() < Params.kFood3) {
+		if (Math.random() < config.getkFood3()) {
 			currModel.food3Available();
 		}
 
-		if (Math.random() < Params.kFood4) {
+		if (Math.random() < config.getkFood4()) {
 			currModel.food4Available();
 		}
 
-		if (Math.random() < Params.kFood5) {
+		if (Math.random() < config.getkFood5()) {
 			currModel.food5Available();
 		}
 
-		if (Math.random() < Params.kFood6) {
+		if (Math.random() < config.getkFood6()) {
 			currModel.food6Available();
 		}
 
-		if (Math.random() < Params.kFood7) {
+		if (Math.random() < config.getkFood7()) {
 			currModel.food7Available();
 		}
 
-		if (Math.random() < Params.kFood8) {
+		if (Math.random() < config.getkFood8()) {
 			currModel.food8Available();
 		}
 
-		if (Math.random() < Params.kFood9) {
+		if (Math.random() < config.getkFood9()) {
 			currModel.food9Available();
 		}
 
 	}
 
 	public void calcStressLevels() {
-		if (stressCounter >= Params.iStressIn) {
+		if (stressCounter >= config.getiStressIn()) {
 			currModel.addStress();
 			stressCounter = 0;
 		}
@@ -140,6 +142,10 @@ public class Simulator extends Thing {
 
 	public void setStressCounter(int stressCounter) {
 		this.stressCounter = stressCounter;
+	}
+
+	public void setConfig(SimulationConfiguration config) {
+		this.config = config;
 	}
 
 }

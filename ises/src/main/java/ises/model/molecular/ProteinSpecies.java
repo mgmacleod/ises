@@ -1,17 +1,23 @@
 package ises.model.molecular;
 
-import ises.sys.Params;
+import ises.rest.entities.SimulationConfiguration;
 
 public class ProteinSpecies extends ModelComponent {
 
 	protected int prodRate, degRate, shape;
 	protected int copies, boundCopies;
 	protected Gene gene;
+	private SimulationConfiguration config;
 
-	public ProteinSpecies(Gene g) {
+	private ProteinSpecies(SimulationConfiguration config) {
+		this.config = config;
+	}
+
+	public ProteinSpecies(Gene g, SimulationConfiguration config) {
+		this(config);
 		gene = g;
 
-		shape = randInt(Params.sMax);
+		shape = randInt(config.getsMax());
 		degRate = randInt(2) + 1;
 		prodRate = randInt(8);
 
@@ -20,7 +26,8 @@ public class ProteinSpecies extends ModelComponent {
 		boundCopies = 0;
 	}
 
-	public ProteinSpecies(ProteinSpecies parent, Gene g) {
+	public ProteinSpecies(ProteinSpecies parent, Gene g, SimulationConfiguration config) {
+		this(config);
 		gene = g;
 		this.name = g.getName() + "PP";
 
@@ -58,7 +65,7 @@ public class ProteinSpecies extends ModelComponent {
 		}
 		int d = Math.abs(shape - bs.getShape());
 
-		if (d > Params.dMax)
+		if (d > config.getdMax())
 			return 0.0;
 
 		double b = (double) (d + 1);
@@ -134,7 +141,7 @@ public class ProteinSpecies extends ModelComponent {
 	}
 
 	public void mutateDegRate() {
-		if (Math.random() > Params.mStabP)
+		if (Math.random() > config.getmStabP())
 			return;
 
 		degRate = addNoise(degRate, 2.0);
@@ -142,34 +149,34 @@ public class ProteinSpecies extends ModelComponent {
 		if (degRate < 1)
 			degRate = 1;
 
-		if (degRate > Params.maxDegRate)
-			degRate = Params.maxDegRate;
+		if (degRate > config.getMaxDegRate())
+			degRate = config.getMaxDegRate();
 
 	}
 
 	public void mutateProdRate() {
-		if (Math.random() > Params.mProdP)
+		if (Math.random() > config.getmProdP())
 			return;
 		prodRate = addNoise(prodRate, 2.0);
 
 		if (prodRate < 1)
 			prodRate = 1;
 
-		else if (prodRate > Params.maxProdRate)
-			prodRate = Params.maxProdRate;
+		else if (prodRate > config.getMaxProdRate())
+			prodRate = config.getMaxProdRate();
 	}
 
 	public void mutateShape() {
-		if (Math.random() > Params.mShapeP)
+		if (Math.random() > config.getmShapeP())
 			return;
 
-		int s = addNoise(shape, Math.log10((double) Params.sMax));
+		int s = addNoise(shape, Math.log10((double) config.getsMax()));
 
-		if (s >= Params.sMax)
-			shape = s - Params.sMax;
+		if (s >= config.getsMax())
+			shape = s - config.getsMax();
 
 		else if (s < 0)
-			shape = s + Params.sMax;
+			shape = s + config.getsMax();
 
 		else
 			shape = s;
