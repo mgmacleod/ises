@@ -25,6 +25,7 @@ public class GA extends Thing {
 		modelCount = Params.iSampleModel;
 		grnCount = Params.iSampleGRN;
 		running = false;
+		done = false;
 		collectingData = collData;
 
 		for (int i = 0; i < Params.popSize; i++) {

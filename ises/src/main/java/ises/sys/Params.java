@@ -97,7 +97,7 @@ public class Params {
 	// these are all as in original
 
 	public static int popSize = 100;
-	public static int maxGen = 1000;
+	public static int maxGen = 100;
 	public static int neutralGen = 100; // number of generations of neutral evolution
 	public static int initGenomeSize = 32;
 
