@@ -20,7 +20,7 @@ import ises.stats.ShapeDistribution;
 
 @Service
 @Scope("prototype")
-public class ISES {
+public class ISES implements Runnable {
 
 	private static final Logger logger = LoggerFactory.getLogger(ISES.class);
 

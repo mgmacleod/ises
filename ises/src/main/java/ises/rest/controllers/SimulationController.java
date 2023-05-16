@@ -1,5 +1,6 @@
 package ises.rest.controllers;
 
+import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,17 +14,19 @@ import ises.sys.ISES;
 public class SimulationController {
 
 	private final ISES ises;
+	private final AsyncTaskExecutor executor;
 
-	public SimulationController(ISES ises) {
+	public SimulationController(ISES ises, AsyncTaskExecutor executor) {
 		this.ises = ises;
+		this.executor = executor;
 	}
 
 	@PostMapping("/simulation/run")
 	public String runSimulation(@RequestBody SimulationConfiguration config) {
 		ises.init(config);
-		ises.run();
+		executor.execute(ises);
 
-		return "Done";
+		return "Running";
 	}
 
 }
