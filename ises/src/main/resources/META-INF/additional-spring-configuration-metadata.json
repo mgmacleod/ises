@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "simulation.executor.core.pool.size",
+    "type": "java.lang.String",
+    "description": "Pool size (number of threads available) for submitting simulation run jobs"
+  },
+  {
+    "name": "simulation.executor.queue.capacity",
+    "type": "java.lang.String",
+    "description": "Maximum capacity for the thread executor when submitting simulation run jobs"
+  }
+]}

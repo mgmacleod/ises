@@ -19,6 +19,7 @@ import ises.model.molecular.behav.Syn2Behaviour;
 import ises.model.molecular.behav.Syn3Behaviour;
 import ises.model.molecular.behav.Syn4Behaviour;
 import ises.model.network.Node;
+import ises.rest.entities.SimulationConfiguration;
 
 public class Gene extends ModelComponent {
 
@@ -30,26 +31,30 @@ public class Gene extends ModelComponent {
 	protected Node node;
 	protected String ancestralName;
 	protected Model model;
+	private SimulationConfiguration config;
 
-	public Gene() {
+	private Gene(SimulationConfiguration config) {
+		this.config = config;
 	}
 
-	public Gene(Gene parent) {
+	public Gene(Gene parent, SimulationConfiguration config) {
+		this(config);
 		this.model = parent.model;
 		this.genome = parent.genome;
 		this.name = "randomName";
 		this.ancestralName = parent.name;
 
 		if (parent.regRegion != null)
-			this.regRegion = new RegulatoryRegion(parent.regRegion, this);
+			this.regRegion = new RegulatoryRegion(parent.regRegion, this, config);
 		else
-			this.regRegion = new RegulatoryRegion(this);
+			this.regRegion = new RegulatoryRegion(this, config);
 
-		this.proteinSpecies = new ProteinSpecies(parent.proteinSpecies, this);
+		this.proteinSpecies = new ProteinSpecies(parent.proteinSpecies, this, config);
 		initBehaviour();
 	}
 
-	public Gene(Gene parent, Model m) {
+	public Gene(Gene parent, Model m, SimulationConfiguration config) {
+		this(config);
 		model = m;
 		genome = model.getGenome();
 		regState = 0;
@@ -57,26 +62,27 @@ public class Gene extends ModelComponent {
 		this.ancestralName = this.name;
 
 		if (parent.regRegion != null)
-			this.regRegion = new RegulatoryRegion(parent.regRegion, this);
+			this.regRegion = new RegulatoryRegion(parent.regRegion, this, config);
 		else
 			this.regRegion = null;
 
-		this.proteinSpecies = new ProteinSpecies(parent.proteinSpecies, this);
+		this.proteinSpecies = new ProteinSpecies(parent.proteinSpecies, this, config);
 		initBehaviour();
 
 	}
 
-	public Gene(Model m, String tag, boolean regulated) {
+	public Gene(Model m, String tag, boolean regulated, SimulationConfiguration config) {
+		this(config);
 		model = m;
 		genome = m.getGenome();
 		name = tag;
 		ancestralName = "" + tag;
 		initBehaviour();
 
-		proteinSpecies = new ProteinSpecies(this);
+		proteinSpecies = new ProteinSpecies(this, config);
 
 		if (regulated)
-			regRegion = new RegulatoryRegion(this);
+			regRegion = new RegulatoryRegion(this, config);
 
 		else
 			regRegion = null;
@@ -159,39 +165,39 @@ public class Gene extends ModelComponent {
 	public void initBehaviour() {
 		// sort out behaviour. ugly!
 		if (name.equals("fod1"))
-			behaviour = new Fod1Behaviour(model, this);
+			behaviour = new Fod1Behaviour(model, this, config);
 		else if (name.equals("fod2"))
-			behaviour = new Fod2Behaviour(model, this);
+			behaviour = new Fod2Behaviour(model, this, config);
 		else if (name.equals("fod3"))
-			behaviour = new Fod3Behaviour(model, this);
+			behaviour = new Fod3Behaviour(model, this, config);
 		else if (name.equals("fod4"))
-			behaviour = new Fod4Behaviour(model, this);
+			behaviour = new Fod4Behaviour(model, this, config);
 		else if (name.equals("fod5"))
-			behaviour = new Fod5Behaviour(model, this);
+			behaviour = new Fod5Behaviour(model, this, config);
 		else if (name.equals("fod6"))
-			behaviour = new Fod6Behaviour(model, this);
+			behaviour = new Fod6Behaviour(model, this, config);
 		else if (name.equals("fod7"))
-			behaviour = new Fod7Behaviour(model, this);
+			behaviour = new Fod7Behaviour(model, this, config);
 		else if (name.equals("fod8"))
-			behaviour = new Fod8Behaviour(model, this);
+			behaviour = new Fod8Behaviour(model, this, config);
 		else if (name.equals("fod9"))
-			behaviour = new Fod9Behaviour(model, this);
+			behaviour = new Fod9Behaviour(model, this, config);
 
 		else if (name.equals("syn1"))
-			behaviour = new Syn1Behaviour(model, this);
+			behaviour = new Syn1Behaviour(model, this, config);
 		else if (name.equals("syn2"))
-			behaviour = new Syn2Behaviour(model, this);
+			behaviour = new Syn2Behaviour(model, this, config);
 		else if (name.equals("syn3"))
-			behaviour = new Syn3Behaviour(model, this);
+			behaviour = new Syn3Behaviour(model, this, config);
 		else if (name.equals("syn4"))
-			behaviour = new Syn4Behaviour(model, this);
+			behaviour = new Syn4Behaviour(model, this, config);
 		else if (name.equals("rsp1"))
-			behaviour = new Rsp1Behaviour(model, this);
+			behaviour = new Rsp1Behaviour(model, this, config);
 		else if (name.equals("rsp2"))
-			behaviour = new Rsp2Behaviour(model, this);
+			behaviour = new Rsp2Behaviour(model, this, config);
 
 		else
-			behaviour = new GeneBehaviour(model, this);
+			behaviour = new GeneBehaviour(model, this, config);
 	}
 
 	/**

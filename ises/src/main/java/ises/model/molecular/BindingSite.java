@@ -1,21 +1,25 @@
 package ises.model.molecular;
 
-import ises.sys.Params;
+import ises.rest.entities.SimulationConfiguration;
 
 public class BindingSite extends ModelComponent {
 	protected int shape, bias, occupancy;
 	protected Gene gene;
+	private SimulationConfiguration config;
 
-	public BindingSite() {
+	private BindingSite(SimulationConfiguration config) {
+		this.config = config;
 	}
 
-	public BindingSite(BindingSite bs) {
+	public BindingSite(BindingSite bs, SimulationConfiguration config) {
+		this(config);
 		this.gene = bs.gene;
 		this.bias = bs.bias;
 		this.shape = bs.shape;
 	}
 
-	public BindingSite(BindingSite bs, Gene g) {
+	public BindingSite(BindingSite bs, Gene g, SimulationConfiguration config) {
+		this(config);
 		gene = g;
 		this.shape = bs.shape;
 		this.bias = bs.bias;
@@ -23,9 +27,10 @@ public class BindingSite extends ModelComponent {
 
 	}
 
-	public BindingSite(Gene g, int index) {
+	public BindingSite(Gene g, int index, SimulationConfiguration config) {
+		this(config);
 		gene = g;
-		shape = randInt(Params.sMax);
+		shape = randInt(config.getsMax());
 		bias = (random() < 0.5) ? -1 : 1;
 		occupancy = 0;
 
@@ -79,21 +84,21 @@ public class BindingSite extends ModelComponent {
 	}
 
 	public void mutateBias() {
-		if (random() < Params.mFlipBS)
+		if (random() < config.getmFlipBS())
 			bias = -bias;
 	}
 
 	public void mutateShape() {
-		if (random() > Params.mShapeBS)
+		if (random() > config.getmShapeBS())
 			return;
 
-		int s = addNoise(shape, Math.log10((double) Params.sMax));
+		int s = addNoise(shape, Math.log10((double) config.getsMax()));
 
-		if (s >= Params.sMax)
-			shape = s - Params.sMax;
+		if (s >= config.getsMax())
+			shape = s - config.getsMax();
 
 		else if (s < 0)
-			shape = s + Params.sMax;
+			shape = s + config.getsMax();
 
 		else
 			shape = s;

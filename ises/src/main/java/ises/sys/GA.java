@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import ises.Thing;
 import ises.model.cellular.Model;
 import ises.model.network.GRN;
+import ises.rest.entities.SimulationConfiguration;
 
 public class GA extends Thing {
 
@@ -15,20 +16,22 @@ public class GA extends Thing {
 	protected ISES ises;
 	protected boolean running, done;
 	protected Model best, worst;
+	private SimulationConfiguration config;
 
-	public GA(ISES is) {
+	public GA(ISES is, SimulationConfiguration config) {
+		this.config = config;
 		ises = is;
 		pop = new LinkedList<Model>();
 		offspring = new LinkedList<Model>();
 		gen = 0;
-		foodCount = Params.iFoodFlip;
-		modelCount = Params.iSampleModel;
-		grnCount = Params.iSampleGRN;
+		foodCount = config.getiFoodFlip();
+		modelCount = config.getiSampleModel();
+		grnCount = config.getiSampleGRN();
 		running = false;
 		done = false;
 
-		for (int i = 0; i < Params.popSize; i++) {
-			pop.add(new Model(i));
+		for (int i = 0; i < config.getPopSize(); i++) {
+			pop.add(new Model(i, config));
 		}
 	}
 
@@ -61,44 +64,44 @@ public class GA extends Thing {
 
 		for (Integer i : multFoods) {
 			if (i.intValue() == 1)
-				Params.kFood1 = Params.kFoodBase * Params.kFoodFactor;
+				config.setkFood1(config.getkFoodBase() * config.getkFoodFactor());
 			else if (i.intValue() == 2)
-				Params.kFood2 = Params.kFoodBase * Params.kFoodFactor;
+				config.setkFood2(config.getkFoodBase() * config.getkFoodFactor());
 			else if (i.intValue() == 3)
-				Params.kFood3 = Params.kFoodBase * Params.kFoodFactor;
+				config.setkFood3(config.getkFoodBase() * config.getkFoodFactor());
 			else if (i.intValue() == 4)
-				Params.kFood4 = Params.kFoodBase * Params.kFoodFactor;
+				config.setkFood4(config.getkFoodBase() * config.getkFoodFactor());
 			else if (i.intValue() == 5)
-				Params.kFood5 = Params.kFoodBase * Params.kFoodFactor;
+				config.setkFood5(config.getkFoodBase() * config.getkFoodFactor());
 			else if (i.intValue() == 6)
-				Params.kFood6 = Params.kFoodBase * Params.kFoodFactor;
+				config.setkFood6(config.getkFoodBase() * config.getkFoodFactor());
 			else if (i.intValue() == 7)
-				Params.kFood7 = Params.kFoodBase * Params.kFoodFactor;
+				config.setkFood7(config.getkFoodBase() * config.getkFoodFactor());
 			else if (i.intValue() == 8)
-				Params.kFood8 = Params.kFoodBase * Params.kFoodFactor;
+				config.setkFood8(config.getkFoodBase() * config.getkFoodFactor());
 			else if (i.intValue() == 9)
-				Params.kFood9 = Params.kFoodBase * Params.kFoodFactor;
+				config.setkFood9(config.getkFoodBase() * config.getkFoodFactor());
 		}
 
 		for (Integer i : foods) {
 			if (i.intValue() == 1)
-				Params.kFood1 = Params.kFoodBase / Params.kFoodFactor;
+				config.setkFood1(config.getkFoodBase() / config.getkFoodFactor());
 			else if (i.intValue() == 2)
-				Params.kFood2 = Params.kFoodBase / Params.kFoodFactor;
+				config.setkFood2(config.getkFoodBase() / config.getkFoodFactor());
 			else if (i.intValue() == 3)
-				Params.kFood3 = Params.kFoodBase / Params.kFoodFactor;
+				config.setkFood3(config.getkFoodBase() / config.getkFoodFactor());
 			else if (i.intValue() == 4)
-				Params.kFood4 = Params.kFoodBase / Params.kFoodFactor;
+				config.setkFood4(config.getkFoodBase() / config.getkFoodFactor());
 			else if (i.intValue() == 5)
-				Params.kFood5 = Params.kFoodBase / Params.kFoodFactor;
+				config.setkFood5(config.getkFoodBase() / config.getkFoodFactor());
 			else if (i.intValue() == 6)
-				Params.kFood6 = Params.kFoodBase / Params.kFoodFactor;
+				config.setkFood6(config.getkFoodBase() / config.getkFoodFactor());
 			else if (i.intValue() == 7)
-				Params.kFood7 = Params.kFoodBase / Params.kFoodFactor;
+				config.setkFood7(config.getkFoodBase() / config.getkFoodFactor());
 			else if (i.intValue() == 8)
-				Params.kFood8 = Params.kFoodBase / Params.kFoodFactor;
+				config.setkFood8(config.getkFoodBase() / config.getkFoodFactor());
 			else if (i.intValue() == 9)
-				Params.kFood9 = Params.kFoodBase / Params.kFoodFactor;
+				config.setkFood9(config.getkFoodBase() / config.getkFoodFactor());
 		}
 
 	}
@@ -128,7 +131,7 @@ public class GA extends Thing {
 	}
 
 	public void preEvolve() {
-		for (int i = 0; i < Params.neutralGen; i++) {
+		for (int i = 0; i < config.getNeutralGen(); i++) {
 			for (Model m : pop)
 				m.preEvolve();
 		}
@@ -141,7 +144,7 @@ public class GA extends Thing {
 
 	public void nextGen() {
 
-		if (gen > Params.maxGen) {
+		if (gen > config.getMaxGen()) {
 			running = false;
 			done = true;
 			ises.setDone(true);
@@ -149,7 +152,7 @@ public class GA extends Thing {
 			return;
 		}
 
-		if (foodCount == Params.iFoodFlip) {
+		if (foodCount == config.getiFoodFlip()) {
 			flipFoodProbs();
 			foodCount = 0;
 		}
@@ -165,17 +168,17 @@ public class GA extends Thing {
 		ises.setCurrWorst(new Model(worst));
 
 		// sample data
-		if (modelCount == Params.iSampleModel) {
+		if (modelCount == config.getiSampleModel()) {
 			modelCount = 0;
 			ises.storeCurrBest();
 		}
 
-		if (grnCount == Params.iSampleGRN) {
+		if (grnCount == config.getiSampleGRN()) {
 			grnCount = 0;
 			ises.storeCurrGRN();
 		}
 
-		int n = Params.popSize / 2;
+		int n = config.getPopSize() / 2;
 
 		while (pop.size() > n)
 			pop.removeFirst();
@@ -193,6 +196,10 @@ public class GA extends Thing {
 		grnCount++;
 		foodCount++;
 
+	}
+
+	public void setConfig(SimulationConfiguration config) {
+		this.config = config;
 	}
 
 }
