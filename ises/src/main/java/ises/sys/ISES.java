@@ -191,6 +191,7 @@ public class ISES {
 	}
 
 	public void run() {
+		logger.info("Starting run");
 		ga.preEvolve(); // neutral evolution for Params.neutralGen generations
 		start();
 
@@ -204,7 +205,8 @@ public class ISES {
 			running = !ga.isDone();
 		}
 
-		logger.debug("GA done.");
+		logger.debug("GA done");
+		logger.info("Finished run");
 	}
 
 	public String getModelStatus() {
