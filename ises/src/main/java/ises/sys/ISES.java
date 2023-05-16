@@ -36,7 +36,7 @@ public class ISES {
 
 	public ISES() {
 		ga = new GA(this);
-		sim = new Simulator(this);
+		sim = new Simulator();
 		running = false;
 		done = false;
 

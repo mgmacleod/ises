@@ -1,23 +1,21 @@
 package ises.sim;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ises.Thing;
 import ises.model.cellular.Model;
-import ises.sys.ISES;
 import ises.sys.Params;
 
 public class Simulator extends Thing {
-	protected ISES ises;
-	protected Model currModel;
-	protected int currTime, stressCounter, fc1, fc2, fc3;
-	protected boolean running;
+	private static final Logger logger = LoggerFactory.getLogger(Simulator.class);
+
+	private Model currModel;
+	private int currTime, stressCounter;
+	private boolean running;
 
 	public Simulator() {
-	}
-
-	public Simulator(ISES i) {
-		ises = i;
 		running = false;
-
 	}
 
 	public void go() {
@@ -36,15 +34,12 @@ public class Simulator extends Thing {
 
 	public void simulate() {
 		if (currModel == null) {
-			print("null Model in the simulator!! Abandon ship!!");
-			System.exit(1);
+			logger.debug("null Model in the simulator!! Abandon ship!!");
+			throw new IllegalArgumentException("Attempted to simulate a null model");
 		}
 
 		currTime = 1;
 		stressCounter = 0;
-		fc1 = 0;
-		fc2 = 0;
-		fc3 = 0;
 
 		while (currTime <= Params.maxTime && currModel.isAlive()) {
 			calcStressLevels();
@@ -122,59 +117,27 @@ public class Simulator extends Thing {
 		}
 	}
 
-	/**
-	 * @return the ises
-	 */
-	public ISES getIses() {
-		return ises;
-	}
-
-	/**
-	 * @param ises the ises to set
-	 */
-	public void setIses(ISES ises) {
-		this.ises = ises;
-	}
-
-	/**
-	 * @return the currModel
-	 */
 	public Model getCurrModel() {
 		return currModel;
 	}
 
-	/**
-	 * @param currModel the currModel to set
-	 */
 	public void setCurrModel(Model currModel) {
 		this.currModel = currModel;
 		this.currModel.initialize();
 	}
 
-	/**
-	 * @return the currTime
-	 */
 	public int getCurrTime() {
 		return currTime;
 	}
 
-	/**
-	 * @param currTime the currTime to set
-	 */
 	public void setCurrTime(int currTime) {
 		this.currTime = currTime;
 	}
 
-	/**
-	 * @return the stressCounter
-	 */
 	public int getStressCounter() {
 		return stressCounter;
 	}
 
-	/**
-	 * @param stressCounter the stressCounter to set
-	 */
 	public void setStressCounter(int stressCounter) {
 		this.stressCounter = stressCounter;
 	}
