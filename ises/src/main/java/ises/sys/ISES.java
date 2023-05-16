@@ -7,29 +7,36 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import ises.Thing;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+
 import ises.model.cellular.Model;
 import ises.model.network.GRN;
 import ises.sim.Simulator;
 import ises.stats.ShapeDistribution;
 
-public class ISES extends Thing {
+@Service
+@Scope("prototype")
+public class ISES {
 
-	protected GA ga;
-	protected Simulator sim;
-	protected Model currBest, currWorst;
-	protected boolean running, done, collectingData;
+	private static final Logger logger = LoggerFactory.getLogger(ISES.class);
 
-	protected String modelStatus, gaSimStatus;
-	protected GRN currGRN;
+	private GA ga;
+	private Simulator sim;
+	private Model currBest, currWorst;
+	private boolean running, done;
 
-	protected Vector<GRN> sampleGRNs;
-	protected ArrayList<Model> sampleModels;
+	private String modelStatus, gaSimStatus;
+	private GRN currGRN;
 
-	public ISES(boolean collData) {
-		collectingData = collData;
-		ga = new GA(this, collData);
-		sim = new Simulator(this);
+	private Vector<GRN> sampleGRNs;
+	private ArrayList<Model> sampleModels;
+
+	public ISES() {
+		ga = new GA(this);
+		sim = new Simulator();
 		running = false;
 		done = false;
 
@@ -45,7 +52,6 @@ public class ISES extends Thing {
 
 		sampleModels = new ArrayList<Model>(numModels + 5);
 
-		ga.preEvolve(); // neutral evolution for Params.neutralGen generations
 	}
 
 	public Model getCurrBest() {
@@ -64,15 +70,6 @@ public class ISES extends Thing {
 		return sim;
 	}
 
-	public void go() {
-		running = true;
-
-		while (running) {
-			goOnce();
-
-		}
-	}
-
 	public GRN getCurrGRN() {
 		return currGRN;
 	}
@@ -87,10 +84,6 @@ public class ISES extends Thing {
 
 	public ArrayList<Model> getSampleModels() {
 		return sampleModels;
-	}
-
-	public void goOnce() {
-
 	}
 
 	public void nextGen() {
@@ -162,36 +155,12 @@ public class ISES extends Thing {
 
 	}
 
-	public void initDataLists() {
-		int numGRN = Params.maxGen / Params.iSampleGRN;
-		if (numGRN < 0)
-			numGRN = 0;
-
-		sampleGRNs = new Vector<GRN>(numGRN + 5);
-
-		int numModels = Params.maxGen / Params.iSampleModel;
-		if (numModels < 0)
-			numModels = 0;
-
-		sampleModels = new ArrayList<Model>(numModels + 5);
-	}
-
 	public boolean isDone() {
 		return done;
 	}
 
-	public void pause() {
-		running = false;
-
-	}
-
-	public void resume() {
-		go();
-	}
-
 	public void setCurrBest(Model cb) {
 		currBest = cb;
-
 	}
 
 	public void setCurrWorst(Model cw) {
@@ -202,12 +171,6 @@ public class ISES extends Thing {
 		this.done = done;
 	}
 
-	public void setCollectingData(boolean cd) {
-		collectingData = cd;
-		ga.setCollectingData(cd);
-
-	}
-
 	public void simulatePop() {
 		for (Model m : ga.getPop()) {
 			sim.setCurrModel(m);
@@ -215,12 +178,39 @@ public class ISES extends Thing {
 		}
 	}
 
+	public void start() {
+		running = true;
+	}
+
+	public void pause() {
+		running = false;
+	}
+
 	public void stop() {
 		running = false;
 	}
 
+	public void run() {
+		logger.info("Starting run");
+		ga.preEvolve(); // neutral evolution for Params.neutralGen generations
+		start();
+
+		while (running) {
+			logger.debug("GA running generation " + getGa().getGen() + "...");
+			simulatePop();
+
+			nextGen();
+			logger.debug(getModelStatus());
+
+			running = !ga.isDone();
+		}
+
+		logger.debug("GA done");
+		logger.info("Finished run");
+	}
+
 	public String getModelStatus() {
-		modelStatus = "Best Model\n" + "----------------------------\n" + "Fitness: " + currBest.getFitness() + "\n"
+		modelStatus = "\nBest Model\n" + "----------------------------\n" + "Fitness: " + currBest.getFitness() + "\n"
 				+ "Energy: " + currBest.getEnergy() + "\n" + "Stress: " + currBest.getStress() + "\n" + "Biomass: "
 				+ currBest.getBiomass() + "\n" + "Ancestral index: " + currBest.getAncestralIndex() + "\n"
 				+ "# binding sites: " + currBest.getNumSites() + "\n" + "# genes: " + currBest.getNumGenes() + "\n\n" +
