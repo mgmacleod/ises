@@ -18,19 +18,19 @@ import ises.model.molecular.behav.Syn1Behaviour;
 import ises.model.molecular.behav.Syn2Behaviour;
 import ises.model.molecular.behav.Syn3Behaviour;
 import ises.model.molecular.behav.Syn4Behaviour;
-import ises.model.network.Node;
+import ises.model.network.GrnVertex;
 import ises.rest.entities.SimulationConfiguration;
 
 public class Gene extends ModelComponent {
 
-	protected Genome genome;
-	protected RegulatoryRegion regRegion;
-	protected ProteinSpecies proteinSpecies;
-	protected GeneBehaviour behaviour;
-	protected int regState;
-	protected Node node;
-	protected String ancestralName;
-	protected Model model;
+	private Genome genome;
+	private RegulatoryRegion regRegion;
+	private ProteinSpecies proteinSpecies;
+	private GeneBehaviour behaviour;
+	private int regState;
+	private GrnVertex vertex;
+	private String ancestralName;
+	private Model model;
 	private SimulationConfiguration config;
 
 	private Gene(SimulationConfiguration config) {
@@ -39,17 +39,18 @@ public class Gene extends ModelComponent {
 
 	public Gene(Gene parent, SimulationConfiguration config) {
 		this(config);
-		this.model = parent.model;
-		this.genome = parent.genome;
-		this.name = "randomName";
-		this.ancestralName = parent.name;
+		model = parent.model;
+		genome = parent.genome;
+		name = "randomName";
+		ancestralName = parent.name;
 
-		if (parent.regRegion != null)
-			this.regRegion = new RegulatoryRegion(parent.regRegion, this, config);
-		else
-			this.regRegion = new RegulatoryRegion(this, config);
+		if (parent.regRegion != null) {
+			regRegion = new RegulatoryRegion(parent.regRegion, this, config);
+		} else {
+			regRegion = new RegulatoryRegion(this, config);
+		}
 
-		this.proteinSpecies = new ProteinSpecies(parent.proteinSpecies, this, config);
+		proteinSpecies = new ProteinSpecies(parent.proteinSpecies, this, config);
 		initBehaviour();
 	}
 
@@ -58,15 +59,16 @@ public class Gene extends ModelComponent {
 		model = m;
 		genome = model.getGenome();
 		regState = 0;
-		this.name = new String(parent.getName());
-		this.ancestralName = this.name;
+		name = new String(parent.getName());
+		ancestralName = name;
 
-		if (parent.regRegion != null)
-			this.regRegion = new RegulatoryRegion(parent.regRegion, this, config);
-		else
-			this.regRegion = null;
+		if (parent.regRegion != null) {
+			regRegion = new RegulatoryRegion(parent.regRegion, this, config);
+		} else {
+			regRegion = null;
+		}
 
-		this.proteinSpecies = new ProteinSpecies(parent.proteinSpecies, this, config);
+		proteinSpecies = new ProteinSpecies(parent.proteinSpecies, this, config);
 		initBehaviour();
 
 	}
@@ -81,11 +83,11 @@ public class Gene extends ModelComponent {
 
 		proteinSpecies = new ProteinSpecies(this, config);
 
-		if (regulated)
+		if (regulated) {
 			regRegion = new RegulatoryRegion(this, config);
-
-		else
+		} else {
 			regRegion = null;
+		}
 
 	}
 
@@ -104,8 +106,9 @@ public class Gene extends ModelComponent {
 	}
 
 	public void removeSite(BindingSite bs) {
-		if (regRegion != null)
+		if (regRegion != null) {
 			regRegion.removeSite(bs);
+		}
 	}
 
 	public String getAncestralName() {
@@ -126,6 +129,7 @@ public class Gene extends ModelComponent {
 		regState = regRegion.calcRegState();
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		return this == o;
 	}
@@ -135,10 +139,6 @@ public class Gene extends ModelComponent {
 	 */
 	public GeneBehaviour getBehaviour() {
 		return behaviour;
-	}
-
-	public Node getNode() {
-		return node;
 	}
 
 	/**
@@ -162,42 +162,49 @@ public class Gene extends ModelComponent {
 		return regState;
 	}
 
+	public GrnVertex getVertex() {
+		return vertex;
+	}
+
+	public void setVertex(GrnVertex vertex) {
+		this.vertex = vertex;
+	}
+
 	public void initBehaviour() {
 		// sort out behaviour. ugly!
-		if (name.equals("fod1"))
+		if (name.equals("fod1")) {
 			behaviour = new Fod1Behaviour(model, this, config);
-		else if (name.equals("fod2"))
+		} else if (name.equals("fod2")) {
 			behaviour = new Fod2Behaviour(model, this, config);
-		else if (name.equals("fod3"))
+		} else if (name.equals("fod3")) {
 			behaviour = new Fod3Behaviour(model, this, config);
-		else if (name.equals("fod4"))
+		} else if (name.equals("fod4")) {
 			behaviour = new Fod4Behaviour(model, this, config);
-		else if (name.equals("fod5"))
+		} else if (name.equals("fod5")) {
 			behaviour = new Fod5Behaviour(model, this, config);
-		else if (name.equals("fod6"))
+		} else if (name.equals("fod6")) {
 			behaviour = new Fod6Behaviour(model, this, config);
-		else if (name.equals("fod7"))
+		} else if (name.equals("fod7")) {
 			behaviour = new Fod7Behaviour(model, this, config);
-		else if (name.equals("fod8"))
+		} else if (name.equals("fod8")) {
 			behaviour = new Fod8Behaviour(model, this, config);
-		else if (name.equals("fod9"))
+		} else if (name.equals("fod9")) {
 			behaviour = new Fod9Behaviour(model, this, config);
-
-		else if (name.equals("syn1"))
+		} else if (name.equals("syn1")) {
 			behaviour = new Syn1Behaviour(model, this, config);
-		else if (name.equals("syn2"))
+		} else if (name.equals("syn2")) {
 			behaviour = new Syn2Behaviour(model, this, config);
-		else if (name.equals("syn3"))
+		} else if (name.equals("syn3")) {
 			behaviour = new Syn3Behaviour(model, this, config);
-		else if (name.equals("syn4"))
+		} else if (name.equals("syn4")) {
 			behaviour = new Syn4Behaviour(model, this, config);
-		else if (name.equals("rsp1"))
+		} else if (name.equals("rsp1")) {
 			behaviour = new Rsp1Behaviour(model, this, config);
-		else if (name.equals("rsp2"))
+		} else if (name.equals("rsp2")) {
 			behaviour = new Rsp2Behaviour(model, this, config);
-
-		else
+		} else {
 			behaviour = new GeneBehaviour(model, this, config);
+		}
 	}
 
 	/**
@@ -210,24 +217,29 @@ public class Gene extends ModelComponent {
 		return regState > 0;
 	}
 
+	@Override
 	public void label(String s) {
 		name = s;
 		proteinSpecies.label(s);
 	}
 
 	public void labelRegRegion() {
-		if (regRegion != null)
+		if (regRegion != null) {
 			regRegion.labelSites();
+		}
 	}
 
 	public void printSites() {
-		if (regRegion == null)
+		if (regRegion == null) {
 			return;
+		}
 
-		for (BindingSite bs : regRegion.getSites())
+		for (BindingSite bs : regRegion.getSites()) {
 			print(bs);
+		}
 	}
 
+	@Override
 	public void mutate() {
 		proteinSpecies.mutate();
 	}
@@ -241,10 +253,6 @@ public class Gene extends ModelComponent {
 	 */
 	public void setBehaviour(GeneBehaviour behaviour) {
 		this.behaviour = behaviour;
-	}
-
-	public void setNode(Node n) {
-		node = n;
 	}
 
 	/**
@@ -281,8 +289,9 @@ public class Gene extends ModelComponent {
 	 * 
 	 */
 	public void unbindAndDeactivate() {
-		if (regRegion != null)
+		if (regRegion != null) {
 			regRegion.unbindAndDeactivate();
+		}
 		regState = 0;
 	}
 

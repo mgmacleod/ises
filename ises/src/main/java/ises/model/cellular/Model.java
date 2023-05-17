@@ -3,12 +3,13 @@ package ises.model.cellular;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.jgrapht.graph.DefaultWeightedEdge;
+
 import ises.Thing;
 import ises.model.molecular.BindingSite;
 import ises.model.molecular.ProteinSpecies;
-import ises.model.network.Edge;
-import ises.model.network.GRN;
-import ises.model.network.Node;
+import ises.model.network.GeneRegulatoryNetwork;
+import ises.model.network.GrnVertex;
 import ises.rest.entities.SimulationConfiguration;
 
 public class Model extends Thing implements Comparable<Model> {
@@ -18,7 +19,7 @@ public class Model extends Thing implements Comparable<Model> {
 	protected int energy, biomass, stress;
 	protected int index, ancestralIndex;
 	protected Integer fitness;
-	protected GRN grn;
+	protected GeneRegulatoryNetwork grn;
 	protected ArrayList<Integer> speciesOrder;
 	protected ArrayList<Integer> sitesOrder;
 	protected int highestEnergy, lowestEnergy;
@@ -35,42 +36,37 @@ public class Model extends Thing implements Comparable<Model> {
 	}
 
 	public Model(Model parent) {
-		this.ancestralIndex = parent.ancestralIndex;
+		ancestralIndex = parent.ancestralIndex;
 		genome = new Genome(parent.genome, this, parent.config);
 
-		this.energy = parent.energy;
-		this.stress = parent.stress;
-		this.biomass = parent.biomass;
-		this.fitness = Integer.valueOf(parent.fitness.intValue());
-		this.highestEnergy = parent.highestEnergy;
-		this.lowestEnergy = parent.lowestEnergy;
-		this.meanBiomass = parent.meanBiomass;
-		this.meanEnergy = parent.meanEnergy;
-		this.config = parent.config;
+		energy = parent.energy;
+		stress = parent.stress;
+		biomass = parent.biomass;
+		fitness = Integer.valueOf(parent.fitness.intValue());
+		highestEnergy = parent.highestEnergy;
+		lowestEnergy = parent.lowestEnergy;
+		meanBiomass = parent.meanBiomass;
+		meanEnergy = parent.meanEnergy;
+		config = parent.config;
 	}
 
 	public void addBiomass(int bm) {
 		biomass += bm;
 	}
 
-	public void addEdgeToGRN(Edge e) {
-		grn.addEdge(e);
-	}
-
 	public void addEdgeToGRN(ProteinSpecies ps, BindingSite bs) {
-		Node regulator = ps.getGene().getNode();
-		Node target = bs.getGene().getNode();
-		boolean pos = bs.getBias() > 0;
-		addEdgeToGRN(new Edge(regulator, target, ps.calcAffinityFor(bs), pos));
+		GrnVertex regulator = ps.getGene().getVertex();
+		GrnVertex target = bs.getGene().getVertex();
+		double weight = ps.calcAffinityFor(bs) * bs.getBias();
+		DefaultWeightedEdge edge = grn.addEdge(regulator, target);
+		if (edge != null) {
+			grn.setEdgeWeight(edge, weight);
+		}
+
 	}
 
 	public void addEnergy(int e) {
 		energy += e;
-
-	}
-
-	public void addNodeToGRN(Node n) {
-		grn.addNode(n);
 	}
 
 	public int calcNumSitesFromGenes() {
@@ -93,9 +89,10 @@ public class Model extends Thing implements Comparable<Model> {
 		return genome.getNumGenes() + genome.getNumSites();
 	}
 
+	@Override
 	public int compareTo(Model m) {
 
-		return this.fitness.compareTo(m.fitness);
+		return fitness.compareTo(m.fitness);
 	}
 
 	public void doFod1() {
@@ -171,6 +168,7 @@ public class Model extends Thing implements Comparable<Model> {
 		removeEnergy(config.getcBio4());
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		return this == o;
 	}
@@ -249,7 +247,7 @@ public class Model extends Thing implements Comparable<Model> {
 		return genome;
 	}
 
-	public GRN getGRN() {
+	public GeneRegulatoryNetwork getGRN() {
 		return grn;
 	}
 
@@ -291,7 +289,7 @@ public class Model extends Thing implements Comparable<Model> {
 	}
 
 	public void initGRN() {
-		grn = new GRN();
+		grn = new GeneRegulatoryNetwork();
 
 		// ugly
 		genome.createNodesFor(grn);
@@ -313,14 +311,16 @@ public class Model extends Thing implements Comparable<Model> {
 	public void initOrders() {
 		int nSpecies = proteome.getNumSpecies();
 		int nSites = genome.getNumSites();
-		speciesOrder = new ArrayList<Integer>(nSpecies);
-		sitesOrder = new ArrayList<Integer>(nSites);
+		speciesOrder = new ArrayList<>(nSpecies);
+		sitesOrder = new ArrayList<>(nSites);
 
-		for (int i = 0; i < nSpecies; i++)
+		for (int i = 0; i < nSpecies; i++) {
 			speciesOrder.add(Integer.valueOf(i));
+		}
 
-		for (int i = 0; i < nSites; i++)
+		for (int i = 0; i < nSites; i++) {
 			sitesOrder.add(Integer.valueOf(i));
+		}
 
 	}
 
@@ -362,8 +362,9 @@ public class Model extends Thing implements Comparable<Model> {
 		for (Integer i : speciesOrder) {
 			ProteinSpecies ps = proteome.getProteinSpecies(i.intValue());
 			for (Integer j : sitesOrder) {
-				if (ps.isSpent())
+				if (ps.isSpent()) {
 					break;
+				}
 
 				BindingSite bs = genome.getSite(j.intValue());
 				if (ps.bindsTo(bs)) {
@@ -376,11 +377,13 @@ public class Model extends Thing implements Comparable<Model> {
 	}
 
 	public void regulateSignallingGenes() {
-		if (energy >= config.gettEnergy1())
+		if (energy >= config.gettEnergy1()) {
 			genome.activateNrg1();
+		}
 
-		if (energy >= config.gettEnergy2())
+		if (energy >= config.gettEnergy2()) {
 			genome.activateNrg2();
+		}
 
 		if (stress > 0) {
 			genome.activateRcp1();
@@ -459,11 +462,13 @@ public class Model extends Thing implements Comparable<Model> {
 	}
 
 	private void collectStats() {
-		if (energy < lowestEnergy)
+		if (energy < lowestEnergy) {
 			lowestEnergy = energy;
+		}
 
-		if (energy > highestEnergy)
+		if (energy > highestEnergy) {
 			highestEnergy = energy;
+		}
 
 		totalEnergy += energy;
 		totalBiomass += biomass;

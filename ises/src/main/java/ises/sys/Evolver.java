@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import ises.model.cellular.Model;
-import ises.model.network.GRN;
+import ises.model.network.GeneRegulatoryNetwork;
 import ises.rest.entities.SimulationConfiguration;
 import ises.stats.ShapeDistribution;
 
@@ -30,8 +30,8 @@ public class Evolver implements Runnable {
 	private boolean running, done;
 	private Model currBest, currWorst;
 	private String modelStatus;
-	private GRN currGRN;
-	private Vector<GRN> sampleGRNs;
+	private GeneRegulatoryNetwork currGRN;
+	private Vector<GeneRegulatoryNetwork> sampleGRNs;
 	private ArrayList<Model> sampleModels;
 	private SimulationConfiguration config;
 	private final Simulator sim;
@@ -42,8 +42,8 @@ public class Evolver implements Runnable {
 
 	public void initializeForRun(SimulationConfiguration config) {
 		this.config = config;
-		pop = new LinkedList<Model>();
-		offspring = new LinkedList<Model>();
+		pop = new LinkedList<>();
+		offspring = new LinkedList<>();
 		gen = 1;
 		foodCount = config.getiFoodFlip();
 		modelCount = config.getiSampleModel();
@@ -58,16 +58,18 @@ public class Evolver implements Runnable {
 		sim.initializeForRun(config);
 
 		int numGRN = config.getMaxGen() / config.getiSampleGRN();
-		if (numGRN < 0)
+		if (numGRN < 0) {
 			numGRN = 0;
+		}
 
-		sampleGRNs = new Vector<GRN>(numGRN + 5);
+		sampleGRNs = new Vector<>(numGRN + 5);
 
 		int numModels = config.getMaxGen() / config.getiSampleModel();
-		if (numModels < 0)
+		if (numModels < 0) {
 			numModels = 0;
+		}
 
-		sampleModels = new ArrayList<Model>(numModels + 5);
+		sampleModels = new ArrayList<>(numModels + 5);
 	}
 
 	public void start() {
@@ -100,57 +102,61 @@ public class Evolver implements Runnable {
 	}
 
 	private void flipFoodProbs() {
-		ArrayList<Integer> foods = new ArrayList<Integer>();
-		ArrayList<Integer> multFoods = new ArrayList<Integer>();
+		ArrayList<Integer> foods = new ArrayList<>();
+		ArrayList<Integer> multFoods = new ArrayList<>();
 
-		for (int i = 1; i < 10; i++)
+		for (int i = 1; i < 10; i++) {
 			foods.add(Integer.valueOf(i));
+		}
 
 		Collections.shuffle(foods);
 
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++) {
 			multFoods.add(foods.remove(i));
+		}
 
 		for (Integer i : multFoods) {
-			if (i.intValue() == 1)
+			if (i.intValue() == 1) {
 				config.setkFood1(config.getkFoodBase() * config.getkFoodFactor());
-			else if (i.intValue() == 2)
+			} else if (i.intValue() == 2) {
 				config.setkFood2(config.getkFoodBase() * config.getkFoodFactor());
-			else if (i.intValue() == 3)
+			} else if (i.intValue() == 3) {
 				config.setkFood3(config.getkFoodBase() * config.getkFoodFactor());
-			else if (i.intValue() == 4)
+			} else if (i.intValue() == 4) {
 				config.setkFood4(config.getkFoodBase() * config.getkFoodFactor());
-			else if (i.intValue() == 5)
+			} else if (i.intValue() == 5) {
 				config.setkFood5(config.getkFoodBase() * config.getkFoodFactor());
-			else if (i.intValue() == 6)
+			} else if (i.intValue() == 6) {
 				config.setkFood6(config.getkFoodBase() * config.getkFoodFactor());
-			else if (i.intValue() == 7)
+			} else if (i.intValue() == 7) {
 				config.setkFood7(config.getkFoodBase() * config.getkFoodFactor());
-			else if (i.intValue() == 8)
+			} else if (i.intValue() == 8) {
 				config.setkFood8(config.getkFoodBase() * config.getkFoodFactor());
-			else if (i.intValue() == 9)
+			} else if (i.intValue() == 9) {
 				config.setkFood9(config.getkFoodBase() * config.getkFoodFactor());
+			}
 		}
 
 		for (Integer i : foods) {
-			if (i.intValue() == 1)
+			if (i.intValue() == 1) {
 				config.setkFood1(config.getkFoodBase() / config.getkFoodFactor());
-			else if (i.intValue() == 2)
+			} else if (i.intValue() == 2) {
 				config.setkFood2(config.getkFoodBase() / config.getkFoodFactor());
-			else if (i.intValue() == 3)
+			} else if (i.intValue() == 3) {
 				config.setkFood3(config.getkFoodBase() / config.getkFoodFactor());
-			else if (i.intValue() == 4)
+			} else if (i.intValue() == 4) {
 				config.setkFood4(config.getkFoodBase() / config.getkFoodFactor());
-			else if (i.intValue() == 5)
+			} else if (i.intValue() == 5) {
 				config.setkFood5(config.getkFoodBase() / config.getkFoodFactor());
-			else if (i.intValue() == 6)
+			} else if (i.intValue() == 6) {
 				config.setkFood6(config.getkFoodBase() / config.getkFoodFactor());
-			else if (i.intValue() == 7)
+			} else if (i.intValue() == 7) {
 				config.setkFood7(config.getkFoodBase() / config.getkFoodFactor());
-			else if (i.intValue() == 8)
+			} else if (i.intValue() == 8) {
 				config.setkFood8(config.getkFoodBase() / config.getkFoodFactor());
-			else if (i.intValue() == 9)
+			} else if (i.intValue() == 9) {
 				config.setkFood9(config.getkFoodBase() / config.getkFoodFactor());
+			}
 		}
 
 	}
@@ -173,8 +179,9 @@ public class Evolver implements Runnable {
 
 	private void preEvolve() {
 		for (int i = 0; i < config.getNeutralGen(); i++) {
-			for (Model m : pop)
+			for (Model m : pop) {
 				m.preEvolve();
+			}
 		}
 
 	}
@@ -199,13 +206,13 @@ public class Evolver implements Runnable {
 			foodCount = 0;
 		}
 
-		offspring = new LinkedList<Model>();
+		offspring = new LinkedList<>();
 		Collections.sort(pop);
 
 		best = pop.getLast();
 		worst = pop.getFirst();
 
-		currGRN = new GRN(best.getGRN());
+		currGRN = (GeneRegulatoryNetwork) best.getGRN().clone();
 		currBest = new Model(best);
 		currWorst = new Model(worst);
 
@@ -222,11 +229,13 @@ public class Evolver implements Runnable {
 
 		int n = config.getPopSize() / 2;
 
-		while (pop.size() > n)
+		while (pop.size() > n) {
 			pop.removeFirst();
+		}
 
-		for (Model m : pop)
+		for (Model m : pop) {
 			offspring.add(m.replicate());
+		}
 
 		pop.addAll(offspring);
 
@@ -242,6 +251,7 @@ public class Evolver implements Runnable {
 		logger.debug(getModelStatus());
 	}
 
+	@Override
 	public void run() {
 		logger.info("Starting run");
 		preEvolve(); // neutral evolution for config.neutralGen generations
@@ -269,9 +279,9 @@ public class Evolver implements Runnable {
 	private void prepareData() {
 		int size = sampleModels.size();
 
-		ArrayList<String> modelStats = new ArrayList<String>(size);
-		ArrayList<String> shapeDistros = new ArrayList<String>(size);
-		ArrayList<String> shapeStats = new ArrayList<String>(size);
+		ArrayList<String> modelStats = new ArrayList<>(size);
+		ArrayList<String> shapeDistros = new ArrayList<>(size);
+		ArrayList<String> shapeStats = new ArrayList<>(size);
 
 		for (Model m : sampleModels) {
 			modelStats.add(m.getStatString());
@@ -299,13 +309,15 @@ public class Evolver implements Runnable {
 
 			modelStatsFile.close();
 
-			for (String s : shapeStats)
+			for (String s : shapeStats) {
 				shapeStatsFile.println(s);
+			}
 
 			shapeStatsFile.close();
 
-			for (String s : shapeDistros)
+			for (String s : shapeDistros) {
 				shapeDistrosFile.println(s);
+			}
 
 			shapeDistrosFile.close();
 

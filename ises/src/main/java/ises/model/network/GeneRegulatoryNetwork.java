@@ -7,8 +7,18 @@ public class GeneRegulatoryNetwork extends DefaultDirectedWeightedGraph<GrnVerte
 
 	private static final long serialVersionUID = 5432328473075170472L;
 
-	public GeneRegulatoryNetwork(Class<? extends DefaultWeightedEdge> edgeClass) {
-		super(edgeClass);
+	private String name;
+
+	public GeneRegulatoryNetwork() {
+		super(DefaultWeightedEdge.class);
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }
