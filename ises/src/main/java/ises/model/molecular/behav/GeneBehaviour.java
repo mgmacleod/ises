@@ -20,27 +20,8 @@ public class GeneBehaviour extends ModelComponent {
 		gene = g;
 	}
 
-	/**
-	 * @return the gene
-	 */
-	public Gene getGene() {
-		return gene;
-	}
-
-	public void pay(int cost) {
-		model.removeEnergy(cost);
-	}
-
-	/**
-	 * @param gene the gene to set
-	 */
-	public void setGene(Gene gene) {
-		this.gene = gene;
-	}
-
 	public void translate() {
 		// determine number of proteins to produce
-
 		int nProteins = addNoise(gene.getProteinSpecies().getProdRate(), 1.5);
 
 		// pay for translation

@@ -2,11 +2,16 @@ package ises.model.molecular;
 
 import ises.rest.entities.SimulationConfiguration;
 
+/**
+ * Represents an abstract protein species that is produced from the translation of a {@link Gene}. For simplicity and
+ * efficiency, the number of a given protein in the model is represented by the integer variable {@link #copies};
+ * likewise, the number of copies that are bound to a binding site on a gene is represented by {@link #boundCopies}.
+ */
 public class ProteinSpecies extends ModelComponent {
 
-	protected int prodRate, degRate, shape;
-	protected int copies, boundCopies;
-	protected Gene gene;
+	private int prodRate, degRate, shape;
+	private int copies, boundCopies;
+	private Gene gene;
 	private SimulationConfiguration config;
 
 	private ProteinSpecies(SimulationConfiguration config) {
@@ -29,12 +34,12 @@ public class ProteinSpecies extends ModelComponent {
 	public ProteinSpecies(ProteinSpecies parent, Gene g, SimulationConfiguration config) {
 		this(config);
 		gene = g;
-		this.name = g.getName() + "PP";
+		name = g.getName() + "PP";
 
-		this.prodRate = parent.prodRate;
-		this.degRate = parent.degRate;
-		this.shape = parent.shape;
-		this.copies = this.boundCopies = 0;
+		prodRate = parent.prodRate;
+		degRate = parent.degRate;
+		shape = parent.shape;
+		copies = boundCopies = 0;
 	}
 
 	public void addCopies(int inc) {
@@ -45,8 +50,9 @@ public class ProteinSpecies extends ModelComponent {
 		if (bs == null) {
 			return false;
 		}
-		if (isSpent())
+		if (isSpent()) {
 			return false;
+		}
 
 		double affinity = calcAffinityFor(bs);
 		boolean binds = !bs.isOccupied() && Math.random() < affinity;
@@ -65,10 +71,11 @@ public class ProteinSpecies extends ModelComponent {
 		}
 		int d = Math.abs(shape - bs.getShape());
 
-		if (d > config.getdMax())
+		if (d > config.getdMax()) {
 			return 0.0;
+		}
 
-		double b = (double) (d + 1);
+		double b = d + 1;
 		double a = 1 / b;
 		return a;
 
@@ -79,36 +86,21 @@ public class ProteinSpecies extends ModelComponent {
 		double degProb = 1 / (double) degRate;
 
 		for (int i = 0; i < copies; i++) {
-			if (Math.random() < degProb)
+			if (Math.random() < degProb) {
 				count++;
+			}
 		}
 
 		copies -= count;
 
-		if (copies < 0)
+		if (copies < 0) {
 			copies = 0;
+		}
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		return this == o;
-	}
-
-	/**
-	 * @return the boundCopies
-	 */
-	public int getBoundCopies() {
-		return boundCopies;
-	}
-
-	/**
-	 * @return the copies
-	 */
-	public int getCopies() {
-		return copies;
-	}
-
-	public int getDegRate() {
-		return degRate;
 	}
 
 	/**
@@ -130,95 +122,67 @@ public class ProteinSpecies extends ModelComponent {
 		return copies == 0 || boundCopies == copies;
 	}
 
+	@Override
 	public void label(String s) {
 		name = s + "PP";
 	}
 
+	@Override
 	public void mutate() {
 		mutateShape();
 		mutateDegRate();
 		mutateProdRate();
 	}
 
-	public void mutateDegRate() {
-		if (Math.random() > config.getmStabP())
+	private void mutateDegRate() {
+		if (Math.random() > config.getmStabP()) {
 			return;
+		}
 
 		degRate = addNoise(degRate, 2.0);
 
-		if (degRate < 1)
+		if (degRate < 1) {
 			degRate = 1;
+		}
 
-		if (degRate > config.getMaxDegRate())
+		if (degRate > config.getMaxDegRate()) {
 			degRate = config.getMaxDegRate();
+		}
 
 	}
 
-	public void mutateProdRate() {
-		if (Math.random() > config.getmProdP())
+	private void mutateProdRate() {
+		if (Math.random() > config.getmProdP()) {
 			return;
+		}
 		prodRate = addNoise(prodRate, 2.0);
 
-		if (prodRate < 1)
+		if (prodRate < 1) {
 			prodRate = 1;
-
-		else if (prodRate > config.getMaxProdRate())
+		} else if (prodRate > config.getMaxProdRate()) {
 			prodRate = config.getMaxProdRate();
+		}
 	}
 
-	public void mutateShape() {
-		if (Math.random() > config.getmShapeP())
+	private void mutateShape() {
+		if (Math.random() > config.getmShapeP()) {
 			return;
+		}
 
-		int s = addNoise(shape, Math.log10((double) config.getsMax()));
+		int s = addNoise(shape, Math.log10(config.getsMax()));
 
-		if (s >= config.getsMax())
+		if (s >= config.getsMax()) {
 			shape = s - config.getsMax();
-
-		else if (s < 0)
+		} else if (s < 0) {
 			shape = s + config.getsMax();
-
-		else
+		} else {
 			shape = s;
+		}
 
 	}
 
 	/**
-	 * @param boundCopies the boundCopies to set
-	 */
-	public void setBoundCopies(int boundCopies) {
-		this.boundCopies = boundCopies;
-	}
-
-	/**
-	 * @param copies the copies to set
-	 */
-	public void setCopies(int copies) {
-		this.copies = copies;
-	}
-
-	public void setDegRate(int degRate) {
-		this.degRate = degRate;
-	}
-
-	/**
-	 * @param parentGene the parentGene to set
-	 */
-	public void setParentGene(Gene parentGene) {
-		this.gene = parentGene;
-	}
-
-	public void setProdRate(int prodRate) {
-		this.prodRate = prodRate;
-	}
-
-	public void setShape(int shape) {
-		this.shape = shape;
-	}
-
-	/**
-	 * Sets the boundCopies of this protein species to 0 and stochastically degrades
-	 * the number of available copies.
+	 * Sets the boundCopies of this protein species to 0 and stochastically degrades the number of available copies.
 	 */
 	public void unBindAndDeactivate() {
 		boundCopies = 0;

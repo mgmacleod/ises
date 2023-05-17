@@ -6,41 +6,20 @@ import ises.model.molecular.Gene;
 import ises.model.molecular.ModelComponent;
 import ises.model.molecular.ProteinSpecies;
 
+/**
+ * Represents the abstract proteome of a {@link Model}, which consists of a collection of {@link ProteinSpecies} and
+ * some basic logic for manipulating them.
+ */
 public class Proteome extends ModelComponent {
-	protected ArrayList<ProteinSpecies> species;
-
-	public Proteome() {
-
-	}
+	private ArrayList<ProteinSpecies> species;
 
 	public Proteome(Genome genome) {
-		species = new ArrayList<ProteinSpecies>();
+		species = new ArrayList<>();
 
-		for (Gene g : genome.getAllGenes())
+		for (Gene g : genome.getAllGenes()) {
 			species.add(g.getProteinSpecies());
+		}
 
-	}
-
-	public int getNumProteins() {
-		int count = 0;
-
-		for (ProteinSpecies ps : species)
-			count += ps.getCopies();
-
-		return count;
-	}
-
-	public int getNumBoundProteins() {
-		int count = 0;
-
-		for (ProteinSpecies ps : species)
-			count += ps.getBoundCopies();
-
-		return count;
-	}
-
-	public void addSpecies(ProteinSpecies ps) {
-		species.add(ps);
 	}
 
 	public int getNumSpecies() {
@@ -48,33 +27,21 @@ public class Proteome extends ModelComponent {
 	}
 
 	public void unbindAndDeactivate() {
-		for (ProteinSpecies ps : species)
+		for (ProteinSpecies ps : species) {
 			ps.unBindAndDeactivate();
-	}
-
-	public boolean hasNextSpecies() {
-		return !species.isEmpty();
+		}
 	}
 
 	public ProteinSpecies getProteinSpecies(int i) {
-		if (i < 0 || i >= species.size())
+		if (i < 0 || i >= species.size()) {
 			return null;
+		}
 
 		return species.get(i);
 	}
 
-	/**
-	 * @return the species
-	 */
 	public ArrayList<ProteinSpecies> getSpecies() {
 		return species;
-	}
-
-	/**
-	 * @param species the species to set
-	 */
-	public void setSpecies(ArrayList<ProteinSpecies> species) {
-		this.species = species;
 	}
 
 }

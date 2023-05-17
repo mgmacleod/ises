@@ -1,5 +1,8 @@
 package ises.rest.entities;
 
+/**
+ * Represents all of the configuration values needed to control a simulation run.
+ */
 public class SimulationConfiguration {
 	////////////////////////// Model parameters \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
@@ -64,12 +67,11 @@ public class SimulationConfiguration {
 
 	// food availability rates
 	/**
-	 * this implementation assigns a probability to each food and makes it available
-	 * to the model at each timestep with this probability
+	 * this implementation assigns a probability to each food and makes it available to the model at each timestep with this
+	 * probability
 	 * 
-	 * the kFood1-9 parameters don't use the values set here; rather their values
-	 * are set dynamically based on the base probability (kFoodBase) and the factor
-	 * (kFoodFactor) by which kFoodBase is divided or multiplied randomly with
+	 * the kFood1-9 parameters don't use the values set here; rather their values are set dynamically based on the base
+	 * probability (kFoodBase) and the factor (kFoodFactor) by which kFoodBase is divided or multiplied randomly with
 	 * frequency iFoodFlip
 	 * 
 	 */

@@ -9,6 +9,9 @@ import ises.Thing;
 import ises.model.cellular.Model;
 import ises.rest.entities.SimulationConfiguration;
 
+/**
+ * Provides a basic simulation engine to evaluate the behaviour of {@link Model}s
+ */
 @Service
 @Scope("prototype")
 public class Simulator extends Thing {
@@ -27,21 +30,12 @@ public class Simulator extends Thing {
 		running = false;
 	}
 
-	public void go() {
+	public void start() {
 		running = true;
 		simulate();
 	}
 
-	public void pause() {
-		running = false;
-	}
-
-	public void resume() {
-		running = true;
-		simulate();
-	}
-
-	public void simulate() {
+	private void simulate() {
 		if (currModel == null) {
 			logger.debug("null Model in the simulator!! Abandon ship!!");
 			throw new IllegalArgumentException("Attempted to simulate a null model");
@@ -69,14 +63,6 @@ public class Simulator extends Thing {
 		currModel.setFitness(f);
 
 		currModel.calcMeans(currTime);
-	}
-
-	public boolean isRunning() {
-		return running;
-	}
-
-	public void setRunning(boolean running) {
-		this.running = running;
 	}
 
 	private void calcFoodAvail() {
@@ -119,15 +105,11 @@ public class Simulator extends Thing {
 
 	}
 
-	public void calcStressLevels() {
+	private void calcStressLevels() {
 		if (stressCounter >= config.getiStressIn()) {
 			currModel.addStress();
 			stressCounter = 0;
 		}
-	}
-
-	public Model getCurrModel() {
-		return currModel;
 	}
 
 	public void setCurrModel(Model currModel) {
@@ -135,24 +117,8 @@ public class Simulator extends Thing {
 		this.currModel.initialize();
 	}
 
-	public int getCurrTime() {
-		return currTime;
-	}
-
-	public void setCurrTime(int currTime) {
-		this.currTime = currTime;
-	}
-
-	public int getStressCounter() {
-		return stressCounter;
-	}
-
-	public void setStressCounter(int stressCounter) {
-		this.stressCounter = stressCounter;
-	}
-
-	public void setConfig(SimulationConfiguration config) {
-		this.config = config;
+	public boolean isRunning() {
+		return running;
 	}
 
 }

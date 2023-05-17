@@ -2,7 +2,10 @@ package ises.model.molecular;
 
 import ises.Thing;
 
-public class ModelComponent extends Thing {
+/**
+ * Base class for all components of a {@link ises.model.cellular.Model}
+ */
+public abstract class ModelComponent extends Thing {
 	public String name;
 
 	public ModelComponent() {

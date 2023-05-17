@@ -4,11 +4,14 @@ import java.util.ArrayList;
 
 import ises.rest.entities.SimulationConfiguration;
 
+/**
+ * Represents the abstract regulatory region of a {@link Gene}, consisting of a collection of {@link BindingSites}
+ */
 public class RegulatoryRegion extends ModelComponent {
 
-	protected ArrayList<BindingSite> sites;
-	protected Gene gene;
-	protected int regState;
+	private ArrayList<BindingSite> sites;
+	private Gene gene;
+	private int regState;
 	private SimulationConfiguration config;
 
 	private RegulatoryRegion(SimulationConfiguration config) {
@@ -17,25 +20,27 @@ public class RegulatoryRegion extends ModelComponent {
 
 	public RegulatoryRegion(Gene g, SimulationConfiguration config) {
 		this(config);
-		sites = new ArrayList<BindingSite>();
+		sites = new ArrayList<>();
 		gene = g;
 		regState = 0;
 
 		name = gene.getName() + "RR";
 		int r = randInt(4);
 
-		for (int i = 0; i < r; i++)
+		for (int i = 0; i < r; i++) {
 			sites.add(new BindingSite(gene, i, config));
+		}
 
 	}
 
 	public RegulatoryRegion(RegulatoryRegion rr, Gene g, SimulationConfiguration config) {
 		this(config);
 		gene = g;
-		sites = new ArrayList<BindingSite>();
+		sites = new ArrayList<>();
 
-		for (BindingSite bs : rr.sites)
-			this.sites.add(new BindingSite(bs, g, config));
+		for (BindingSite bs : rr.sites) {
+			sites.add(new BindingSite(bs, g, config));
+		}
 
 	}
 
@@ -44,8 +49,9 @@ public class RegulatoryRegion extends ModelComponent {
 	}
 
 	public void removeSite(BindingSite bs) {
-		if (sites.size() == 1)
+		if (sites.size() == 1) {
 			return;
+		}
 
 		sites.remove(bs);
 	}
@@ -53,21 +59,24 @@ public class RegulatoryRegion extends ModelComponent {
 	public int calcRegState() {
 		regState = 0;
 
-		for (BindingSite bs : sites)
+		for (BindingSite bs : sites) {
 			regState += bs.regState();
+		}
 
 		return regState;
 	}
 
-	public void deleteSite(BindingSite bs) {
-		if (sites.isEmpty())
+	private void deleteSite(BindingSite bs) {
+		if (sites.isEmpty()) {
 			return;
+		}
 
-		if (Math.random() < config.getmDelBS())
+		if (Math.random() < config.getmDelBS()) {
 			sites.remove(bs);
+		}
 	}
 
-	public void duplicateSite(BindingSite bs) {
+	private void duplicateSite(BindingSite bs) {
 		if (sites.isEmpty()) {
 
 		}
@@ -79,34 +88,20 @@ public class RegulatoryRegion extends ModelComponent {
 
 	}
 
+	@Override
 	public boolean equals(Object o) {
-		if (!(o instanceof RegulatoryRegion))
+		if (!(o instanceof RegulatoryRegion)) {
 			return false;
+		}
 
 		return o == this;
 	}
 
-	/**
-	 * @return the gene
-	 */
-	public Gene getGene() {
-		return gene;
-	}
-
-	/**
-	 * @return the regState
-	 */
-	public int getRegState() {
-		return regState;
-	}
-
-	/**
-	 * @return the sites
-	 */
 	public ArrayList<BindingSite> getSites() {
 		return sites;
 	}
 
+	@Override
 	public void label(String s) {
 		for (int i = 0; i < sites.size(); i++) {
 			BindingSite bs = sites.get(i);
@@ -119,14 +114,14 @@ public class RegulatoryRegion extends ModelComponent {
 		label(gene.name);
 	}
 
+	@Override
 	public void mutate() {
-
 		if (sites.isEmpty() && random() < config.getmDupBS()) {
 			sites.add(new BindingSite(gene, 0, config));
 			return;
 		}
 
-		ArrayList<BindingSite> sitesCopy = new ArrayList<BindingSite>(sites);
+		ArrayList<BindingSite> sitesCopy = new ArrayList<>(sites);
 
 		for (BindingSite bs : sitesCopy) {
 			duplicateSite(bs);
@@ -135,30 +130,10 @@ public class RegulatoryRegion extends ModelComponent {
 		}
 	}
 
-	/**
-	 * @param gene the gene to set
-	 */
-	public void setGene(Gene gene) {
-		this.gene = gene;
-	}
-
-	/**
-	 * @param regState the regState to set
-	 */
-	public void setRegState(int regState) {
-		this.regState = regState;
-	}
-
-	/**
-	 * @param sites the sites to set
-	 */
-	public void setSites(ArrayList<BindingSite> sites) {
-		this.sites = sites;
-	}
-
 	public void unbindAndDeactivate() {
-		for (BindingSite bs : sites)
+		for (BindingSite bs : sites) {
 			bs.unbindAndDeactivate();
+		}
 
 		regState = 0;
 	}

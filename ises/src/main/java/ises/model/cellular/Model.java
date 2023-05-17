@@ -12,24 +12,29 @@ import ises.model.network.GeneRegulatoryNetwork;
 import ises.model.network.GrnVertex;
 import ises.rest.entities.SimulationConfiguration;
 
+/**
+ * Represents an abstract 'cell' that consists or a {@link Genome}, its representation as a
+ * {@link GeneRegulatoryNetwork}, and the {@link Proteome} generated from it. It also contains the logic to take a
+ * {@link #step()} in the simulation.
+ */
 public class Model extends Thing implements Comparable<Model> {
 
-	protected Genome genome;
-	protected Proteome proteome;
-	protected int energy, biomass, stress;
-	protected int index, ancestralIndex;
-	protected Integer fitness;
-	protected GeneRegulatoryNetwork grn;
-	protected ArrayList<Integer> speciesOrder;
-	protected ArrayList<Integer> sitesOrder;
-	protected int highestEnergy, lowestEnergy;
-	protected int totalEnergy, totalBiomass;
-	protected double meanEnergy, meanBiomass;
+	private Genome genome;
+	private Proteome proteome;
+	private int energy, biomass, stress;
+	private int ancestralIndex;
+	private Integer fitness;
+	private GeneRegulatoryNetwork grn;
+	private ArrayList<Integer> speciesOrder;
+	private ArrayList<Integer> sitesOrder;
+	private int highestEnergy, lowestEnergy;
+	private int totalEnergy, totalBiomass;
+	private double meanEnergy, meanBiomass;
 	private SimulationConfiguration config;
 
 	public Model(int i, SimulationConfiguration config) {
 		genome = new Genome(this, config);
-		index = ancestralIndex = i;
+		ancestralIndex = i;
 		this.config = config;
 
 		initialize();
@@ -37,7 +42,7 @@ public class Model extends Thing implements Comparable<Model> {
 
 	public Model(Model parent) {
 		ancestralIndex = parent.ancestralIndex;
-		genome = new Genome(parent.genome, this, parent.config);
+		genome = new Genome(parent.genome, this);
 
 		energy = parent.energy;
 		stress = parent.stress;
@@ -50,11 +55,11 @@ public class Model extends Thing implements Comparable<Model> {
 		config = parent.config;
 	}
 
-	public void addBiomass(int bm) {
+	private void addBiomass(int bm) {
 		biomass += bm;
 	}
 
-	public void addEdgeToGRN(ProteinSpecies ps, BindingSite bs) {
+	private void addEdgeToGRN(ProteinSpecies ps, BindingSite bs) {
 		GrnVertex regulator = ps.getGene().getVertex();
 		GrnVertex target = bs.getGene().getVertex();
 		double weight = ps.calcAffinityFor(bs) * bs.getBias();
@@ -65,20 +70,8 @@ public class Model extends Thing implements Comparable<Model> {
 
 	}
 
-	public void addEnergy(int e) {
+	private void addEnergy(int e) {
 		energy += e;
-	}
-
-	public int calcNumSitesFromGenes() {
-		return genome.calcNumSitesFromGenes();
-	}
-
-	public int getNumProteins() {
-		return proteome.getNumProteins();
-	}
-
-	public int getNumBoundProteins() {
-		return proteome.getNumBoundProteins();
 	}
 
 	public void addStress() {
@@ -91,7 +84,6 @@ public class Model extends Thing implements Comparable<Model> {
 
 	@Override
 	public int compareTo(Model m) {
-
 		return fitness.compareTo(m.fitness);
 	}
 
@@ -173,14 +165,10 @@ public class Model extends Thing implements Comparable<Model> {
 		return this == o;
 	}
 
-	public void flush() {
+	private void flush() {
 		proteome = null;
 		grn = null;
 		genome.flush();
-	}
-
-	public void foodAvailable(int kind) {
-		genome.activateFodGene(kind);
 	}
 
 	public void food1Available() {
@@ -251,13 +239,6 @@ public class Model extends Thing implements Comparable<Model> {
 		return grn;
 	}
 
-	/**
-	 * @return the index
-	 */
-	public int getIndex() {
-		return index;
-	}
-
 	public int getAncestralIndex() {
 		return ancestralIndex;
 	}
@@ -270,28 +251,16 @@ public class Model extends Thing implements Comparable<Model> {
 		return genome.getNumSites();
 	}
 
-	public int getNumSitesFromGenes() {
-		return genome.getNumSitesFromGenes();
-	}
-
-	/**
-	 * @return the proteome
-	 */
 	public Proteome getProteome() {
 		return proteome;
 	}
 
-	/**
-	 * @return the stress
-	 */
 	public int getStress() {
 		return stress;
 	}
 
 	public void initGRN() {
 		grn = new GeneRegulatoryNetwork();
-
-		// ugly
 		genome.createNodesFor(grn);
 	}
 
@@ -308,7 +277,7 @@ public class Model extends Thing implements Comparable<Model> {
 		energy = config.getStartEnergy();
 	}
 
-	public void initOrders() {
+	private void initOrders() {
 		int nSpecies = proteome.getNumSpecies();
 		int nSites = genome.getNumSites();
 		speciesOrder = new ArrayList<>(nSpecies);
@@ -332,10 +301,6 @@ public class Model extends Thing implements Comparable<Model> {
 		return (energy > 0 && stress < config.gettStress1());
 	}
 
-	public boolean isDead() {
-		return energy <= 0 || stress > config.gettStress1();
-	}
-
 	public void mutate() {
 		genome.mutate();
 	}
@@ -345,20 +310,67 @@ public class Model extends Thing implements Comparable<Model> {
 		genome.labelGenes();
 	}
 
-	public void randomizeOrders() {
+	public void removeEnergy(int e) {
+		energy -= e;
+	}
+
+	public Model replicate() {
+		flush();
+		return new Model(this);
+	}
+
+	public void setFitness(int f) {
+		fitness = Integer.valueOf(f);
+	}
+
+	public void step() {
+		randomizeOrders();
+		regulateSignallingGenes();
+		translateInputGenes();
+
+		if (energy <= 0) {
+			collectStats();
+			return;
+		}
+		regulateGenome();
+		translateRegulatedGenes();
+		unbindAndDeactivate();
+		collectStats();
+	}
+
+	private void randomizeOrders() {
 		randomizeSpeciesOrder();
 		randomizeSitesOrder();
 	}
 
-	public void randomizeSitesOrder() {
-		Collections.shuffle(sitesOrder);
-	}
-
-	public void randomizeSpeciesOrder() {
+	private void randomizeSpeciesOrder() {
 		Collections.shuffle(speciesOrder);
 	}
 
-	public void regulateGenome() {
+	private void randomizeSitesOrder() {
+		Collections.shuffle(sitesOrder);
+	}
+
+	private void regulateSignallingGenes() {
+		if (energy >= config.gettEnergy1()) {
+			genome.activateNrg1();
+		}
+
+		if (energy >= config.gettEnergy2()) {
+			genome.activateNrg2();
+		}
+
+		if (stress > 0) {
+			genome.activateRcp1();
+			genome.activateRcp2();
+		}
+	}
+
+	private void translateInputGenes() {
+		genome.translateInputGenes();
+	}
+
+	private void regulateGenome() {
 		for (Integer i : speciesOrder) {
 			ProteinSpecies ps = proteome.getProteinSpecies(i.intValue());
 			for (Integer j : sitesOrder) {
@@ -376,89 +388,13 @@ public class Model extends Thing implements Comparable<Model> {
 		genome.calcRegStates();
 	}
 
-	public void regulateSignallingGenes() {
-		if (energy >= config.gettEnergy1()) {
-			genome.activateNrg1();
-		}
-
-		if (energy >= config.gettEnergy2()) {
-			genome.activateNrg2();
-		}
-
-		if (stress > 0) {
-			genome.activateRcp1();
-			genome.activateRcp2();
-		}
+	private void translateRegulatedGenes() {
+		genome.translateRegulatedGenes();
 	}
 
-	public void removeEnergy(int e) {
-		energy -= e;
-	}
-
-	public Model replicate() {
-		flush();
-		return new Model(this);
-	}
-
-	/**
-	 * @param biomass the biomass to set
-	 */
-	public void setBiomass(int biomass) {
-		this.biomass = biomass;
-	}
-
-	/**
-	 * @param energy the energy to set
-	 */
-	public void setEnergy(int energy) {
-		this.energy = energy;
-	}
-
-	public void setFitness(int f) {
-		fitness = Integer.valueOf(f);
-	}
-
-	/**
-	 * @param genome the genome to set
-	 */
-	public void setGenome(Genome genome) {
-		this.genome = genome;
-	}
-
-	/**
-	 * @param index the index to set
-	 */
-	public void setIndex(int index) {
-		this.index = index;
-	}
-
-	/**
-	 * @param proteome the proteome to set
-	 */
-	public void setProteome(Proteome proteome) {
-		this.proteome = proteome;
-	}
-
-	/**
-	 * @param stress the stress to set
-	 */
-	public void setStress(int stress) {
-		this.stress = stress;
-	}
-
-	public void step() {
-		randomizeOrders();
-		regulateSignallingGenes();
-		translateInputGenes();
-
-		if (energy <= 0) {
-			collectStats();
-			return;
-		}
-		regulateGenome();
-		translateRegulatedGenes();
-		unbindAndDeactivate();
-		collectStats();
+	private void unbindAndDeactivate() {
+		genome.unbindAndDeactivate();
+		proteome.unbindAndDeactivate();
 	}
 
 	private void collectStats() {
@@ -480,25 +416,11 @@ public class Model extends Thing implements Comparable<Model> {
 	}
 
 	public String getStatString() {
-		String s = "energy=" + energy + ";biomass=" + biomass + ";fitness=" + fitness + ";lowestEnergy=" + lowestEnergy
-				+ ";highestEnergy=" + highestEnergy + ";meanEnergy=" + String.format("%.3f", meanEnergy)
-				+ ";meanBiomass=" + String.format("%.3f", meanBiomass) + ";nGenes=" + genome.getNumGenes() + ";nSites="
-				+ genome.getNumSites();
+		String s = "energy=" + energy + ";biomass=" + biomass + ";fitness=" + fitness + ";lowestEnergy=" + lowestEnergy + ";highestEnergy="
+				+ highestEnergy + ";meanEnergy=" + String.format("%.3f", meanEnergy) + ";meanBiomass=" + String.format("%.3f", meanBiomass)
+				+ ";nGenes=" + genome.getNumGenes() + ";nSites=" + genome.getNumSites();
 
 		return s;
-	}
-
-	private void translateInputGenes() {
-		genome.translateInputGenes();
-	}
-
-	private void translateRegulatedGenes() {
-		genome.translateRegulatedGenes();
-	}
-
-	private void unbindAndDeactivate() {
-		genome.unbindAndDeactivate();
-		proteome.unbindAndDeactivate();
 	}
 
 }

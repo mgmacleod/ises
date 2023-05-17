@@ -2,9 +2,14 @@ package ises.model.molecular;
 
 import ises.rest.entities.SimulationConfiguration;
 
+/**
+ * Represents an abstract binding site on the {@link RegulatoryRegion} of a {@link Gene}, consisting of a simple integer
+ * {@link #shape}, a positive or negative {@link #bias} (indicating whether its effect on the gene's expression is
+ * activating or inhibiting), and an {@link #occupancy} (whether or not it is bound to a transcription factor).
+ */
 public class BindingSite extends ModelComponent {
-	protected int shape, bias, occupancy;
-	protected Gene gene;
+	private int shape, bias, occupancy;
+	private Gene gene;
 	private SimulationConfiguration config;
 
 	private BindingSite(SimulationConfiguration config) {
@@ -13,17 +18,17 @@ public class BindingSite extends ModelComponent {
 
 	public BindingSite(BindingSite bs, SimulationConfiguration config) {
 		this(config);
-		this.gene = bs.gene;
-		this.bias = bs.bias;
-		this.shape = bs.shape;
+		gene = bs.gene;
+		bias = bs.bias;
+		shape = bs.shape;
 	}
 
 	public BindingSite(BindingSite bs, Gene g, SimulationConfiguration config) {
 		this(config);
 		gene = g;
-		this.shape = bs.shape;
-		this.bias = bs.bias;
-		this.occupancy = 0;
+		shape = bs.shape;
+		bias = bs.bias;
+		occupancy = 0;
 
 	}
 
@@ -38,34 +43,19 @@ public class BindingSite extends ModelComponent {
 
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		return this == o;
 	}
 
-	/**
-	 * @return the bias
-	 */
 	public int getBias() {
 		return bias;
 	}
 
-	/**
-	 * @return the gene
-	 */
 	public Gene getGene() {
 		return gene;
 	}
 
-	/**
-	 * @return the occupancy
-	 */
-	public int getOccupancy() {
-		return occupancy;
-	}
-
-	/**
-	 * @return the shape
-	 */
 	public int getShape() {
 		return shape;
 	}
@@ -78,30 +68,32 @@ public class BindingSite extends ModelComponent {
 		name = s + "BS#" + i;
 	}
 
+	@Override
 	public void mutate() {
 		mutateShape();
 		mutateBias();
 	}
 
-	public void mutateBias() {
-		if (random() < config.getmFlipBS())
+	private void mutateBias() {
+		if (random() < config.getmFlipBS()) {
 			bias = -bias;
+		}
 	}
 
-	public void mutateShape() {
-		if (random() > config.getmShapeBS())
+	private void mutateShape() {
+		if (random() > config.getmShapeBS()) {
 			return;
+		}
 
-		int s = addNoise(shape, Math.log10((double) config.getsMax()));
+		int s = addNoise(shape, Math.log10(config.getsMax()));
 
-		if (s >= config.getsMax())
+		if (s >= config.getsMax()) {
 			shape = s - config.getsMax();
-
-		else if (s < 0)
+		} else if (s < 0) {
 			shape = s + config.getsMax();
-
-		else
+		} else {
 			shape = s;
+		}
 	}
 
 	public void occupy() {
@@ -113,42 +105,12 @@ public class BindingSite extends ModelComponent {
 
 	}
 
-	/**
-	 * @param bias the bias to set
-	 */
-	public void setBias(int bias) {
-		this.bias = bias;
-	}
-
-	/**
-	 * @param gene the gene to set
-	 */
-	public void setGene(Gene gene) {
-		this.gene = gene;
-	}
-
-	/**
-	 * @param occupancy the occupancy to set
-	 */
-	public void setOccupancy(int occupancy) {
-		this.occupancy = occupancy;
-	}
-
-	/**
-	 * @param shape the shape to set
-	 */
-	public void setShape(int shape) {
-		this.shape = shape;
-	}
-
 	public void unbindAndDeactivate() {
 		occupancy = 0;
 	}
 
+	@Override
 	public String toString() {
-		if (name == null)
-			name = "bullshit";
-
 		return name;
 	}
 
