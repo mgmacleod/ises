@@ -13,12 +13,9 @@ public class FodBehaviour extends InputBehaviour {
 		super(m, g, config);
 	}
 
+	@Override
 	public void translate() {
 		super.translate();
-	}
-
-	public void addEnergy(int e) {
-		model.addEnergy(e);
 	}
 
 }

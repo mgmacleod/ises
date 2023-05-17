@@ -2,6 +2,9 @@ package ises.model.network;
 
 import java.util.Objects;
 
+/**
+ * Represents a vertex in a {@link GeneRegulatoryNetwork}
+ */
 public class GrnVertex {
 
 	private final String name;

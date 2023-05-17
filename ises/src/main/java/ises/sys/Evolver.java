@@ -1,9 +1,5 @@
 package ises.sys;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -17,16 +13,19 @@ import org.springframework.stereotype.Service;
 import ises.model.cellular.Model;
 import ises.model.network.GeneRegulatoryNetwork;
 import ises.rest.entities.SimulationConfiguration;
-import ises.stats.ShapeDistribution;
 
+/**
+ * Provides the genetic algorithm to evolve a population of model 'organisms' and collect data about those organisms
+ * throughout the run
+ */
 @Service
 @Scope("prototype")
 public class Evolver implements Runnable {
 
 	private static final Logger logger = LoggerFactory.getLogger(Evolver.class);
 
-	private LinkedList<Model> pop, offspring;
-	private int gen, modelCount, grnCount, foodCount;
+	private LinkedList<Model> population, offspring;
+	private int generation, modelCount, grnCount, foodCount;
 	private boolean running, done;
 	private Model currBest, currWorst;
 	private String modelStatus;
@@ -42,9 +41,9 @@ public class Evolver implements Runnable {
 
 	public void initializeForRun(SimulationConfiguration config) {
 		this.config = config;
-		pop = new LinkedList<>();
+		population = new LinkedList<>();
 		offspring = new LinkedList<>();
-		gen = 1;
+		generation = 1;
 		foodCount = config.getiFoodFlip();
 		modelCount = config.getiSampleModel();
 		grnCount = config.getiSampleGRN();
@@ -52,7 +51,7 @@ public class Evolver implements Runnable {
 		done = false;
 
 		for (int i = 0; i < config.getPopSize(); i++) {
-			pop.add(new Model(i, config));
+			population.add(new Model(i, config));
 		}
 
 		sim.initializeForRun(config);
@@ -89,7 +88,7 @@ public class Evolver implements Runnable {
 	}
 
 	private void storeCurrGRN() {
-		currGRN.setName("generation " + getGen());
+		currGRN.setName("generation " + generation);
 		sampleGRNs.add(currGRN);
 	}
 
@@ -169,36 +168,24 @@ public class Evolver implements Runnable {
 		this.running = running;
 	}
 
-	public LinkedList<Model> getPop() {
-		return pop;
-	}
-
-	public int getGen() {
-		return gen;
-	}
-
 	private void preEvolve() {
 		for (int i = 0; i < config.getNeutralGen(); i++) {
-			for (Model m : pop) {
+			for (Model m : population) {
 				m.preEvolve();
 			}
 		}
 
 	}
 
-	public boolean isDone() {
-		return done;
-	}
-
 	private void nextGen() {
-		if (gen > config.getMaxGen()) {
+		if (generation > config.getMaxGen()) {
 			running = false;
 			done = true;
 
 			return;
 		}
 
-		logger.debug("GA running generation " + gen + "...");
+		logger.debug("GA running generation " + generation + "...");
 		Model best, worst;
 
 		if (foodCount == config.getiFoodFlip()) {
@@ -207,10 +194,10 @@ public class Evolver implements Runnable {
 		}
 
 		offspring = new LinkedList<>();
-		Collections.sort(pop);
+		Collections.sort(population);
 
-		best = pop.getLast();
-		worst = pop.getFirst();
+		best = population.getLast();
+		worst = population.getFirst();
 
 		currGRN = (GeneRegulatoryNetwork) best.getGRN().clone();
 		currBest = new Model(best);
@@ -229,21 +216,21 @@ public class Evolver implements Runnable {
 
 		int n = config.getPopSize() / 2;
 
-		while (pop.size() > n) {
-			pop.removeFirst();
+		while (population.size() > n) {
+			population.removeFirst();
 		}
 
-		for (Model m : pop) {
+		for (Model m : population) {
 			offspring.add(m.replicate());
 		}
 
-		pop.addAll(offspring);
+		population.addAll(offspring);
 
-		for (Model m : pop) {
+		for (Model m : population) {
 			m.mutate();
 		}
 
-		gen++;
+		generation++;
 		modelCount++;
 		grnCount++;
 		foodCount++;
@@ -258,7 +245,7 @@ public class Evolver implements Runnable {
 		start();
 
 		while (running) {
-			simulatePop();
+			simulatePopulation();
 			nextGen();
 
 			running = !done;
@@ -268,75 +255,23 @@ public class Evolver implements Runnable {
 		logger.info("Finished run");
 	}
 
-	private void simulatePop() {
-		for (Model m : getPop()) {
+	private void simulatePopulation() {
+		for (Model m : population) {
 			sim.setCurrModel(m);
-			sim.go();
+			sim.start();
 		}
-	}
-
-	@SuppressWarnings("unused")
-	private void prepareData() {
-		int size = sampleModels.size();
-
-		ArrayList<String> modelStats = new ArrayList<>(size);
-		ArrayList<String> shapeDistros = new ArrayList<>(size);
-		ArrayList<String> shapeStats = new ArrayList<>(size);
-
-		for (Model m : sampleModels) {
-			modelStats.add(m.getStatString());
-
-			ShapeDistribution sd = new ShapeDistribution(m);
-			shapeDistros.add(sd.getDistroString());
-			shapeStats.add(sd.getStatString());
-
-		}
-
-		try {
-			String sep = File.separator;
-			String filename = "." + sep + "data" + sep + "modelStats.txt";
-			PrintWriter modelStatsFile = new PrintWriter(new FileWriter(filename));
-			filename = "." + sep + "data" + sep + "shapeStats.txt";
-			PrintWriter shapeStatsFile = new PrintWriter(new FileWriter(filename));
-			filename = "." + sep + "data" + sep + "shapeDistros.txt";
-			PrintWriter shapeDistrosFile = new PrintWriter(new FileWriter(filename));
-
-			modelStatsFile.println("#si " + config.getiSampleModel());
-			modelStatsFile.println("#nm " + sampleModels.size());
-			for (String s : modelStats) {
-				modelStatsFile.println(s);
-			}
-
-			modelStatsFile.close();
-
-			for (String s : shapeStats) {
-				shapeStatsFile.println(s);
-			}
-
-			shapeStatsFile.close();
-
-			for (String s : shapeDistros) {
-				shapeDistrosFile.println(s);
-			}
-
-			shapeDistrosFile.close();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
 	}
 
 	private String getModelStatus() {
-		modelStatus = "\nBest Model\n" + "----------------------------\n" + "Fitness: " + currBest.getFitness() + "\n"
-				+ "Energy: " + currBest.getEnergy() + "\n" + "Stress: " + currBest.getStress() + "\n" + "Biomass: "
-				+ currBest.getBiomass() + "\n" + "Ancestral index: " + currBest.getAncestralIndex() + "\n"
-				+ "# binding sites: " + currBest.getNumSites() + "\n" + "# genes: " + currBest.getNumGenes() + "\n\n" +
+		modelStatus = "\nBest Model\n" + "----------------------------\n" + "Fitness: " + currBest.getFitness() + "\n" + "Energy: "
+				+ currBest.getEnergy() + "\n" + "Stress: " + currBest.getStress() + "\n" + "Biomass: " + currBest.getBiomass() + "\n"
+				+ "Ancestral index: " + currBest.getAncestralIndex() + "\n" + "# binding sites: " + currBest.getNumSites() + "\n" + "# genes: "
+				+ currBest.getNumGenes() + "\n\n" +
 
-				"Worst Model\n" + "----------------------------\n" + "Fitness: " + currWorst.getFitness() + "\n"
-				+ "Energy: " + currWorst.getEnergy() + "\n" + "Stress: " + currWorst.getStress() + "\n" + "Biomass: "
-				+ currWorst.getBiomass() + "\n" + "Ancestral index: " + currWorst.getAncestralIndex() + "\n"
-				+ "# binding sites: " + currWorst.getNumSites() + "\n" + "# genes: " + currWorst.getNumGenes() + "\n\n";
+				"Worst Model\n" + "----------------------------\n" + "Fitness: " + currWorst.getFitness() + "\n" + "Energy: " + currWorst.getEnergy()
+				+ "\n" + "Stress: " + currWorst.getStress() + "\n" + "Biomass: " + currWorst.getBiomass() + "\n" + "Ancestral index: "
+				+ currWorst.getAncestralIndex() + "\n" + "# binding sites: " + currWorst.getNumSites() + "\n" + "# genes: " + currWorst.getNumGenes()
+				+ "\n\n";
 
 		return modelStatus;
 	}

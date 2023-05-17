@@ -9,6 +9,9 @@ import org.springframework.web.context.annotation.RequestScope;
 import ises.rest.entities.SimulationConfiguration;
 import ises.sys.Evolver;
 
+/**
+ * Basic REST controller for managing simulation runs
+ */
 @RestController
 @RequestScope
 public class SimulationController {

@@ -21,6 +21,11 @@ import ises.model.molecular.behav.Syn4Behaviour;
 import ises.model.network.GrnVertex;
 import ises.rest.entities.SimulationConfiguration;
 
+/**
+ * Represents an abstract gene in the {@link Genome} of a {@link Model}, consisting of a {@link RegulatoryRegion}, a
+ * reference to the {@link ProteinSpecies} it 'encodes', and the {@link GeneBehaviour} that determines the effect it has
+ * when translated.
+ */
 public class Gene extends ModelComponent {
 
 	private Genome genome;
@@ -29,7 +34,6 @@ public class Gene extends ModelComponent {
 	private GeneBehaviour behaviour;
 	private int regState;
 	private GrnVertex vertex;
-	private String ancestralName;
 	private Model model;
 	private SimulationConfiguration config;
 
@@ -42,7 +46,6 @@ public class Gene extends ModelComponent {
 		model = parent.model;
 		genome = parent.genome;
 		name = "randomName";
-		ancestralName = parent.name;
 
 		if (parent.regRegion != null) {
 			regRegion = new RegulatoryRegion(parent.regRegion, this, config);
@@ -60,7 +63,6 @@ public class Gene extends ModelComponent {
 		genome = model.getGenome();
 		regState = 0;
 		name = new String(parent.getName());
-		ancestralName = name;
 
 		if (parent.regRegion != null) {
 			regRegion = new RegulatoryRegion(parent.regRegion, this, config);
@@ -78,7 +80,6 @@ public class Gene extends ModelComponent {
 		model = m;
 		genome = m.getGenome();
 		name = tag;
-		ancestralName = "" + tag;
 		initBehaviour();
 
 		proteinSpecies = new ProteinSpecies(this, config);
@@ -111,19 +112,8 @@ public class Gene extends ModelComponent {
 		}
 	}
 
-	public String getAncestralName() {
-		return ancestralName;
-	}
-
-	public Model getModel() {
-		return model;
-	}
-
 	/**
-	 * calculates the regulation state of the gene; calls calcRegState() on
-	 * regRegion; smells like a donkey and looks like one too; eats shoots and
-	 * leaves.
-	 * 
+	 * calculates the regulation state of the gene (i.e., whether it should be translated or not)
 	 */
 	public void calcRegState() {
 		regState = regRegion.calcRegState();
@@ -134,30 +124,14 @@ public class Gene extends ModelComponent {
 		return this == o;
 	}
 
-	/**
-	 * @return the behaviour
-	 */
-	public GeneBehaviour getBehaviour() {
-		return behaviour;
-	}
-
-	/**
-	 * @return the proteinSpecies
-	 */
 	public ProteinSpecies getProteinSpecies() {
 		return proteinSpecies;
 	}
 
-	/**
-	 * @return the regRegion
-	 */
 	public RegulatoryRegion getRegRegion() {
 		return regRegion;
 	}
 
-	/**
-	 * @return the regState
-	 */
 	public int getRegState() {
 		return regState;
 	}
@@ -170,8 +144,8 @@ public class Gene extends ModelComponent {
 		this.vertex = vertex;
 	}
 
-	public void initBehaviour() {
-		// sort out behaviour. ugly!
+	private void initBehaviour() {
+		// sort out behaviour.
 		if (name.equals("fod1")) {
 			behaviour = new Fod1Behaviour(model, this, config);
 		} else if (name.equals("fod2")) {
@@ -229,56 +203,13 @@ public class Gene extends ModelComponent {
 		}
 	}
 
-	public void printSites() {
-		if (regRegion == null) {
-			return;
-		}
-
-		for (BindingSite bs : regRegion.getSites()) {
-			print(bs);
-		}
-	}
-
 	@Override
 	public void mutate() {
 		proteinSpecies.mutate();
 	}
 
-	public Genome getGenome() {
-		return genome;
-	}
-
 	/**
-	 * @param behaviour the behaviour to set
-	 */
-	public void setBehaviour(GeneBehaviour behaviour) {
-		this.behaviour = behaviour;
-	}
-
-	/**
-	 * @param proteinSpecies the proteinSpecies to set
-	 */
-	public void setProteinSpecies(ProteinSpecies proteinSpecies) {
-		this.proteinSpecies = proteinSpecies;
-	}
-
-	/**
-	 * @param regRegion the regRegion to set
-	 */
-	public void setRegRegion(RegulatoryRegion regRegion) {
-		this.regRegion = regRegion;
-	}
-
-	/**
-	 * @param regState the regState to set
-	 */
-	public void setRegState(int regState) {
-		this.regState = regState;
-	}
-
-	/**
-	 * The basic method for protein translation. calls the translate() method of
-	 * this Gene's Behaviour
+	 * The basic method for protein translation. calls the translate() method of this Gene's Behaviour
 	 */
 	public void translate() {
 		behaviour.translate();

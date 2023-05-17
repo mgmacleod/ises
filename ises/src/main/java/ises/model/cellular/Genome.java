@@ -10,6 +10,11 @@ import ises.model.network.GrnVertex;
 import ises.model.network.GrnVertexType;
 import ises.rest.entities.SimulationConfiguration;
 
+/**
+ * Represents the abstract genome of a {@link Model}, consisting of a set of {@link Gene}s and the methods to operate on
+ * them to activate, deactivate, mutate, bind and unbind them, etc.
+ *
+ */
 public class Genome extends ModelComponent {
 
 	private Gene fod1, fod2, fod3, fod4, fod5, fod6, fod7, fod8, fod9, nrg1, nrg2, rcp1, rcp2;
@@ -24,8 +29,8 @@ public class Genome extends ModelComponent {
 	 * @param parent
 	 * @param m
 	 */
-	public Genome(Genome parent, Model m, SimulationConfiguration config) {
-		this.config = config;
+	public Genome(Genome parent, Model m) {
+		config = parent.config;
 		inputGenes = new ArrayList<>();
 		regGenes = new ArrayList<>();
 		outputGenes = new ArrayList<>();
@@ -175,7 +180,7 @@ public class Genome extends ModelComponent {
 		rcp2.activate();
 	}
 
-	public void addAllSites() {
+	private void addAllSites() {
 		for (Gene g : regGenes) {
 			for (BindingSite bs : g.getRegRegion().getSites()) {
 				sites.add(bs);
@@ -189,7 +194,7 @@ public class Genome extends ModelComponent {
 		}
 	}
 
-	public void addGenesToLists() {
+	private void addGenesToLists() {
 		inputGenes.add(fod1);
 		inputGenes.add(fod2);
 		inputGenes.add(fod3);
@@ -207,10 +212,6 @@ public class Genome extends ModelComponent {
 		allGenes.addAll(inputGenes);
 		allGenes.addAll(regGenes);
 		allGenes.addAll(outputGenes);
-	}
-
-	public void addSite(BindingSite bs) {
-		sites.add(bs);
 	}
 
 	public int calcNumSitesFromGenes() {
@@ -258,7 +259,7 @@ public class Genome extends ModelComponent {
 		}
 	}
 
-	public boolean deleteGene(Gene g) {
+	private boolean deleteGene(Gene g) {
 		if (inputGenes.contains(g) || outputGenes.contains(g)) {
 			return false;
 		}
@@ -276,7 +277,7 @@ public class Genome extends ModelComponent {
 		return false;
 	}
 
-	public void duplicateGene(Gene g) {
+	private void duplicateGene(Gene g) {
 		if (Math.random() > config.getmDupGene()) {
 			return;
 		}
@@ -320,10 +321,6 @@ public class Genome extends ModelComponent {
 		numGenes += inputGenes.size();
 		numGenes += outputGenes.size();
 		numGenes += regGenes.size();
-
-		if (numGenes != allGenes.size()) {
-			print("getNumGenes is inconsistent.  Abandon ship!!");
-		}
 
 		return numGenes;
 	}
@@ -401,7 +398,7 @@ public class Genome extends ModelComponent {
 		updateSitesList();
 	}
 
-	public Gene randomRegulatedGene() {
+	private Gene randomRegulatedGene() {
 		if (random() < 0.5 && !regGenes.isEmpty()) {
 			int r = randInt(regGenes.size());
 			return regGenes.get(r);
@@ -413,7 +410,7 @@ public class Genome extends ModelComponent {
 		}
 	}
 
-	public void duplicateSite(BindingSite bs) {
+	private void duplicateSite(BindingSite bs) {
 		if (random() < config.getmDupBS()) {
 			Gene g = randomRegulatedGene();
 			BindingSite bs2 = new BindingSite(bs, g, config);
@@ -421,43 +418,11 @@ public class Genome extends ModelComponent {
 		}
 	}
 
-	public void deleteSite(BindingSite bs) {
+	private void deleteSite(BindingSite bs) {
 		if (random() < config.getmDelBS()) {
 			Gene g = bs.getGene();
 			g.removeSite(bs);
 		}
-	}
-
-	public void printSites() {
-		for (BindingSite bs : sites) {
-			print(bs);
-		}
-	}
-
-	public void printSitesFromGenes() {
-		for (Gene g : regGenes) {
-			g.printSites();
-		}
-	}
-
-	public void removeSite(BindingSite bs) {
-		sites.remove(bs);
-	}
-
-	public void setInputGenes(ArrayList<Gene> inputGenes) {
-		this.inputGenes = inputGenes;
-	}
-
-	public void setOutputGenes(ArrayList<Gene> outputGenes) {
-		this.outputGenes = outputGenes;
-	}
-
-	public void setRegGenes(ArrayList<Gene> regGenes) {
-		this.regGenes = regGenes;
-	}
-
-	public void setSites(ArrayList<BindingSite> sites) {
-		this.sites = sites;
 	}
 
 	public void translateInputGenes() {
@@ -507,7 +472,7 @@ public class Genome extends ModelComponent {
 		}
 	}
 
-	public void updateSitesList() {
+	private void updateSitesList() {
 		sites = new ArrayList<>();
 		addAllSites();
 	}
