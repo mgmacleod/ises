@@ -1,9 +1,24 @@
 package ises.rest.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
 /**
  * Represents all of the configuration values needed to control a simulation run.
  */
+@Entity
+@Table(name = "sim_config")
 public class SimulationConfiguration {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private long id;
+
 	////////////////////////// Model parameters \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 	// shape parameters
@@ -18,7 +33,6 @@ public class SimulationConfiguration {
 	private double basalTranslationRate = 0.01;
 
 	// max protein production and degradation rates added.
-	// Not explicitly mentioned in the paper
 	private int maxDegradationRate = 10; // max timesteps a protein can survive
 	private int maxProductionRate = 10; // max number of proteins a gene can produce
 
@@ -75,14 +89,31 @@ public class SimulationConfiguration {
 	 * frequency iFoodFlip
 	 * 
 	 */
+	@JsonIgnore
 	private double food1Rate = 0.0;
+
+	@JsonIgnore
 	private double food2Rate = 0.0;
+
+	@JsonIgnore
 	private double food3Rate = 0.0;
+
+	@JsonIgnore
 	private double food4Rate = 0.0;
+
+	@JsonIgnore
 	private double food5Rate = 0.0;
+
+	@JsonIgnore
 	private double food6Rate = 0.0;
+
+	@JsonIgnore
 	private double food7Rate = 0.0;
+
+	@JsonIgnore
 	private double food8Rate = 0.0;
+
+	@JsonIgnore
 	private double food9Rate = 0.0;
 
 	private double foodRateBase = 0.08;
@@ -130,7 +161,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setShapeMax(int sMax) {
-		this.shapeMax = sMax;
+		shapeMax = sMax;
 	}
 
 	public int getDistanceMax() {
@@ -138,7 +169,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setDistanceMax(int dMax) {
-		this.distanceMax = dMax;
+		distanceMax = dMax;
 	}
 
 	public int getCostRNA() {
@@ -146,7 +177,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setCostRNA(int cRNA) {
-		this.costRNA = cRNA;
+		costRNA = cRNA;
 	}
 
 	public int getCostProtein() {
@@ -154,7 +185,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setCostProtein(int cProtein) {
-		this.costProtein = cProtein;
+		costProtein = cProtein;
 	}
 
 	public double getBasalTranslationRate() {
@@ -162,7 +193,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setBasalTranslationRate(double kBasal) {
-		this.basalTranslationRate = kBasal;
+		basalTranslationRate = kBasal;
 	}
 
 	public int getMaxDegradationRate() {
@@ -170,7 +201,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setMaxDegradationRate(int maxDegRate) {
-		this.maxDegradationRate = maxDegRate;
+		maxDegradationRate = maxDegRate;
 	}
 
 	public int getMaxProductionRate() {
@@ -178,7 +209,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setMaxProductionRate(int maxProdRate) {
-		this.maxProductionRate = maxProdRate;
+		maxProductionRate = maxProdRate;
 	}
 
 	public int getEnergy1Threshold() {
@@ -186,7 +217,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setEnergy1Threshold(int tEnergy1) {
-		this.energy1Threshold = tEnergy1;
+		energy1Threshold = tEnergy1;
 	}
 
 	public int getEnergy2Threshold() {
@@ -194,7 +225,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setEnergy2Threshold(int tEnergy2) {
-		this.energy2Threshold = tEnergy2;
+		energy2Threshold = tEnergy2;
 	}
 
 	public int getEnergy1Production() {
@@ -202,7 +233,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setEnergy1Production(int pEnergy1) {
-		this.energy1Production = pEnergy1;
+		energy1Production = pEnergy1;
 	}
 
 	public int getEnergy2Production() {
@@ -210,7 +241,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setEnergy2Production(int pEnergy2) {
-		this.energy2Production = pEnergy2;
+		energy2Production = pEnergy2;
 	}
 
 	public int getEnergy3Production() {
@@ -218,7 +249,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setEnergy3Production(int pEnergy3) {
-		this.energy3Production = pEnergy3;
+		energy3Production = pEnergy3;
 	}
 
 	public int getEnergy4Production() {
@@ -226,7 +257,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setEnergy4Production(int pEnergy4) {
-		this.energy4Production = pEnergy4;
+		energy4Production = pEnergy4;
 	}
 
 	public int getEnergy5Production() {
@@ -234,7 +265,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setEnergy5Production(int pEnergy5) {
-		this.energy5Production = pEnergy5;
+		energy5Production = pEnergy5;
 	}
 
 	public int getEnergy6Production() {
@@ -242,7 +273,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setEnergy6Production(int pEnergy6) {
-		this.energy6Production = pEnergy6;
+		energy6Production = pEnergy6;
 	}
 
 	public int getEnergy7Production() {
@@ -250,7 +281,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setEnergy7Production(int pEnergy7) {
-		this.energy7Production = pEnergy7;
+		energy7Production = pEnergy7;
 	}
 
 	public int getEnergy8Production() {
@@ -258,7 +289,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setEnergy8Production(int pEnergy8) {
-		this.energy8Production = pEnergy8;
+		energy8Production = pEnergy8;
 	}
 
 	public int getEnergy9Production() {
@@ -266,7 +297,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setEnergy9Production(int pEnergy9) {
-		this.energy9Production = pEnergy9;
+		energy9Production = pEnergy9;
 	}
 
 	public int getBiomass1Production() {
@@ -274,7 +305,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setBiomass1Production(int pBio1) {
-		this.biomass1Production = pBio1;
+		biomass1Production = pBio1;
 	}
 
 	public int getBiomass2Production() {
@@ -282,7 +313,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setBiomass2Production(int pBio2) {
-		this.biomass2Production = pBio2;
+		biomass2Production = pBio2;
 	}
 
 	public int getBiomass3Production() {
@@ -290,7 +321,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setBiomass3Production(int pBio3) {
-		this.biomass3Production = pBio3;
+		biomass3Production = pBio3;
 	}
 
 	public int getBiomass4Production() {
@@ -298,7 +329,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setBiomass4Production(int pBio4) {
-		this.biomass4Production = pBio4;
+		biomass4Production = pBio4;
 	}
 
 	public int getBiomass1Cost() {
@@ -306,7 +337,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setBiomass1Cost(int cBio1) {
-		this.biomass1Cost = cBio1;
+		biomass1Cost = cBio1;
 	}
 
 	public int getBiomass2Cost() {
@@ -314,7 +345,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setBiomass2Cost(int cBio2) {
-		this.biomass2Cost = cBio2;
+		biomass2Cost = cBio2;
 	}
 
 	public int getBiomass3Cost() {
@@ -322,7 +353,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setBiomass3Cost(int cBio3) {
-		this.biomass3Cost = cBio3;
+		biomass3Cost = cBio3;
 	}
 
 	public int getBiomass4Cost() {
@@ -330,7 +361,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setBiomass4Cost(int cBio4) {
-		this.biomass4Cost = cBio4;
+		biomass4Cost = cBio4;
 	}
 
 	public int getStress1Production() {
@@ -338,7 +369,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setStress1Production(int pStress1) {
-		this.stress1Production = pStress1;
+		stress1Production = pStress1;
 	}
 
 	public int getStress2Production() {
@@ -346,7 +377,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setStress2Production(int pStress2) {
-		this.stress2Production = pStress2;
+		stress2Production = pStress2;
 	}
 
 	public int getStress1Cost() {
@@ -354,7 +385,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setStress1Cost(int cStress1) {
-		this.stress1Cost = cStress1;
+		stress1Cost = cStress1;
 	}
 
 	public int getStress2Cost() {
@@ -362,7 +393,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setStress2Cost(int cStress2) {
-		this.stress2Cost = cStress2;
+		stress2Cost = cStress2;
 	}
 
 	public int getStress1Threshold() {
@@ -370,7 +401,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setStress1Threshold(int tStress1) {
-		this.stress1Threshold = tStress1;
+		stress1Threshold = tStress1;
 	}
 
 	public int getStress2Threshold() {
@@ -378,7 +409,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setStress2Threshold(int tStress2) {
-		this.stress2Threshold = tStress2;
+		stress2Threshold = tStress2;
 	}
 
 	public int getStartEnergy() {
@@ -402,7 +433,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setFood1Rate(double kFood1) {
-		this.food1Rate = kFood1;
+		food1Rate = kFood1;
 	}
 
 	public double getFood2Rate() {
@@ -410,7 +441,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setFood2Rate(double kFood2) {
-		this.food2Rate = kFood2;
+		food2Rate = kFood2;
 	}
 
 	public double getFood3Rate() {
@@ -418,7 +449,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setFood3Rate(double kFood3) {
-		this.food3Rate = kFood3;
+		food3Rate = kFood3;
 	}
 
 	public double getFood4Rate() {
@@ -426,7 +457,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setFood4Rate(double kFood4) {
-		this.food4Rate = kFood4;
+		food4Rate = kFood4;
 	}
 
 	public double getFood5Rate() {
@@ -434,7 +465,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setFood5Rate(double kFood5) {
-		this.food5Rate = kFood5;
+		food5Rate = kFood5;
 	}
 
 	public double getFood6Rate() {
@@ -442,7 +473,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setFood6Rate(double kFood6) {
-		this.food6Rate = kFood6;
+		food6Rate = kFood6;
 	}
 
 	public double getFood7Rate() {
@@ -450,7 +481,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setFood7Rate(double kFood7) {
-		this.food7Rate = kFood7;
+		food7Rate = kFood7;
 	}
 
 	public double getFood8Rate() {
@@ -458,7 +489,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setFood8Rate(double kFood8) {
-		this.food8Rate = kFood8;
+		food8Rate = kFood8;
 	}
 
 	public double getFood9Rate() {
@@ -466,7 +497,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setFood9Rate(double kFood9) {
-		this.food9Rate = kFood9;
+		food9Rate = kFood9;
 	}
 
 	public double getFoodRateBase() {
@@ -474,7 +505,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setFoodRateBase(double kFoodBase) {
-		this.foodRateBase = kFoodBase;
+		foodRateBase = kFoodBase;
 	}
 
 	public double getFoodRateFactor() {
@@ -482,7 +513,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setFoodRateFactor(double kFoodFactor) {
-		this.foodRateFactor = kFoodFactor;
+		foodRateFactor = kFoodFactor;
 	}
 
 	public int getFoodFlipInterval() {
@@ -490,7 +521,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setFoodFlipInterval(int iFoodFlip) {
-		this.foodFlipInterval = iFoodFlip;
+		foodFlipInterval = iFoodFlip;
 	}
 
 	public int getStressInProduction() {
@@ -498,7 +529,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setStressInProduction(int pStressIn) {
-		this.stressInProduction = pStressIn;
+		stressInProduction = pStressIn;
 	}
 
 	public int getStressInInterval() {
@@ -506,7 +537,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setStressInInterval(int iStressIn) {
-		this.stressInInterval = iStressIn;
+		stressInInterval = iStressIn;
 	}
 
 	public int getPopulationSize() {
@@ -514,7 +545,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setPopulationSize(int popSize) {
-		this.populationSize = popSize;
+		populationSize = popSize;
 	}
 
 	public int getMaxGeneration() {
@@ -522,7 +553,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setMaxGeneration(int maxGen) {
-		this.maxGeneration = maxGen;
+		maxGeneration = maxGen;
 	}
 
 	public int getNeutralGenerations() {
@@ -530,7 +561,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setNeutralGenerations(int neutralGen) {
-		this.neutralGenerations = neutralGen;
+		neutralGenerations = neutralGen;
 	}
 
 	public int getInitGenomeSize() {
@@ -546,7 +577,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setGeneDupProbability(double mDupGene) {
-		this.geneDupProbability = mDupGene;
+		geneDupProbability = mDupGene;
 	}
 
 	public double getGeneDelProbability() {
@@ -554,7 +585,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setGeneDelProbability(double mDelGene) {
-		this.geneDelProbability = mDelGene;
+		geneDelProbability = mDelGene;
 	}
 
 	public double getProtShapeMutProbability() {
@@ -562,7 +593,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setProtShapeMutProbability(double mShapeP) {
-		this.protShapeMutProbability = mShapeP;
+		protShapeMutProbability = mShapeP;
 	}
 
 	public double getProtProdMutProbability() {
@@ -570,7 +601,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setProtProdMutProbability(double mProdP) {
-		this.protProdMutProbability = mProdP;
+		protProdMutProbability = mProdP;
 	}
 
 	public double getProtDegMutProbability() {
@@ -578,7 +609,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setProtDegMutProbability(double mStabP) {
-		this.protDegMutProbability = mStabP;
+		protDegMutProbability = mStabP;
 	}
 
 	public double getBindSiteDupProbability() {
@@ -586,7 +617,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setBindSiteDupProbability(double mDupBS) {
-		this.bindSiteDupProbability = mDupBS;
+		bindSiteDupProbability = mDupBS;
 	}
 
 	public double getBindSiteDelProbability() {
@@ -594,7 +625,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setBindSiteDelProbability(double mDelBS) {
-		this.bindSiteDelProbability = mDelBS;
+		bindSiteDelProbability = mDelBS;
 	}
 
 	public double getBindSiteShapeMutProbability() {
@@ -602,7 +633,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setBindSiteShapeMutProbability(double mShapeBS) {
-		this.bindSiteShapeMutProbability = mShapeBS;
+		bindSiteShapeMutProbability = mShapeBS;
 	}
 
 	public double getBindSiteFlipProbability() {
@@ -610,7 +641,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setBindSiteFlipProbability(double mFlipBS) {
-		this.bindSiteFlipProbability = mFlipBS;
+		bindSiteFlipProbability = mFlipBS;
 	}
 
 	public int getSampleGrnInterval() {
@@ -618,7 +649,7 @@ public class SimulationConfiguration {
 	}
 
 	public void setSampleGrnInterval(int iSampleGRN) {
-		this.sampleGrnInterval = iSampleGRN;
+		sampleGrnInterval = iSampleGRN;
 	}
 
 	public int getSampleModelInterval() {
@@ -626,7 +657,15 @@ public class SimulationConfiguration {
 	}
 
 	public void setSampleModelInterval(int iSampleModel) {
-		this.sampleModelInterval = iSampleModel;
+		sampleModelInterval = iSampleModel;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 }
