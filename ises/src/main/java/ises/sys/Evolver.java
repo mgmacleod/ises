@@ -44,26 +44,26 @@ public class Evolver implements Runnable {
 		population = new LinkedList<>();
 		offspring = new LinkedList<>();
 		generation = 1;
-		foodCount = config.getiFoodFlip();
-		modelCount = config.getiSampleModel();
-		grnCount = config.getiSampleGRN();
+		foodCount = config.getFoodFlipInterval();
+		modelCount = config.getSampleModelInterval();
+		grnCount = config.getSampleGrnInterval();
 		running = false;
 		done = false;
 
-		for (int i = 0; i < config.getPopSize(); i++) {
+		for (int i = 0; i < config.getPopulationSize(); i++) {
 			population.add(new Model(i, config));
 		}
 
 		sim.initializeForRun(config);
 
-		int numGRN = config.getMaxGen() / config.getiSampleGRN();
+		int numGRN = config.getMaxGeneration() / config.getSampleGrnInterval();
 		if (numGRN < 0) {
 			numGRN = 0;
 		}
 
 		sampleGRNs = new Vector<>(numGRN + 5);
 
-		int numModels = config.getMaxGen() / config.getiSampleModel();
+		int numModels = config.getMaxGeneration() / config.getSampleModelInterval();
 		if (numModels < 0) {
 			numModels = 0;
 		}
@@ -116,45 +116,45 @@ public class Evolver implements Runnable {
 
 		for (Integer i : multFoods) {
 			if (i.intValue() == 1) {
-				config.setkFood1(config.getkFoodBase() * config.getkFoodFactor());
+				config.setFood1Rate(config.getFoodRateBase() * config.getFoodRateFactor());
 			} else if (i.intValue() == 2) {
-				config.setkFood2(config.getkFoodBase() * config.getkFoodFactor());
+				config.setFood2Rate(config.getFoodRateBase() * config.getFoodRateFactor());
 			} else if (i.intValue() == 3) {
-				config.setkFood3(config.getkFoodBase() * config.getkFoodFactor());
+				config.setFood3Rate(config.getFoodRateBase() * config.getFoodRateFactor());
 			} else if (i.intValue() == 4) {
-				config.setkFood4(config.getkFoodBase() * config.getkFoodFactor());
+				config.setFood4Rate(config.getFoodRateBase() * config.getFoodRateFactor());
 			} else if (i.intValue() == 5) {
-				config.setkFood5(config.getkFoodBase() * config.getkFoodFactor());
+				config.setFood5Rate(config.getFoodRateBase() * config.getFoodRateFactor());
 			} else if (i.intValue() == 6) {
-				config.setkFood6(config.getkFoodBase() * config.getkFoodFactor());
+				config.setFood6Rate(config.getFoodRateBase() * config.getFoodRateFactor());
 			} else if (i.intValue() == 7) {
-				config.setkFood7(config.getkFoodBase() * config.getkFoodFactor());
+				config.setFood7Rate(config.getFoodRateBase() * config.getFoodRateFactor());
 			} else if (i.intValue() == 8) {
-				config.setkFood8(config.getkFoodBase() * config.getkFoodFactor());
+				config.setFood8Rate(config.getFoodRateBase() * config.getFoodRateFactor());
 			} else if (i.intValue() == 9) {
-				config.setkFood9(config.getkFoodBase() * config.getkFoodFactor());
+				config.setFood9Rate(config.getFoodRateBase() * config.getFoodRateFactor());
 			}
 		}
 
 		for (Integer i : foods) {
 			if (i.intValue() == 1) {
-				config.setkFood1(config.getkFoodBase() / config.getkFoodFactor());
+				config.setFood1Rate(config.getFoodRateBase() / config.getFoodRateFactor());
 			} else if (i.intValue() == 2) {
-				config.setkFood2(config.getkFoodBase() / config.getkFoodFactor());
+				config.setFood2Rate(config.getFoodRateBase() / config.getFoodRateFactor());
 			} else if (i.intValue() == 3) {
-				config.setkFood3(config.getkFoodBase() / config.getkFoodFactor());
+				config.setFood3Rate(config.getFoodRateBase() / config.getFoodRateFactor());
 			} else if (i.intValue() == 4) {
-				config.setkFood4(config.getkFoodBase() / config.getkFoodFactor());
+				config.setFood4Rate(config.getFoodRateBase() / config.getFoodRateFactor());
 			} else if (i.intValue() == 5) {
-				config.setkFood5(config.getkFoodBase() / config.getkFoodFactor());
+				config.setFood5Rate(config.getFoodRateBase() / config.getFoodRateFactor());
 			} else if (i.intValue() == 6) {
-				config.setkFood6(config.getkFoodBase() / config.getkFoodFactor());
+				config.setFood6Rate(config.getFoodRateBase() / config.getFoodRateFactor());
 			} else if (i.intValue() == 7) {
-				config.setkFood7(config.getkFoodBase() / config.getkFoodFactor());
+				config.setFood7Rate(config.getFoodRateBase() / config.getFoodRateFactor());
 			} else if (i.intValue() == 8) {
-				config.setkFood8(config.getkFoodBase() / config.getkFoodFactor());
+				config.setFood8Rate(config.getFoodRateBase() / config.getFoodRateFactor());
 			} else if (i.intValue() == 9) {
-				config.setkFood9(config.getkFoodBase() / config.getkFoodFactor());
+				config.setFood9Rate(config.getFoodRateBase() / config.getFoodRateFactor());
 			}
 		}
 
@@ -169,7 +169,7 @@ public class Evolver implements Runnable {
 	}
 
 	private void preEvolve() {
-		for (int i = 0; i < config.getNeutralGen(); i++) {
+		for (int i = 0; i < config.getNeutralGenerations(); i++) {
 			for (Model m : population) {
 				m.preEvolve();
 			}
@@ -178,7 +178,7 @@ public class Evolver implements Runnable {
 	}
 
 	private void nextGen() {
-		if (generation > config.getMaxGen()) {
+		if (generation > config.getMaxGeneration()) {
 			running = false;
 			done = true;
 
@@ -188,7 +188,7 @@ public class Evolver implements Runnable {
 		logger.debug("GA running generation " + generation + "...");
 		Model best, worst;
 
-		if (foodCount == config.getiFoodFlip()) {
+		if (foodCount == config.getFoodFlipInterval()) {
 			flipFoodProbs();
 			foodCount = 0;
 		}
@@ -204,17 +204,17 @@ public class Evolver implements Runnable {
 		currWorst = new Model(worst);
 
 		// sample data
-		if (modelCount == config.getiSampleModel()) {
+		if (modelCount == config.getSampleModelInterval()) {
 			modelCount = 0;
 			storeCurrBest();
 		}
 
-		if (grnCount == config.getiSampleGRN()) {
+		if (grnCount == config.getSampleGrnInterval()) {
 			grnCount = 0;
 			storeCurrGRN();
 		}
 
-		int n = config.getPopSize() / 2;
+		int n = config.getPopulationSize() / 2;
 
 		while (population.size() > n) {
 			population.removeFirst();

@@ -71,7 +71,7 @@ public class RegulatoryRegion extends ModelComponent {
 			return;
 		}
 
-		if (Math.random() < config.getmDelBS()) {
+		if (Math.random() < config.getBindSiteDelProbability()) {
 			sites.remove(bs);
 		}
 	}
@@ -81,7 +81,7 @@ public class RegulatoryRegion extends ModelComponent {
 
 		}
 
-		if (Math.random() < config.getmDupBS()) {
+		if (Math.random() < config.getBindSiteDupProbability()) {
 			BindingSite dup = new BindingSite(bs, config);
 			sites.add(dup);
 		}
@@ -116,7 +116,7 @@ public class RegulatoryRegion extends ModelComponent {
 
 	@Override
 	public void mutate() {
-		if (sites.isEmpty() && random() < config.getmDupBS()) {
+		if (sites.isEmpty() && random() < config.getBindSiteDupProbability()) {
 			sites.add(new BindingSite(gene, 0, config));
 			return;
 		}

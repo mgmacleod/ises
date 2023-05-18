@@ -67,46 +67,46 @@ public class Simulator extends Thing {
 
 	private void calcFoodAvail() {
 		double rand = random();
-		if (rand < config.getkFood1()) {
+		if (rand < config.getFood1Rate()) {
 			currModel.food1Available();
 		}
 
-		if (Math.random() < config.getkFood2()) {
+		if (Math.random() < config.getFood2Rate()) {
 			currModel.food2Available();
 		}
 
-		if (Math.random() < config.getkFood3()) {
+		if (Math.random() < config.getFood3Rate()) {
 			currModel.food3Available();
 		}
 
-		if (Math.random() < config.getkFood4()) {
+		if (Math.random() < config.getFood4Rate()) {
 			currModel.food4Available();
 		}
 
-		if (Math.random() < config.getkFood5()) {
+		if (Math.random() < config.getFood5Rate()) {
 			currModel.food5Available();
 		}
 
-		if (Math.random() < config.getkFood6()) {
+		if (Math.random() < config.getFood6Rate()) {
 			currModel.food6Available();
 		}
 
-		if (Math.random() < config.getkFood7()) {
+		if (Math.random() < config.getFood7Rate()) {
 			currModel.food7Available();
 		}
 
-		if (Math.random() < config.getkFood8()) {
+		if (Math.random() < config.getFood8Rate()) {
 			currModel.food8Available();
 		}
 
-		if (Math.random() < config.getkFood9()) {
+		if (Math.random() < config.getFood9Rate()) {
 			currModel.food9Available();
 		}
 
 	}
 
 	private void calcStressLevels() {
-		if (stressCounter >= config.getiStressIn()) {
+		if (stressCounter >= config.getStressInInterval()) {
 			currModel.addStress();
 			stressCounter = 0;
 		}

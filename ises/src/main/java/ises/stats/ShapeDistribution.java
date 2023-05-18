@@ -59,7 +59,7 @@ public class ShapeDistribution {
 			sum += freqs[i];
 		}
 
-		meanFreq = sum / (double) config.getsMax();
+		meanFreq = sum / (double) config.getShapeMax();
 	}
 
 	private void calcMeanShape() {
@@ -96,7 +96,7 @@ public class ShapeDistribution {
 			sos += (diff * diff);
 		}
 
-		double var = sos / config.getsMax();
+		double var = sos / config.getShapeMax();
 		sdFreq = Math.sqrt(var);
 	}
 
@@ -224,8 +224,8 @@ public class ShapeDistribution {
 	}
 
 	private void initFreqs() {
-		freqs = new int[config.getsMax()];
-		for (int shape = 0; shape < config.getsMax(); shape++) {
+		freqs = new int[config.getShapeMax()];
+		for (int shape = 0; shape < config.getShapeMax(); shape++) {
 			freqs[shape] = 0;
 		}
 	}
@@ -237,7 +237,7 @@ public class ShapeDistribution {
 	}
 
 	private void initPFreqs() {
-		pFreqs = new double[config.getsMax()];
+		pFreqs = new double[config.getShapeMax()];
 		for (int i = 0; i < freqs.length; i++) {
 			pFreqs[i] = (freqs[i] / (double) numEntries);
 		}

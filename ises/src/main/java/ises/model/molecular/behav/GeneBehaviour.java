@@ -25,7 +25,7 @@ public class GeneBehaviour extends ModelComponent {
 		int nProteins = addNoise(gene.getProteinSpecies().getProdRate(), 1.5);
 
 		// pay for translation
-		model.removeEnergy(config.getcRNA() + (nProteins * config.getcProtein()));
+		model.removeEnergy(config.getCostRNA() + (nProteins * config.getCostProtein()));
 
 		// add the proteins to the model; changes reflected in the proteome
 		gene.getProteinSpecies().addCopies(nProteins);

@@ -35,7 +35,7 @@ public class BindingSite extends ModelComponent {
 	public BindingSite(Gene g, int index, SimulationConfiguration config) {
 		this(config);
 		gene = g;
-		shape = randInt(config.getsMax());
+		shape = randInt(config.getShapeMax());
 		bias = (random() < 0.5) ? -1 : 1;
 		occupancy = 0;
 
@@ -75,22 +75,22 @@ public class BindingSite extends ModelComponent {
 	}
 
 	private void mutateBias() {
-		if (random() < config.getmFlipBS()) {
+		if (random() < config.getBindSiteFlipProbability()) {
 			bias = -bias;
 		}
 	}
 
 	private void mutateShape() {
-		if (random() > config.getmShapeBS()) {
+		if (random() > config.getBindSiteShapeMutProbability()) {
 			return;
 		}
 
-		int s = addNoise(shape, Math.log10(config.getsMax()));
+		int s = addNoise(shape, Math.log10(config.getShapeMax()));
 
-		if (s >= config.getsMax()) {
-			shape = s - config.getsMax();
+		if (s >= config.getShapeMax()) {
+			shape = s - config.getShapeMax();
 		} else if (s < 0) {
-			shape = s + config.getsMax();
+			shape = s + config.getShapeMax();
 		} else {
 			shape = s;
 		}
