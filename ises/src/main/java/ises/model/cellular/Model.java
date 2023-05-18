@@ -79,7 +79,7 @@ public class Model extends Thing implements Comparable<Model> {
 	}
 
 	public int getNumShapes() {
-		return genome.getNumGenes() + genome.getNumSites();
+		return genome.getNumGenes() + proteome.getNumSpecies();
 	}
 
 	@Override

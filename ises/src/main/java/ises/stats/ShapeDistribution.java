@@ -8,54 +8,42 @@ import ises.model.molecular.ProteinSpecies;
 import ises.rest.entities.SimulationConfiguration;
 
 public class ShapeDistribution {
-	protected int[] freqs;
-	protected int numEntries;
-	protected double[] pFreqs;
-	protected int mcShape, lcShape, highestFreq, lowestFreq;
-	protected int numPopulated, numUnpopulated;
-	protected double popUnpopRatio;
-	protected double meanShape, meanFreq, sdShape, sdFreq;
-	private SimulationConfiguration config; // TODO initialize this sucker!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	private int[] freqs;
+	private int numEntries;
+	private double[] pFreqs;
+	private int mcShape, lcShape, highestFreq, lowestFreq;
+	private int numPopulated, numUnpopulated;
+	private double popUnpopRatio;
+	private double meanShape, meanFreq, sdShape, sdFreq;
+	private SimulationConfiguration config;
 
-	public ShapeDistribution(Genome genome) {
-		initFreqs();
-		addFromGenome(genome);
-		numEntries = genome.getNumSites();
-		initialize();
-	}
-
-	public ShapeDistribution(Model model) {
+	public ShapeDistribution(Model model, SimulationConfiguration config) {
+		this.config = config;
 		initFreqs();
 		addFromGenome(model.getGenome());
 
-		if (model.getProteome() == null)
+		if (model.getProteome() == null) {
 			model.initProteome();
+		}
 
 		addFromProteome(model.getProteome());
 		numEntries = model.getNumShapes();
 		initialize();
 	}
 
-	public ShapeDistribution(Proteome proteome) {
-		initFreqs();
-		addFromProteome(proteome);
-		numEntries = proteome.getNumSpecies();
-		initialize();
-	}
-
-	public void addFromGenome(Genome genome) {
+	private void addFromGenome(Genome genome) {
 		for (BindingSite bs : genome.getSites()) {
 			freqs[bs.getShape()]++;
 		}
 	}
 
-	public void addFromProteome(Proteome proteome) {
+	private void addFromProteome(Proteome proteome) {
 		for (ProteinSpecies ps : proteome.getSpecies()) {
 			freqs[ps.getShape()]++;
 		}
 	}
 
-	public void calcAll() {
+	private void calcAll() {
 		calcMeanShape();
 		calcMeanFreq();
 		calcSDShape();
@@ -63,7 +51,7 @@ public class ShapeDistribution {
 		calcPopulatedStats();
 	}
 
-	public void calcMeanFreq() {
+	private void calcMeanFreq() {
 		meanFreq = 0.0;
 
 		int sum = 0;
@@ -74,7 +62,7 @@ public class ShapeDistribution {
 		meanFreq = sum / (double) config.getsMax();
 	}
 
-	public void calcMeanShape() {
+	private void calcMeanShape() {
 		meanShape = 0.0;
 		int sum = 0;
 		for (int i = 0; i < freqs.length; i++) {
@@ -84,20 +72,21 @@ public class ShapeDistribution {
 		meanShape = sum / (double) numEntries;
 	}
 
-	public void calcPopulatedStats() {
+	private void calcPopulatedStats() {
 		numPopulated = 0;
 		numUnpopulated = 0;
 		for (int i = 0; i < freqs.length; i++) {
-			if (freqs[i] != 0)
+			if (freqs[i] != 0) {
 				numPopulated++;
-			else
+			} else {
 				numUnpopulated++;
+			}
 		}
 
 		popUnpopRatio = (double) numPopulated / (double) numUnpopulated;
 	}
 
-	public void calcSDFreq() {
+	private void calcSDFreq() {
 		sdFreq = 0.0;
 		double sos = 0.0;
 
@@ -107,11 +96,11 @@ public class ShapeDistribution {
 			sos += (diff * diff);
 		}
 
-		double var = sos / (double) config.getsMax();
+		double var = sos / config.getsMax();
 		sdFreq = Math.sqrt(var);
 	}
 
-	public void calcSDShape() {
+	private void calcSDShape() {
 		sdShape = 0.0;
 		double sos = 0.0;
 		int count = 0;
@@ -124,37 +113,17 @@ public class ShapeDistribution {
 			}
 		}
 
-		double var = sos / (double) count;
+		double var = sos / count;
 		sdShape = Math.sqrt(var);
 
 	}
 
-	public void decrement(int shape) {
-		freqs[shape - 1]--;
-	}
-
-	public int difference(ShapeDistribution sd) {
-		if (sd == null)
-			return Integer.MIN_VALUE;
-
-		if (this.freqs.length != sd.freqs.length)
-			return Integer.MAX_VALUE;
-
-		int ans = 0;
-		for (int i = 0; i < freqs.length; i++) {
-			int a = this.freqs[i] - sd.freqs[i];
-			ans += Math.abs(a);
-		}
-
-		return ans;
-	}
-
-	public void findAll() {
+	private void findAll() {
 		findHighs();
 		findLows();
 	}
 
-	public void findHighs() {
+	private void findHighs() {
 		mcShape = 0;
 		highestFreq = 0;
 		for (int i = 0; i < freqs.length; i++) {
@@ -165,7 +134,7 @@ public class ShapeDistribution {
 		}
 	}
 
-	public void findLows() {
+	private void findLows() {
 		lcShape = 0;
 		lowestFreq = 10000;
 		for (int i = 0; i < freqs.length; i++) {
@@ -175,12 +144,9 @@ public class ShapeDistribution {
 			}
 		}
 
-		if (lowestFreq == 10000)
+		if (lowestFreq == 10000) {
 			lowestFreq = 0;
-	}
-
-	public int get(int shape) {
-		return freqs[shape - 1];
+		}
 	}
 
 	public String getDistroString() {
@@ -250,32 +216,27 @@ public class ShapeDistribution {
 	}
 
 	public String getStatString() {
-		String s = "numEntries=" + numEntries + ";mcShape=" + mcShape + ";lcShape=" + lcShape + ";highestFreq="
-				+ highestFreq + ";lowestFreq=" + lowestFreq + ";numPopulated=" + numPopulated + ";numUnpopulated="
-				+ numUnpopulated + ";popUnpopRatio=" + String.format("%.3f", popUnpopRatio) + ";meanShape="
-				+ String.format("%.3f", meanShape) + ";meanFreq=" + String.format("%.3f", meanFreq) + ";sdShape="
-				+ String.format("%.3f", sdShape) + ";sdFreq=" + String.format("%.3f", sdFreq);
+		String s = "numEntries=" + numEntries + ";mcShape=" + mcShape + ";lcShape=" + lcShape + ";highestFreq=" + highestFreq + ";lowestFreq="
+				+ lowestFreq + ";numPopulated=" + numPopulated + ";numUnpopulated=" + numUnpopulated + ";popUnpopRatio="
+				+ String.format("%.3f", popUnpopRatio) + ";meanShape=" + String.format("%.3f", meanShape) + ";meanFreq="
+				+ String.format("%.3f", meanFreq) + ";sdShape=" + String.format("%.3f", sdShape) + ";sdFreq=" + String.format("%.3f", sdFreq);
 		return s;
 	}
 
-	public void increment(int shape) {
-		freqs[shape - 1]++;
-	}
-
-	public void initFreqs() {
+	private void initFreqs() {
 		freqs = new int[config.getsMax()];
 		for (int shape = 0; shape < config.getsMax(); shape++) {
 			freqs[shape] = 0;
 		}
 	}
 
-	public void initialize() {
+	private void initialize() {
 		initPFreqs();
 		findAll();
 		calcAll();
 	}
 
-	public void initPFreqs() {
+	private void initPFreqs() {
 		pFreqs = new double[config.getsMax()];
 		for (int i = 0; i < freqs.length; i++) {
 			pFreqs[i] = (freqs[i] / (double) numEntries);
