@@ -3,16 +3,20 @@ package ises.sys;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import ises.model.cellular.Model;
 import ises.model.network.GeneRegulatoryNetwork;
 import ises.rest.entities.SimulationConfiguration;
+import ises.rest.entities.dto.ModelDto;
+import ises.rest.entities.dto.ShapeDistributionDto;
+import ises.stats.ShapeDistribution;
 
 /**
  * Provides the genetic algorithm to evolve a population of model 'organisms' and collect data about those organisms
@@ -24,19 +28,21 @@ public class Evolver implements Runnable {
 
 	private static final Logger logger = LoggerFactory.getLogger(Evolver.class);
 
+	private final Simulator sim;
+	private final DataStorageRunner dataStorageRunner;
+	private final AsyncTaskExecutor executor;
 	private LinkedList<Model> population, offspring;
-	private int generation, modelCount, grnCount, foodCount;
+	private int generation, modelCount, foodCount;
 	private boolean running, done;
 	private Model currBest, currWorst;
 	private String modelStatus;
 	private GeneRegulatoryNetwork currGRN;
-	private Vector<GeneRegulatoryNetwork> sampleGRNs;
-	private ArrayList<Model> sampleModels;
 	private SimulationConfiguration config;
-	private final Simulator sim;
 
-	public Evolver(Simulator sim) {
+	public Evolver(Simulator sim, DataStorageRunner dataStorageRunner, @Qualifier("dataStorageExecutor") AsyncTaskExecutor executor) {
 		this.sim = sim;
+		this.dataStorageRunner = dataStorageRunner;
+		this.executor = executor;
 	}
 
 	public void initializeForRun(SimulationConfiguration config) {
@@ -46,7 +52,6 @@ public class Evolver implements Runnable {
 		generation = 1;
 		foodCount = config.getFoodFlipInterval();
 		modelCount = config.getSampleModelInterval();
-		grnCount = config.getSampleGrnInterval();
 		running = false;
 		done = false;
 
@@ -55,20 +60,6 @@ public class Evolver implements Runnable {
 		}
 
 		sim.initializeForRun(config);
-
-		int numGRN = config.getMaxGeneration() / config.getSampleGrnInterval();
-		if (numGRN < 0) {
-			numGRN = 0;
-		}
-
-		sampleGRNs = new Vector<>(numGRN + 5);
-
-		int numModels = config.getMaxGeneration() / config.getSampleModelInterval();
-		if (numModels < 0) {
-			numModels = 0;
-		}
-
-		sampleModels = new ArrayList<>(numModels + 5);
 	}
 
 	public void start() {
@@ -83,21 +74,13 @@ public class Evolver implements Runnable {
 		running = false;
 	}
 
-	private void storeCurrBest() {
-		sampleModels.add(currBest);
-	}
+	private void storeData() {
+		ModelDto modelDto = new ModelDto(currBest);
+		modelDto.setGeneration(generation);
+		ShapeDistributionDto shapeDistroDto = new ShapeDistributionDto(new ShapeDistribution(currBest));
+		dataStorageRunner.initForRun(modelDto, shapeDistroDto);
 
-	private void storeCurrGRN() {
-		currGRN.setName("generation " + generation);
-		sampleGRNs.add(currGRN);
-	}
-
-	@SuppressWarnings("unused")
-	private void storeFinalGRN() {
-		if (!sampleGRNs.get(sampleGRNs.size() - 1).getName().equals("final GRN")) {
-			currGRN.setName("final GRN");
-			sampleGRNs.add(currGRN);
-		}
+		executor.execute(dataStorageRunner);
 	}
 
 	private void flipFoodProbs() {
@@ -206,12 +189,7 @@ public class Evolver implements Runnable {
 		// sample data
 		if (modelCount == config.getSampleModelInterval()) {
 			modelCount = 0;
-			storeCurrBest();
-		}
-
-		if (grnCount == config.getSampleGrnInterval()) {
-			grnCount = 0;
-			storeCurrGRN();
+			storeData();
 		}
 
 		int n = config.getPopulationSize() / 2;
@@ -232,7 +210,6 @@ public class Evolver implements Runnable {
 
 		generation++;
 		modelCount++;
-		grnCount++;
 		foodCount++;
 
 		logger.debug(getModelStatus());

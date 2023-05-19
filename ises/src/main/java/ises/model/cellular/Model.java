@@ -423,4 +423,24 @@ public class Model extends Thing implements Comparable<Model> {
 		return s;
 	}
 
+	public int getHighestEnergy() {
+		return highestEnergy;
+	}
+
+	public int getLowestEnergy() {
+		return lowestEnergy;
+	}
+
+	public double getMeanEnergy() {
+		return meanEnergy;
+	}
+
+	public double getMeanBiomass() {
+		return meanBiomass;
+	}
+
+	public SimulationConfiguration getConfig() {
+		return config;
+	}
+
 }

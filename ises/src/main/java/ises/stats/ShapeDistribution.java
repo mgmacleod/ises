@@ -17,8 +17,8 @@ public class ShapeDistribution {
 	private double meanShape, meanFreq, sdShape, sdFreq;
 	private SimulationConfiguration config;
 
-	public ShapeDistribution(Model model, SimulationConfiguration config) {
-		this.config = config;
+	public ShapeDistribution(Model model) {
+		config = model.getConfig();
 		initFreqs();
 		addFromGenome(model.getGenome());
 
@@ -213,6 +213,10 @@ public class ShapeDistribution {
 
 	public double getSdShape() {
 		return sdShape;
+	}
+
+	public SimulationConfiguration getConfig() {
+		return config;
 	}
 
 	public String getStatString() {
