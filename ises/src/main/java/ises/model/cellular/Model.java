@@ -43,15 +43,6 @@ public class Model extends Thing implements Comparable<Model> {
 	public Model(Model parent) {
 		ancestralIndex = parent.ancestralIndex;
 		genome = new Genome(parent.genome, this);
-
-		energy = parent.energy;
-		stress = parent.stress;
-		biomass = parent.biomass;
-		fitness = Integer.valueOf(parent.fitness.intValue());
-		highestEnergy = parent.highestEnergy;
-		lowestEnergy = parent.lowestEnergy;
-		meanBiomass = parent.meanBiomass;
-		meanEnergy = parent.meanEnergy;
 		config = parent.config;
 	}
 
@@ -273,6 +264,7 @@ public class Model extends Thing implements Comparable<Model> {
 		biomass = stress = 0;
 		highestEnergy = lowestEnergy = 0;
 		totalEnergy = totalBiomass = 0;
+		meanBiomass = meanEnergy = 0.0;
 
 		energy = config.getStartEnergy();
 	}
