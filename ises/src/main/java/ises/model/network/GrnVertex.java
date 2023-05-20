@@ -1,17 +1,18 @@
 package ises.model.network;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * Represents a vertex in a {@link GeneRegulatoryNetwork}
  */
-public class GrnVertex {
+public class GrnVertex implements Serializable {
+	private static final long serialVersionUID = -534265340460113553L;
 
 	private final String name;
 	private final GrnVertexType type;
 
 	public GrnVertex(String name, GrnVertexType type) {
-		super();
 		this.name = name;
 		this.type = type;
 	}

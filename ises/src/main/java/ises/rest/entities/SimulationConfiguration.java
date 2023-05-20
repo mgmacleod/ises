@@ -19,7 +19,7 @@ public class SimulationConfiguration {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "sim_id")
-	private long id;
+	private Long id;
 
 	////////////////////////// Model parameters \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
@@ -762,11 +762,11 @@ public class SimulationConfiguration {
 		sampleModelInterval = iSampleModel;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

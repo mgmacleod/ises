@@ -14,13 +14,14 @@ import org.springframework.stereotype.Service;
 import ises.model.cellular.Model;
 import ises.model.network.GeneRegulatoryNetwork;
 import ises.rest.entities.SimulationConfiguration;
+import ises.rest.entities.dto.GrnDto;
 import ises.rest.entities.dto.ModelDto;
 import ises.rest.entities.dto.ShapeDistributionDto;
 import ises.stats.ShapeDistribution;
 
 /**
  * Provides the genetic algorithm to evolve a population of model 'organisms' and collect data about those organisms
- * throughout the run
+ * throughout the run.
  */
 @Service
 @Scope("prototype")
@@ -78,7 +79,8 @@ public class Evolver implements Runnable {
 		ModelDto modelDto = new ModelDto(currBest);
 		modelDto.setGeneration(generation);
 		ShapeDistributionDto shapeDistroDto = new ShapeDistributionDto(new ShapeDistribution(currBest));
-		dataStorageRunner.initForRun(modelDto, shapeDistroDto);
+		GrnDto grnDto = new GrnDto(currGRN);
+		dataStorageRunner.initForRun(modelDto, shapeDistroDto, grnDto);
 
 		executor.execute(dataStorageRunner);
 	}
