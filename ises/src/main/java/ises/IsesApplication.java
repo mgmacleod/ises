@@ -17,8 +17,23 @@ public class IsesApplication {
 
 	@Bean(name = "simulationRunExecutor")
 	@Scope("prototype")
-	AsyncTaskExecutor callbackRequestExecutor(@Value("${simulation.executor.core.pool.size}") int poolSize,
+	AsyncTaskExecutor simulationRunExecutor(@Value("${simulation.executor.core.pool.size}") int poolSize,
 			@Value("${simulation.executor.queue.capacity}") int queueCapacity) {
+
+		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+		executor.setAllowCoreThreadTimeOut(true);
+		executor.setCorePoolSize(poolSize);
+		executor.setQueueCapacity(queueCapacity);
+		executor.setThreadNamePrefix("callback_request_thread_pool");
+		executor.initialize();
+
+		return executor;
+	}
+
+	@Bean(name = "dataStorageExecutor")
+	@Scope("prototype")
+	AsyncTaskExecutor dataStorageExecutor(@Value("${storage.executor.core.pool.size}") int poolSize,
+			@Value("${storage.executor.queue.capacity}") int queueCapacity) {
 
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 		executor.setAllowCoreThreadTimeOut(true);

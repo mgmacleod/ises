@@ -268,7 +268,7 @@ public class Genome extends ModelComponent {
 			return false;
 		}
 
-		if (Math.random() < config.getmDelGene()) {
+		if (Math.random() < config.getGeneDelProbability()) {
 			regGenes.remove(g);
 			allGenes.remove(g);
 			return true;
@@ -278,7 +278,7 @@ public class Genome extends ModelComponent {
 	}
 
 	private void duplicateGene(Gene g) {
-		if (Math.random() > config.getmDupGene()) {
+		if (Math.random() > config.getGeneDupProbability()) {
 			return;
 		}
 
@@ -411,7 +411,7 @@ public class Genome extends ModelComponent {
 	}
 
 	private void duplicateSite(BindingSite bs) {
-		if (random() < config.getmDupBS()) {
+		if (random() < config.getBindSiteDupProbability()) {
 			Gene g = randomRegulatedGene();
 			BindingSite bs2 = new BindingSite(bs, g, config);
 			g.addSite(bs2);
@@ -419,7 +419,7 @@ public class Genome extends ModelComponent {
 	}
 
 	private void deleteSite(BindingSite bs) {
-		if (random() < config.getmDelBS()) {
+		if (random() < config.getBindSiteDelProbability()) {
 			Gene g = bs.getGene();
 			g.removeSite(bs);
 		}
@@ -437,7 +437,7 @@ public class Genome extends ModelComponent {
 	public void translateRegulatedGenes() {
 		for (Gene g : regGenes) {
 
-			if (g.getRegState() == 0 && random() < config.getkBasal()) {
+			if (g.getRegState() == 0 && random() < config.getBasalTranslationRate()) {
 				g.activate();
 			}
 
@@ -448,7 +448,7 @@ public class Genome extends ModelComponent {
 
 		for (Gene g : outputGenes) {
 
-			if (g.getRegState() == 0 && random() < config.getkBasal()) {
+			if (g.getRegState() == 0 && random() < config.getBasalTranslationRate()) {
 				g.activate();
 			}
 

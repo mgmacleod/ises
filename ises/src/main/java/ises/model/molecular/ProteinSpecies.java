@@ -22,7 +22,7 @@ public class ProteinSpecies extends ModelComponent {
 		this(config);
 		gene = g;
 
-		shape = randInt(config.getsMax());
+		shape = randInt(config.getShapeMax());
 		degRate = randInt(2) + 1;
 		prodRate = randInt(8);
 
@@ -71,7 +71,7 @@ public class ProteinSpecies extends ModelComponent {
 		}
 		int d = Math.abs(shape - bs.getShape());
 
-		if (d > config.getdMax()) {
+		if (d > config.getDistanceMax()) {
 			return 0.0;
 		}
 
@@ -135,7 +135,7 @@ public class ProteinSpecies extends ModelComponent {
 	}
 
 	private void mutateDegRate() {
-		if (Math.random() > config.getmStabP()) {
+		if (Math.random() > config.getProtDegMutProbability()) {
 			return;
 		}
 
@@ -145,36 +145,36 @@ public class ProteinSpecies extends ModelComponent {
 			degRate = 1;
 		}
 
-		if (degRate > config.getMaxDegRate()) {
-			degRate = config.getMaxDegRate();
+		if (degRate > config.getMaxDegradationRate()) {
+			degRate = config.getMaxDegradationRate();
 		}
 
 	}
 
 	private void mutateProdRate() {
-		if (Math.random() > config.getmProdP()) {
+		if (Math.random() > config.getProtProdMutProbability()) {
 			return;
 		}
 		prodRate = addNoise(prodRate, 2.0);
 
 		if (prodRate < 1) {
 			prodRate = 1;
-		} else if (prodRate > config.getMaxProdRate()) {
-			prodRate = config.getMaxProdRate();
+		} else if (prodRate > config.getMaxProductionRate()) {
+			prodRate = config.getMaxProductionRate();
 		}
 	}
 
 	private void mutateShape() {
-		if (Math.random() > config.getmShapeP()) {
+		if (Math.random() > config.getProtShapeMutProbability()) {
 			return;
 		}
 
-		int s = addNoise(shape, Math.log10(config.getsMax()));
+		int s = addNoise(shape, Math.log10(config.getShapeMax()));
 
-		if (s >= config.getsMax()) {
-			shape = s - config.getsMax();
+		if (s >= config.getShapeMax()) {
+			shape = s - config.getShapeMax();
 		} else if (s < 0) {
-			shape = s + config.getsMax();
+			shape = s + config.getShapeMax();
 		} else {
 			shape = s;
 		}

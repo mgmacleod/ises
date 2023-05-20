@@ -3,20 +3,25 @@ package ises.sys;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import ises.model.cellular.Model;
 import ises.model.network.GeneRegulatoryNetwork;
 import ises.rest.entities.SimulationConfiguration;
+import ises.rest.entities.dto.GrnDto;
+import ises.rest.entities.dto.ModelDto;
+import ises.rest.entities.dto.ShapeDistributionDto;
+import ises.stats.ShapeDistribution;
 
 /**
  * Provides the genetic algorithm to evolve a population of model 'organisms' and collect data about those organisms
- * throughout the run
+ * throughout the run.
  */
 @Service
 @Scope("prototype")
@@ -24,19 +29,21 @@ public class Evolver implements Runnable {
 
 	private static final Logger logger = LoggerFactory.getLogger(Evolver.class);
 
+	private final Simulator sim;
+	private final DataStorageRunner dataStorageRunner;
+	private final AsyncTaskExecutor executor;
 	private LinkedList<Model> population, offspring;
-	private int generation, modelCount, grnCount, foodCount;
+	private int generation, modelCount, foodCount;
 	private boolean running, done;
 	private Model currBest, currWorst;
 	private String modelStatus;
 	private GeneRegulatoryNetwork currGRN;
-	private Vector<GeneRegulatoryNetwork> sampleGRNs;
-	private ArrayList<Model> sampleModels;
 	private SimulationConfiguration config;
-	private final Simulator sim;
 
-	public Evolver(Simulator sim) {
+	public Evolver(Simulator sim, DataStorageRunner dataStorageRunner, @Qualifier("dataStorageExecutor") AsyncTaskExecutor executor) {
 		this.sim = sim;
+		this.dataStorageRunner = dataStorageRunner;
+		this.executor = executor;
 	}
 
 	public void initializeForRun(SimulationConfiguration config) {
@@ -44,31 +51,16 @@ public class Evolver implements Runnable {
 		population = new LinkedList<>();
 		offspring = new LinkedList<>();
 		generation = 1;
-		foodCount = config.getiFoodFlip();
-		modelCount = config.getiSampleModel();
-		grnCount = config.getiSampleGRN();
+		foodCount = config.getFoodFlipInterval();
+		modelCount = config.getSampleModelInterval();
 		running = false;
 		done = false;
 
-		for (int i = 0; i < config.getPopSize(); i++) {
+		for (int i = 0; i < config.getPopulationSize(); i++) {
 			population.add(new Model(i, config));
 		}
 
 		sim.initializeForRun(config);
-
-		int numGRN = config.getMaxGen() / config.getiSampleGRN();
-		if (numGRN < 0) {
-			numGRN = 0;
-		}
-
-		sampleGRNs = new Vector<>(numGRN + 5);
-
-		int numModels = config.getMaxGen() / config.getiSampleModel();
-		if (numModels < 0) {
-			numModels = 0;
-		}
-
-		sampleModels = new ArrayList<>(numModels + 5);
 	}
 
 	public void start() {
@@ -83,21 +75,14 @@ public class Evolver implements Runnable {
 		running = false;
 	}
 
-	private void storeCurrBest() {
-		sampleModels.add(currBest);
-	}
+	private void storeData() {
+		ModelDto modelDto = new ModelDto(currBest);
+		modelDto.setGeneration(generation);
+		ShapeDistributionDto shapeDistroDto = new ShapeDistributionDto(new ShapeDistribution(currBest));
+		GrnDto grnDto = new GrnDto(currGRN);
+		dataStorageRunner.initForRun(modelDto, shapeDistroDto, grnDto);
 
-	private void storeCurrGRN() {
-		currGRN.setName("generation " + generation);
-		sampleGRNs.add(currGRN);
-	}
-
-	@SuppressWarnings("unused")
-	private void storeFinalGRN() {
-		if (!sampleGRNs.get(sampleGRNs.size() - 1).getName().equals("final GRN")) {
-			currGRN.setName("final GRN");
-			sampleGRNs.add(currGRN);
-		}
+		executor.execute(dataStorageRunner);
 	}
 
 	private void flipFoodProbs() {
@@ -116,45 +101,45 @@ public class Evolver implements Runnable {
 
 		for (Integer i : multFoods) {
 			if (i.intValue() == 1) {
-				config.setkFood1(config.getkFoodBase() * config.getkFoodFactor());
+				config.setFood1Rate(config.getFoodRateBase() * config.getFoodRateFactor());
 			} else if (i.intValue() == 2) {
-				config.setkFood2(config.getkFoodBase() * config.getkFoodFactor());
+				config.setFood2Rate(config.getFoodRateBase() * config.getFoodRateFactor());
 			} else if (i.intValue() == 3) {
-				config.setkFood3(config.getkFoodBase() * config.getkFoodFactor());
+				config.setFood3Rate(config.getFoodRateBase() * config.getFoodRateFactor());
 			} else if (i.intValue() == 4) {
-				config.setkFood4(config.getkFoodBase() * config.getkFoodFactor());
+				config.setFood4Rate(config.getFoodRateBase() * config.getFoodRateFactor());
 			} else if (i.intValue() == 5) {
-				config.setkFood5(config.getkFoodBase() * config.getkFoodFactor());
+				config.setFood5Rate(config.getFoodRateBase() * config.getFoodRateFactor());
 			} else if (i.intValue() == 6) {
-				config.setkFood6(config.getkFoodBase() * config.getkFoodFactor());
+				config.setFood6Rate(config.getFoodRateBase() * config.getFoodRateFactor());
 			} else if (i.intValue() == 7) {
-				config.setkFood7(config.getkFoodBase() * config.getkFoodFactor());
+				config.setFood7Rate(config.getFoodRateBase() * config.getFoodRateFactor());
 			} else if (i.intValue() == 8) {
-				config.setkFood8(config.getkFoodBase() * config.getkFoodFactor());
+				config.setFood8Rate(config.getFoodRateBase() * config.getFoodRateFactor());
 			} else if (i.intValue() == 9) {
-				config.setkFood9(config.getkFoodBase() * config.getkFoodFactor());
+				config.setFood9Rate(config.getFoodRateBase() * config.getFoodRateFactor());
 			}
 		}
 
 		for (Integer i : foods) {
 			if (i.intValue() == 1) {
-				config.setkFood1(config.getkFoodBase() / config.getkFoodFactor());
+				config.setFood1Rate(config.getFoodRateBase() / config.getFoodRateFactor());
 			} else if (i.intValue() == 2) {
-				config.setkFood2(config.getkFoodBase() / config.getkFoodFactor());
+				config.setFood2Rate(config.getFoodRateBase() / config.getFoodRateFactor());
 			} else if (i.intValue() == 3) {
-				config.setkFood3(config.getkFoodBase() / config.getkFoodFactor());
+				config.setFood3Rate(config.getFoodRateBase() / config.getFoodRateFactor());
 			} else if (i.intValue() == 4) {
-				config.setkFood4(config.getkFoodBase() / config.getkFoodFactor());
+				config.setFood4Rate(config.getFoodRateBase() / config.getFoodRateFactor());
 			} else if (i.intValue() == 5) {
-				config.setkFood5(config.getkFoodBase() / config.getkFoodFactor());
+				config.setFood5Rate(config.getFoodRateBase() / config.getFoodRateFactor());
 			} else if (i.intValue() == 6) {
-				config.setkFood6(config.getkFoodBase() / config.getkFoodFactor());
+				config.setFood6Rate(config.getFoodRateBase() / config.getFoodRateFactor());
 			} else if (i.intValue() == 7) {
-				config.setkFood7(config.getkFoodBase() / config.getkFoodFactor());
+				config.setFood7Rate(config.getFoodRateBase() / config.getFoodRateFactor());
 			} else if (i.intValue() == 8) {
-				config.setkFood8(config.getkFoodBase() / config.getkFoodFactor());
+				config.setFood8Rate(config.getFoodRateBase() / config.getFoodRateFactor());
 			} else if (i.intValue() == 9) {
-				config.setkFood9(config.getkFoodBase() / config.getkFoodFactor());
+				config.setFood9Rate(config.getFoodRateBase() / config.getFoodRateFactor());
 			}
 		}
 
@@ -169,7 +154,7 @@ public class Evolver implements Runnable {
 	}
 
 	private void preEvolve() {
-		for (int i = 0; i < config.getNeutralGen(); i++) {
+		for (int i = 0; i < config.getNeutralGenerations(); i++) {
 			for (Model m : population) {
 				m.preEvolve();
 			}
@@ -178,7 +163,7 @@ public class Evolver implements Runnable {
 	}
 
 	private void nextGen() {
-		if (generation > config.getMaxGen()) {
+		if (generation > config.getMaxGeneration()) {
 			running = false;
 			done = true;
 
@@ -188,7 +173,7 @@ public class Evolver implements Runnable {
 		logger.debug("GA running generation " + generation + "...");
 		Model best, worst;
 
-		if (foodCount == config.getiFoodFlip()) {
+		if (foodCount == config.getFoodFlipInterval()) {
 			flipFoodProbs();
 			foodCount = 0;
 		}
@@ -204,17 +189,12 @@ public class Evolver implements Runnable {
 		currWorst = new Model(worst);
 
 		// sample data
-		if (modelCount == config.getiSampleModel()) {
+		if (modelCount == config.getSampleModelInterval()) {
 			modelCount = 0;
-			storeCurrBest();
+			storeData();
 		}
 
-		if (grnCount == config.getiSampleGRN()) {
-			grnCount = 0;
-			storeCurrGRN();
-		}
-
-		int n = config.getPopSize() / 2;
+		int n = config.getPopulationSize() / 2;
 
 		while (population.size() > n) {
 			population.removeFirst();
@@ -232,7 +212,6 @@ public class Evolver implements Runnable {
 
 		generation++;
 		modelCount++;
-		grnCount++;
 		foodCount++;
 
 		logger.debug(getModelStatus());

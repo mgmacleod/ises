@@ -43,15 +43,6 @@ public class Model extends Thing implements Comparable<Model> {
 	public Model(Model parent) {
 		ancestralIndex = parent.ancestralIndex;
 		genome = new Genome(parent.genome, this);
-
-		energy = parent.energy;
-		stress = parent.stress;
-		biomass = parent.biomass;
-		fitness = Integer.valueOf(parent.fitness.intValue());
-		highestEnergy = parent.highestEnergy;
-		lowestEnergy = parent.lowestEnergy;
-		meanBiomass = parent.meanBiomass;
-		meanEnergy = parent.meanEnergy;
 		config = parent.config;
 	}
 
@@ -75,11 +66,11 @@ public class Model extends Thing implements Comparable<Model> {
 	}
 
 	public void addStress() {
-		stress += config.getpStressIn();
+		stress += config.getStressInProduction();
 	}
 
 	public int getNumShapes() {
-		return genome.getNumGenes() + genome.getNumSites();
+		return genome.getNumGenes() + proteome.getNumSpecies();
 	}
 
 	@Override
@@ -88,47 +79,47 @@ public class Model extends Thing implements Comparable<Model> {
 	}
 
 	public void doFod1() {
-		addEnergy(config.getpEnergy1());
+		addEnergy(config.getEnergy1Production());
 	}
 
 	public void doFod2() {
-		addEnergy(config.getpEnergy2());
+		addEnergy(config.getEnergy2Production());
 	}
 
 	public void doFod3() {
-		addEnergy(config.getpEnergy3());
+		addEnergy(config.getEnergy3Production());
 	}
 
 	public void doFod4() {
-		addEnergy(config.getpEnergy4());
+		addEnergy(config.getEnergy4Production());
 	}
 
 	public void doFod5() {
-		addEnergy(config.getpEnergy5());
+		addEnergy(config.getEnergy5Production());
 	}
 
 	public void doFod6() {
-		addEnergy(config.getpEnergy6());
+		addEnergy(config.getEnergy6Production());
 	}
 
 	public void doFod7() {
-		addEnergy(config.getpEnergy7());
+		addEnergy(config.getEnergy7Production());
 	}
 
 	public void doFod8() {
-		addEnergy(config.getpEnergy8());
+		addEnergy(config.getEnergy8Production());
 	}
 
 	public void doFod9() {
-		addEnergy(config.getpEnergy9());
+		addEnergy(config.getEnergy9Production());
 	}
 
 	public void doRsp1() {
 		if (stress <= 0) {
 			return;
 		}
-		stress -= config.getpStress1();
-		removeEnergy(config.getcStress1());
+		stress -= config.getStress1Production();
+		removeEnergy(config.getStress1Cost());
 	}
 
 	public void doRsp2() {
@@ -136,28 +127,28 @@ public class Model extends Thing implements Comparable<Model> {
 			return;
 		}
 
-		stress -= config.getpStress2();
-		removeEnergy(config.getcStress2());
+		stress -= config.getStress2Production();
+		removeEnergy(config.getStress2Cost());
 	}
 
 	public void doSyn1() {
-		addBiomass(config.getpBio1());
-		removeEnergy(config.getcBio1());
+		addBiomass(config.getBiomass1Production());
+		removeEnergy(config.getBiomass1Cost());
 	}
 
 	public void doSyn2() {
-		addBiomass(config.getpBio2());
-		removeEnergy(config.getcBio2());
+		addBiomass(config.getBiomass2Production());
+		removeEnergy(config.getBiomass2Cost());
 	}
 
 	public void doSyn3() {
-		addBiomass(config.getpBio3());
-		removeEnergy(config.getcBio3());
+		addBiomass(config.getBiomass3Production());
+		removeEnergy(config.getBiomass3Cost());
 	}
 
 	public void doSyn4() {
-		addBiomass(config.getpBio4());
-		removeEnergy(config.getcBio4());
+		addBiomass(config.getBiomass4Production());
+		removeEnergy(config.getBiomass4Cost());
 	}
 
 	@Override
@@ -273,6 +264,7 @@ public class Model extends Thing implements Comparable<Model> {
 		biomass = stress = 0;
 		highestEnergy = lowestEnergy = 0;
 		totalEnergy = totalBiomass = 0;
+		meanBiomass = meanEnergy = 0.0;
 
 		energy = config.getStartEnergy();
 	}
@@ -298,7 +290,7 @@ public class Model extends Thing implements Comparable<Model> {
 	}
 
 	public boolean isAlive() {
-		return (energy > 0 && stress < config.gettStress1());
+		return (energy > 0 && stress < config.getStress1Threshold());
 	}
 
 	public void mutate() {
@@ -352,11 +344,11 @@ public class Model extends Thing implements Comparable<Model> {
 	}
 
 	private void regulateSignallingGenes() {
-		if (energy >= config.gettEnergy1()) {
+		if (energy >= config.getEnergy1Threshold()) {
 			genome.activateNrg1();
 		}
 
-		if (energy >= config.gettEnergy2()) {
+		if (energy >= config.getEnergy2Threshold()) {
 			genome.activateNrg2();
 		}
 
@@ -421,6 +413,26 @@ public class Model extends Thing implements Comparable<Model> {
 				+ ";nGenes=" + genome.getNumGenes() + ";nSites=" + genome.getNumSites();
 
 		return s;
+	}
+
+	public int getHighestEnergy() {
+		return highestEnergy;
+	}
+
+	public int getLowestEnergy() {
+		return lowestEnergy;
+	}
+
+	public double getMeanEnergy() {
+		return meanEnergy;
+	}
+
+	public double getMeanBiomass() {
+		return meanBiomass;
+	}
+
+	public SimulationConfiguration getConfig() {
+		return config;
 	}
 
 }
