@@ -1,5 +1,7 @@
 package ises.rest.entities;
 
+import java.time.LocalDateTime;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -20,6 +22,9 @@ public class SimulationConfiguration {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "sim_id")
 	private Long id;
+
+	@Column(name = "created_on", columnDefinition = "TIMESTAMP")
+	private LocalDateTime createdOn = LocalDateTime.now();
 
 	////////////////////////// Model parameters \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
@@ -768,6 +773,14 @@ public class SimulationConfiguration {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public LocalDateTime getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(LocalDateTime createdOn) {
+		this.createdOn = createdOn;
 	}
 
 }

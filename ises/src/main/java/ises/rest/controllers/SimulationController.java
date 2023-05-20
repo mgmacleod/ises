@@ -1,5 +1,6 @@
 package ises.rest.controllers;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -40,6 +41,9 @@ public class SimulationController {
 
 	@PostMapping("/simulation")
 	public SimulationConfiguration runSimulation(@RequestBody SimulationConfiguration config) {
+		// force created on date to be 'now'
+		config.setCreatedOn(LocalDateTime.now());
+
 		SimulationConfiguration savedConfig = configRepository.save(config);
 		evolver.initializeForRun(savedConfig);
 		executor.execute(evolver);
