@@ -14,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -66,10 +67,15 @@ public class ShapeDistributionDto {
 	@JsonIgnore
 	private SimulationConfiguration config;
 
+	@OneToOne
+	@JoinColumn(name = "model_id", nullable = false)
+	@JsonIgnore
+	private ModelDto modelDto;
+
 	public ShapeDistributionDto() {
 	}
 
-	public ShapeDistributionDto(ShapeDistribution sd) {
+	public ShapeDistributionDto(ShapeDistribution sd, ModelDto modelDto) {
 		config = sd.getConfig();
 		numShapes = sd.getNumEntries();
 		mostCommonShape = sd.getMcShape();
@@ -83,6 +89,7 @@ public class ShapeDistributionDto {
 		meanFreq = new BigDecimal(String.format(Constants.BIG_DECIMAL_FORMAT_STRING, sd.getMeanFreq()));
 		shapeStdDeviation = new BigDecimal(String.format(Constants.BIG_DECIMAL_FORMAT_STRING, sd.getSdShape()));
 		frequencyStdDeviation = new BigDecimal(String.format(Constants.BIG_DECIMAL_FORMAT_STRING, sd.getSdFreq()));
+		this.modelDto = modelDto;
 	}
 
 	public Long getId() {
@@ -195,6 +202,14 @@ public class ShapeDistributionDto {
 
 	public void setConfig(SimulationConfiguration config) {
 		this.config = config;
+	}
+
+	public ModelDto getModelDto() {
+		return modelDto;
+	}
+
+	public void setModelDto(ModelDto modelDto) {
+		this.modelDto = modelDto;
 	}
 
 }

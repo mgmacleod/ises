@@ -78,8 +78,8 @@ public class Evolver implements Runnable {
 	private void storeData() {
 		ModelDto modelDto = new ModelDto(currBest);
 		modelDto.setGeneration(generation);
-		ShapeDistributionDto shapeDistroDto = new ShapeDistributionDto(new ShapeDistribution(currBest));
-		GrnDto grnDto = new GrnDto(currGRN, config);
+		ShapeDistributionDto shapeDistroDto = new ShapeDistributionDto(new ShapeDistribution(currBest), modelDto);
+		GrnDto grnDto = new GrnDto(currGRN, config, modelDto);
 		dataStorageRunner.initForRun(modelDto, shapeDistroDto, grnDto);
 
 		executor.execute(dataStorageRunner);
