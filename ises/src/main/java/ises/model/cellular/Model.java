@@ -44,6 +44,15 @@ public class Model extends Thing implements Comparable<Model> {
 		ancestralIndex = parent.ancestralIndex;
 		genome = new Genome(parent.genome, this);
 		config = parent.config;
+
+		energy = parent.energy;
+		stress = parent.stress;
+		biomass = parent.biomass;
+		fitness = Integer.valueOf(parent.fitness.intValue());
+		highestEnergy = parent.highestEnergy;
+		lowestEnergy = parent.lowestEnergy;
+		meanBiomass = parent.meanBiomass;
+		meanEnergy = parent.meanEnergy;
 	}
 
 	private void addBiomass(int bm) {
