@@ -25,31 +25,31 @@ public class ModelDto {
 	@Column(name = "model_id")
 	private Long id;
 
-	@Column(name = "generation")
+	@Column(name = "generation", nullable = false)
 	private Integer generation;
 
-	@Column(name = "energy")
+	@Column(name = "energy", nullable = false)
 	private Integer energy;
 
-	@Column(name = "biomass")
+	@Column(name = "biomass", nullable = false)
 	private Integer biomass;
 
-	@Column(name = "stress")
+	@Column(name = "stress", nullable = false)
 	private Integer stress;
 
-	@Column(name = "fitness")
+	@Column(name = "fitness", nullable = false)
 	private Integer fitness;
 
-	@Column(name = "highest_energy")
+	@Column(name = "highest_energy", nullable = false)
 	private Integer highestEnergy;
 
-	@Column(name = "lowest_energy")
+	@Column(name = "lowest_energy", nullable = false)
 	private Integer lowestEnergy;
 
-	@Column(name = "mean_energy")
+	@Column(name = "mean_energy", nullable = false)
 	private BigDecimal meanEnergy;
 
-	@Column(name = "mean_biomass")
+	@Column(name = "mean_biomass", nullable = false)
 	private BigDecimal meanBiomass;
 
 	@ManyToOne

@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 /**
  * Represents all of the configuration values needed to control a simulation run.
@@ -23,125 +24,125 @@ public class SimulationConfiguration {
 	@Column(name = "sim_id")
 	private Long id;
 
-	@Column(name = "created_on", columnDefinition = "TIMESTAMP")
+	@Column(name = "created_on", nullable = false, columnDefinition = "TIMESTAMP")
 	private LocalDateTime createdOn = LocalDateTime.now();
 
 	////////////////////////// Model parameters \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 	// shape parameters
-	@Column(name = "shape_max")
+	@Column(name = "shape_max", nullable = false)
 	private int shapeMax = 128; // the size of the shape space
 
-	@Column(name = "distance_max")
+	@Column(name = "distance_max", nullable = false)
 	private int distanceMax = 3; // the maximum 'distance' in shapes for binding
 
 	// translation costs
-	@Column(name = "cost_rna")
+	@Column(name = "cost_rna", nullable = false)
 	private int costRNA = 3; // per translation event
 
-	@Column(name = "cost_protein")
+	@Column(name = "cost_protein", nullable = false)
 	private int costProtein = 2; // per translated protein
 
 	// basal translation rate
-	@Column(name = "basal_translation_rate")
+	@Column(name = "basal_translation_rate", nullable = false)
 	private double basalTranslationRate = 0.01;
 
 	// max protein production and degradation rates added.
-	@Column(name = "max_degradation_rate")
+	@Column(name = "max_degradation_rate", nullable = false)
 	private int maxDegradationRate = 10; // max timesteps a protein can survive
 
-	@Column(name = "max_production_rate")
+	@Column(name = "max_production_rate", nullable = false)
 	private int maxProductionRate = 10; // max number of proteins a gene can produce
 
 	// energy signalling thresholds
-	@Column(name = "energy_1_threshold")
+	@Column(name = "energy_1_threshold", nullable = false)
 	private int energy1Threshold = 500;
 
-	@Column(name = "energy_2_threshold")
+	@Column(name = "energy_2_threshold", nullable = false)
 	private int energy2Threshold = 333;
 
 	// energy yields from food (low, med, high)
 	// the amount of energy produced when each type of food is available
-	@Column(name = "energy_1_production")
+	@Column(name = "energy_1_production", nullable = false)
 	private int energy1Production = 5;
 
-	@Column(name = "energy_2_production")
+	@Column(name = "energy_2_production", nullable = false)
 	private int energy2Production = 5;
 
-	@Column(name = "energy_3_production")
+	@Column(name = "energy_3_production", nullable = false)
 	private int energy3Production = 10;
 
-	@Column(name = "energy_4_production")
+	@Column(name = "energy_4_production", nullable = false)
 	private int energy4Production = 10;
 
-	@Column(name = "energy_5_production")
+	@Column(name = "energy_5_production", nullable = false)
 	private int energy5Production = 15;
 
-	@Column(name = "energy_6_production")
+	@Column(name = "energy_6_production", nullable = false)
 	private int energy6Production = 15;
 
-	@Column(name = "energy_7_production")
+	@Column(name = "energy_7_production", nullable = false)
 	private int energy7Production = 20;
 
-	@Column(name = "energy_8_production")
+	@Column(name = "energy_8_production", nullable = false)
 	private int energy8Production = 20;
 
-	@Column(name = "energy_9_production")
+	@Column(name = "energy_9_production", nullable = false)
 	private int energy9Production = 25;
 
 	// biomass yields from biosynthesis pathways (SAO)
-	@Column(name = "biomass_1_production")
+	@Column(name = "biomass_1_production", nullable = false)
 	private int biomass1Production = 50;
 
-	@Column(name = "biomass_2_production")
+	@Column(name = "biomass_2_production", nullable = false)
 	private int biomass2Production = 10;
 
-	@Column(name = "biomass_3_production")
+	@Column(name = "biomass_3_production", nullable = false)
 	private int biomass3Production = 50;
 
-	@Column(name = "biomass_4_production")
+	@Column(name = "biomass_4_production", nullable = false)
 	private int biomass4Production = 10;
 
 	// costs for biosynthesis pathways (SAO)
-	@Column(name = "biomass_1_cost")
+	@Column(name = "biomass_1_cost", nullable = false)
 	private int biomass1Cost = 75;
 
-	@Column(name = "biomass_2_cost")
+	@Column(name = "biomass_2_cost", nullable = false)
 	private int biomass2Cost = 75;
 
-	@Column(name = "biomass_3_cost")
+	@Column(name = "biomass_3_cost", nullable = false)
 	private int biomass3Cost = 5;
 
-	@Column(name = "biomass_4_cost")
+	@Column(name = "biomass_4_cost", nullable = false)
 	private int biomass4Cost = 5;
 
 	// stress parameters
-	@Column(name = "stress_1_production")
+	@Column(name = "stress_1_production", nullable = false)
 	private int stress1Production = 25; // number of stress molecules removed per rsp activation
 
-	@Column(name = "stress_2_production")
+	@Column(name = "stress_2_production", nullable = false)
 	private int stress2Production = 25;
 
-	@Column(name = "stress_1_cost")
+	@Column(name = "stress_1_cost", nullable = false)
 	private int stress1Cost = 100; // cost per activation
 
-	@Column(name = "stress_2_cost")
+	@Column(name = "stress_2_cost", nullable = false)
 	private int stress2Cost = 100;
 
-	@Column(name = "stress_1_threshold")
+	@Column(name = "stress_1_threshold", nullable = false)
 	private int stress1Threshold = 100; // critical threshold; model dies if reached or exceeded
 
-	@Column(name = "stress_2_threshold")
+	@Column(name = "stress_2_threshold", nullable = false)
 	private int stress2Threshold = 100;
 
 	/////////////////////////// simulation parameters
 	/////////////////////////// \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 	// max time and starting energy (as in original)
-	@Column(name = "start_energy")
+	@Column(name = "start_energy", nullable = false)
 	private int startEnergy = 1000; // the amount of energy with which each model starts
 
-	@Column(name = "max_time")
+	@Column(name = "max_time", nullable = false)
 	private int maxTime = 2000; // number of timesteps in the simulation
 
 	// food availability rates
@@ -155,97 +156,97 @@ public class SimulationConfiguration {
 	 * 
 	 */
 	@JsonIgnore
-	@Column(name = "food_1_rate")
+	@Transient
 	private double food1Rate = 0.0;
 
 	@JsonIgnore
-	@Column(name = "food_2_rate")
+	@Transient
 	private double food2Rate = 0.0;
 
 	@JsonIgnore
-	@Column(name = "food_3_rate")
+	@Transient
 	private double food3Rate = 0.0;
 
 	@JsonIgnore
-	@Column(name = "food_4_rate")
+	@Transient
 	private double food4Rate = 0.0;
 
 	@JsonIgnore
-	@Column(name = "food_5_rate")
+	@Transient
 	private double food5Rate = 0.0;
 
 	@JsonIgnore
-	@Column(name = "food_6_rate")
+	@Transient
 	private double food6Rate = 0.0;
 
 	@JsonIgnore
-	@Column(name = "food_7_rate")
+	@Transient
 	private double food7Rate = 0.0;
 
 	@JsonIgnore
-	@Column(name = "food_8_rate")
+	@Transient
 	private double food8Rate = 0.0;
 
 	@JsonIgnore
-	@Column(name = "food_9_rate")
+	@Transient
 	private double food9Rate = 0.0;
 
-	@Column(name = "food_rate_base")
+	@Column(name = "food_rate_base", nullable = false)
 	private double foodRateBase = 0.08;
 
-	@Column(name = "food_rate_factor")
+	@Column(name = "food_rate_factor", nullable = false)
 	private double foodRateFactor = 2.0;
 
-	@Column(name = "foog_flip_interval")
+	@Column(name = "foog_flip_interval", nullable = false)
 	private int foodFlipInterval = 100;
 
 	// simulation-side stress parameters (as in original)
-	@Column(name = "stress_in_production")
+	@Column(name = "stress_in_production", nullable = false)
 	private int stressInProduction = 25; // the stress increment; number of molecules added
 
-	@Column(name = "stress_in_interval")
+	@Column(name = "stress_in_interval", nullable = false)
 	private int stressInInterval = 25; // number of timesteps before stress enters
 
 	////////////////////////////////// GA parameters \\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-	@Column(name = "population_size")
+	@Column(name = "population_size", nullable = false)
 	private int populationSize = 100;
 
-	@Column(name = "max_generation")
+	@Column(name = "max_generation", nullable = false)
 	private int maxGeneration = 10;
 
-	@Column(name = "neutral_generations")
+	@Column(name = "neutral_generations", nullable = false)
 	private int neutralGenerations = 100; // number of generations of neutral evolution
 
-	@Column(name = "init_genome_size")
+	@Column(name = "init_genome_size", nullable = false)
 	private int initGenomeSize = 32;
 
 	// mutation probabilities
-	@Column(name = "gene_dup_probability")
+	@Column(name = "gene_dup_probability", nullable = false)
 	private double geneDupProbability = 0.001; // gene duplication
 
-	@Column(name = "gene_del_probability")
+	@Column(name = "gene_del_probability", nullable = false)
 	private double geneDelProbability = 0.001; // gene deletion
 
-	@Column(name = "prot_shape_mut_probability")
+	@Column(name = "prot_shape_mut_probability", nullable = false)
 	private double protShapeMutProbability = 0.005; // protein shape mutation
 
-	@Column(name = "prot_prod_mut_probability")
+	@Column(name = "prot_prod_mut_probability", nullable = false)
 	private double protProdMutProbability = 0.005; // protein production rate mutation
 
-	@Column(name = "prot_deg_mut_probability")
+	@Column(name = "prot_deg_mut_probability", nullable = false)
 	private double protDegMutProbability = 0.005; // protein degradation rate mutation
 
-	@Column(name = "bind_site_dup_probability")
+	@Column(name = "bind_site_dup_probability", nullable = false)
 	private double bindSiteDupProbability = 0.008; // binding site duplication
 
-	@Column(name = "bind_site_del_probability")
+	@Column(name = "bind_site_del_probability", nullable = false)
 	private double bindSiteDelProbability = 0.008; // binding site deletion
 
-	@Column(name = "bind_site_shape_mut_probability")
+	@Column(name = "bind_site_shape_mut_probability", nullable = false)
 	private double bindSiteShapeMutProbability = 0.0008; // binding site shape mutation
 
-	@Column(name = "bind_site_flip_probability")
+	@Column(name = "bind_site_flip_probability", nullable = false)
 	private double bindSiteFlipProbability = 0.0008; // binding site regulatory flip
 
 	// data collection intervals
@@ -253,11 +254,11 @@ public class SimulationConfiguration {
 
 	// the gene regulatory network of the best model will be saved every x
 	// generations
-	@Column(name = "sample_grn_interval")
+	@Column(name = "sample_grn_interval", nullable = false)
 	private int sampleGrnInterval = 100;
 
 	// the pertinent data from the best model will be saved every x generations
-	@Column(name = "sample_model_interval")
+	@Column(name = "sample_model_interval", nullable = false)
 	private int sampleModelInterval = 50;
 
 	public SimulationConfiguration() {

@@ -79,7 +79,7 @@ public class Evolver implements Runnable {
 		ModelDto modelDto = new ModelDto(currBest);
 		modelDto.setGeneration(generation);
 		ShapeDistributionDto shapeDistroDto = new ShapeDistributionDto(new ShapeDistribution(currBest));
-		GrnDto grnDto = new GrnDto(currGRN);
+		GrnDto grnDto = new GrnDto(currGRN, config);
 		dataStorageRunner.initForRun(modelDto, shapeDistroDto, grnDto);
 
 		executor.execute(dataStorageRunner);
@@ -185,6 +185,7 @@ public class Evolver implements Runnable {
 		worst = population.getFirst();
 
 		currGRN = (GeneRegulatoryNetwork) best.getGRN().clone();
+		currGRN.setName("Generation " + generation);
 		currBest = new Model(best);
 		currWorst = new Model(worst);
 

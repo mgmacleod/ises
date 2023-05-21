@@ -29,19 +29,19 @@ public class GrnEdgeDto {
 	private Long id;
 
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinColumn(name = "grn_id")
+	@JoinColumn(name = "grn_id", nullable = false)
 	@JsonIgnore
 	private GrnDto grn;
 
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinColumn(name = "source_vertex_id")
+	@JoinColumn(name = "source_vertex_id", nullable = false)
 	private GrnVertexDto source;
 
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinColumn(name = "target_vertex_id")
+	@JoinColumn(name = "target_vertex_id", nullable = false)
 	private GrnVertexDto target;
 
-	@Column(name = "weight")
+	@Column(name = "weight", nullable = false)
 	private BigDecimal weight;
 
 	public GrnEdgeDto() {
