@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.stereotype.Service;
@@ -29,9 +30,10 @@ public class Evolver implements Runnable {
 
 	private static final Logger logger = LoggerFactory.getLogger(Evolver.class);
 
+	private final ApplicationContext applicationContext;
 	private final Simulator sim;
-	private final DataStorageRunner dataStorageRunner;
 	private final AsyncTaskExecutor executor;
+	private DataStorageRunner dataStorageRunner;
 	private LinkedList<Model> population, offspring;
 	private int generation, modelCount, foodCount;
 	private boolean running, done;
@@ -40,10 +42,10 @@ public class Evolver implements Runnable {
 	private GeneRegulatoryNetwork currGRN;
 	private SimulationConfiguration config;
 
-	public Evolver(Simulator sim, DataStorageRunner dataStorageRunner, @Qualifier("dataStorageExecutor") AsyncTaskExecutor executor) {
+	public Evolver(Simulator sim, @Qualifier("dataStorageExecutor") AsyncTaskExecutor executor, ApplicationContext applicationContext) {
 		this.sim = sim;
-		this.dataStorageRunner = dataStorageRunner;
 		this.executor = executor;
+		this.applicationContext = applicationContext;
 	}
 
 	public void initializeForRun(SimulationConfiguration config) {
@@ -78,8 +80,9 @@ public class Evolver implements Runnable {
 	private void storeData() {
 		ModelDto modelDto = new ModelDto(currBest);
 		modelDto.setGeneration(generation);
-		ShapeDistributionDto shapeDistroDto = new ShapeDistributionDto(new ShapeDistribution(currBest));
-		GrnDto grnDto = new GrnDto(currGRN);
+		ShapeDistributionDto shapeDistroDto = new ShapeDistributionDto(new ShapeDistribution(currBest), modelDto);
+		GrnDto grnDto = new GrnDto(currGRN, config, modelDto);
+		dataStorageRunner = applicationContext.getBean(DataStorageRunner.class);
 		dataStorageRunner.initForRun(modelDto, shapeDistroDto, grnDto);
 
 		executor.execute(dataStorageRunner);
@@ -185,6 +188,7 @@ public class Evolver implements Runnable {
 		worst = population.getFirst();
 
 		currGRN = (GeneRegulatoryNetwork) best.getGRN().clone();
+		currGRN.setName("Generation " + generation);
 		currBest = new Model(best);
 		currWorst = new Model(worst);
 

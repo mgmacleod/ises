@@ -14,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -25,51 +26,56 @@ public class ShapeDistributionDto {
 	@Column(name = "shape_distro_id")
 	private Long id;
 
-	@Column(name = "num_shapes")
+	@Column(name = "num_shapes", nullable = false)
 	private Integer numShapes;
 
-	@Column(name = "most_common_shape")
+	@Column(name = "most_common_shape", nullable = false)
 	private Integer mostCommonShape;
 
-	@Column(name = "Least_common_shape")
+	@Column(name = "Least_common_shape", nullable = false)
 	private Integer LeastCommonShape;
 
-	@Column(name = "highest_freq")
+	@Column(name = "highest_freq", nullable = false)
 	private Integer highestFreq;
 
-	@Column(name = "lowest_freq")
+	@Column(name = "lowest_freq", nullable = false)
 	private Integer lowestFreq;
 
-	@Column(name = "num_populated")
+	@Column(name = "num_populated", nullable = false)
 	private Integer numPopulated;
 
-	@Column(name = "num_unpopulated")
+	@Column(name = "num_unpopulated", nullable = false)
 	private Integer numUnpopulated;
 
-	@Column(name = "population_ratio")
+	@Column(name = "population_ratio", nullable = false)
 	private BigDecimal populationRatio;
 
-	@Column(name = "mean_shape")
+	@Column(name = "mean_shape", nullable = false)
 	private BigDecimal meanShape;
 
-	@Column(name = "mean_freq")
+	@Column(name = "mean_freq", nullable = false)
 	private BigDecimal meanFreq;
 
-	@Column(name = "shape_std_deviation")
+	@Column(name = "shape_std_deviation", nullable = false)
 	private BigDecimal shapeStdDeviation;
 
-	@Column(name = "frequency_std_deviation")
+	@Column(name = "frequency_std_deviation", nullable = false)
 	private BigDecimal frequencyStdDeviation;
 
 	@ManyToOne
-	@JoinColumn(name = "sim_id")
+	@JoinColumn(name = "sim_id", nullable = false)
 	@JsonIgnore
 	private SimulationConfiguration config;
+
+	@OneToOne
+	@JoinColumn(name = "model_id", nullable = false)
+	@JsonIgnore
+	private ModelDto modelDto;
 
 	public ShapeDistributionDto() {
 	}
 
-	public ShapeDistributionDto(ShapeDistribution sd) {
+	public ShapeDistributionDto(ShapeDistribution sd, ModelDto modelDto) {
 		config = sd.getConfig();
 		numShapes = sd.getNumEntries();
 		mostCommonShape = sd.getMcShape();
@@ -83,6 +89,7 @@ public class ShapeDistributionDto {
 		meanFreq = new BigDecimal(String.format(Constants.BIG_DECIMAL_FORMAT_STRING, sd.getMeanFreq()));
 		shapeStdDeviation = new BigDecimal(String.format(Constants.BIG_DECIMAL_FORMAT_STRING, sd.getSdShape()));
 		frequencyStdDeviation = new BigDecimal(String.format(Constants.BIG_DECIMAL_FORMAT_STRING, sd.getSdFreq()));
+		this.modelDto = modelDto;
 	}
 
 	public Long getId() {
@@ -195,6 +202,14 @@ public class ShapeDistributionDto {
 
 	public void setConfig(SimulationConfiguration config) {
 		this.config = config;
+	}
+
+	public ModelDto getModelDto() {
+		return modelDto;
+	}
+
+	public void setModelDto(ModelDto modelDto) {
+		this.modelDto = modelDto;
 	}
 
 }

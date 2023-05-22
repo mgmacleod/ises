@@ -24,7 +24,7 @@ public class IsesApplication {
 		executor.setAllowCoreThreadTimeOut(true);
 		executor.setCorePoolSize(poolSize);
 		executor.setQueueCapacity(queueCapacity);
-		executor.setThreadNamePrefix("callback_request_thread_pool");
+		executor.setThreadNamePrefix("simulation_run_thread_pool");
 		executor.initialize();
 
 		return executor;
@@ -39,7 +39,7 @@ public class IsesApplication {
 		executor.setAllowCoreThreadTimeOut(true);
 		executor.setCorePoolSize(poolSize);
 		executor.setQueueCapacity(queueCapacity);
-		executor.setThreadNamePrefix("callback_request_thread_pool");
+		executor.setThreadNamePrefix("data_storage_thread_pool");
 		executor.initialize();
 
 		return executor;
