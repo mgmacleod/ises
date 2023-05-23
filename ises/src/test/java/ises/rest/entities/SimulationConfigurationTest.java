@@ -5,11 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -50,23 +46,6 @@ class SimulationConfigurationTest {
 			assertEquals("distanceMax", v.getPropertyPath().toString(), "Property path mismatch");
 			assertEquals("must be greater than 0", v.getMessage(), "Message mismatch");
 		});
-	}
-
-	/*
-	 * This isn't really a test per se, but rather a convenient way to generate a JSON body
-	 */
-	@Disabled
-	@Test
-	void generateJsonBody() {
-		ObjectMapper mapper = new ObjectMapper();
-		SimulationConfiguration config = new SimulationConfiguration();
-		String json;
-		try {
-			json = mapper.writeValueAsString(config);
-			System.out.println(json);
-		} catch (JsonProcessingException e) {
-			// ignore it
-		}
 	}
 
 }

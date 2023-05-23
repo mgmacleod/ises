@@ -34,8 +34,11 @@ public class ModelDto {
 	@Column(name = "biomass", nullable = false)
 	private Integer biomass;
 
-	@Column(name = "stress", nullable = false)
-	private Integer stress;
+	@Column(name = "stress1", nullable = false)
+	private Integer stress1;
+
+	@Column(name = "stress2", nullable = false)
+	private Integer stress2;
 
 	@Column(name = "fitness", nullable = false)
 	private Integer fitness;
@@ -63,7 +66,8 @@ public class ModelDto {
 	public ModelDto(Model model) {
 		energy = model.getEnergy();
 		biomass = model.getBiomass();
-		stress = model.getStress();
+		stress1 = model.getStress1();
+		stress2 = model.getStress2();
 		fitness = model.getFitness();
 		highestEnergy = model.getHighestEnergy();
 		lowestEnergy = model.getLowestEnergy();
@@ -104,12 +108,20 @@ public class ModelDto {
 		this.biomass = biomass;
 	}
 
-	public Integer getStress() {
-		return stress;
+	public Integer getStress1() {
+		return stress1;
 	}
 
-	public void setStress(Integer stress) {
-		this.stress = stress;
+	public void setStress1(Integer stress) {
+		stress1 = stress;
+	}
+
+	public Integer getStress2() {
+		return stress2;
+	}
+
+	public void setStress2(Integer stress2) {
+		this.stress2 = stress2;
 	}
 
 	public Integer getFitness() {
