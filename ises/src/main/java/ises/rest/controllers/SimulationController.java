@@ -18,6 +18,7 @@ import org.springframework.web.context.annotation.RequestScope;
 import ises.rest.entities.SimulationConfiguration;
 import ises.rest.jpa.SimulationConfigurationRepository;
 import ises.sys.Evolver;
+import jakarta.validation.Valid;
 
 /**
  * Basic REST controller for managing simulation runs
@@ -40,7 +41,7 @@ public class SimulationController {
 	}
 
 	@PostMapping("/simulation")
-	public SimulationConfiguration runSimulation(@RequestBody SimulationConfiguration config) {
+	public SimulationConfiguration runSimulation(@Valid @RequestBody SimulationConfiguration config) {
 		// force created on date to be 'now'
 		config.setCreatedOn(LocalDateTime.now());
 
