@@ -62,9 +62,4 @@ public class IsesApplication {
 		return new BCryptPasswordEncoder();
 	}
 
-//	@Autowired
-//	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-//		auth.inMemoryAuthentication().withUser("simulator").password("$2a$10$8J6vovkd/qlTBkgyf822dOWtLnSMoo0Ywrvv8vquEF5gjTzFwSsai").roles("USER");
-//	}
-
 }
