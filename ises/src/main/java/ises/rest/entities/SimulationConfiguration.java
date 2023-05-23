@@ -280,22 +280,22 @@ public class SimulationConfiguration {
 	@NotNull
 	@Positive
 	@Column(name = "stress_1_in_production", nullable = false)
-	private Integer stress1InProduction = 25; // the stress 1 increment; number of molecules added
+	private Integer stress1InProduction = 10; // the stress 1 increment; number of molecules added
 
 	@NotNull
 	@Positive
 	@Column(name = "stress_1_in_interval", nullable = false)
-	private Integer stress1InInterval = 25; // number of timesteps before stress 1 enters
+	private Integer stress1InInterval = 100; // number of timesteps before stress 2 enters
 
 	@NotNull
 	@Positive
 	@Column(name = "stress_2_in_production", nullable = false)
-	private Integer stress2InProduction = 25; // the stress 1 increment; number of molecules added
+	private Integer stress2InProduction = 10; // the stress 1 increment; number of molecules added
 
 	@NotNull
 	@Positive
 	@Column(name = "stress_2_in_interval", nullable = false)
-	private Integer stress2InInterval = 25; // number of timesteps before stress 1 enters
+	private Integer stress2InInterval = 100; // number of timesteps before stress 1 enters
 
 	////////////////////////////////// GA parameters \\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
@@ -307,7 +307,7 @@ public class SimulationConfiguration {
 	@NotNull
 	@Positive
 	@Column(name = "max_generation", nullable = false)
-	private Integer maxGeneration = 10;
+	private Integer maxGeneration = 1000;
 
 	@NotNull
 	@Positive

@@ -1,6 +1,5 @@
 package ises.sys;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 
@@ -35,7 +34,7 @@ public class Evolver implements Runnable {
 	private final AsyncTaskExecutor executor;
 	private DataStorageRunner dataStorageRunner;
 	private LinkedList<Model> population, offspring;
-	private int generation, modelCount, foodCount;
+	private int generation, modelSampleCounter, foodFlipCounter;
 	private boolean running, done;
 	private Model currBest, currWorst;
 	private String modelStatus;
@@ -53,8 +52,8 @@ public class Evolver implements Runnable {
 		population = new LinkedList<>();
 		offspring = new LinkedList<>();
 		generation = 1;
-		foodCount = config.getFoodFlipInterval();
-		modelCount = config.getSampleModelInterval();
+		foodFlipCounter = config.getFoodFlipInterval();
+		modelSampleCounter = config.getSampleModelInterval();
 		running = false;
 		done = false;
 
@@ -88,66 +87,6 @@ public class Evolver implements Runnable {
 		executor.execute(dataStorageRunner);
 	}
 
-	private void flipFoodProbs() {
-		ArrayList<Integer> foods = new ArrayList<>();
-		ArrayList<Integer> multFoods = new ArrayList<>();
-
-		for (int i = 1; i < 10; i++) {
-			foods.add(Integer.valueOf(i));
-		}
-
-		Collections.shuffle(foods);
-
-		for (int i = 0; i < 4; i++) {
-			multFoods.add(foods.remove(i));
-		}
-
-		for (Integer i : multFoods) {
-			if (i.intValue() == 1) {
-				config.setFood1Rate(config.getFoodRateBase() * config.getFoodRateFactor());
-			} else if (i.intValue() == 2) {
-				config.setFood2Rate(config.getFoodRateBase() * config.getFoodRateFactor());
-			} else if (i.intValue() == 3) {
-				config.setFood3Rate(config.getFoodRateBase() * config.getFoodRateFactor());
-			} else if (i.intValue() == 4) {
-				config.setFood4Rate(config.getFoodRateBase() * config.getFoodRateFactor());
-			} else if (i.intValue() == 5) {
-				config.setFood5Rate(config.getFoodRateBase() * config.getFoodRateFactor());
-			} else if (i.intValue() == 6) {
-				config.setFood6Rate(config.getFoodRateBase() * config.getFoodRateFactor());
-			} else if (i.intValue() == 7) {
-				config.setFood7Rate(config.getFoodRateBase() * config.getFoodRateFactor());
-			} else if (i.intValue() == 8) {
-				config.setFood8Rate(config.getFoodRateBase() * config.getFoodRateFactor());
-			} else if (i.intValue() == 9) {
-				config.setFood9Rate(config.getFoodRateBase() * config.getFoodRateFactor());
-			}
-		}
-
-		for (Integer i : foods) {
-			if (i.intValue() == 1) {
-				config.setFood1Rate(config.getFoodRateBase() / config.getFoodRateFactor());
-			} else if (i.intValue() == 2) {
-				config.setFood2Rate(config.getFoodRateBase() / config.getFoodRateFactor());
-			} else if (i.intValue() == 3) {
-				config.setFood3Rate(config.getFoodRateBase() / config.getFoodRateFactor());
-			} else if (i.intValue() == 4) {
-				config.setFood4Rate(config.getFoodRateBase() / config.getFoodRateFactor());
-			} else if (i.intValue() == 5) {
-				config.setFood5Rate(config.getFoodRateBase() / config.getFoodRateFactor());
-			} else if (i.intValue() == 6) {
-				config.setFood6Rate(config.getFoodRateBase() / config.getFoodRateFactor());
-			} else if (i.intValue() == 7) {
-				config.setFood7Rate(config.getFoodRateBase() / config.getFoodRateFactor());
-			} else if (i.intValue() == 8) {
-				config.setFood8Rate(config.getFoodRateBase() / config.getFoodRateFactor());
-			} else if (i.intValue() == 9) {
-				config.setFood9Rate(config.getFoodRateBase() / config.getFoodRateFactor());
-			}
-		}
-
-	}
-
 	public boolean isRunning() {
 		return running;
 	}
@@ -176,9 +115,9 @@ public class Evolver implements Runnable {
 		logger.debug("GA running generation " + generation + "...");
 		Model best, worst;
 
-		if (foodCount == config.getFoodFlipInterval()) {
-			flipFoodProbs();
-			foodCount = 0;
+		if (foodFlipCounter == config.getFoodFlipInterval()) {
+			sim.flipFoodProbs();
+			foodFlipCounter = 0;
 		}
 
 		offspring = new LinkedList<>();
@@ -193,8 +132,8 @@ public class Evolver implements Runnable {
 		currWorst = new Model(worst);
 
 		// sample data
-		if (modelCount == config.getSampleModelInterval()) {
-			modelCount = 0;
+		if (modelSampleCounter == config.getSampleModelInterval()) {
+			modelSampleCounter = 0;
 			storeData();
 		}
 
@@ -215,8 +154,8 @@ public class Evolver implements Runnable {
 		}
 
 		generation++;
-		modelCount++;
-		foodCount++;
+		modelSampleCounter++;
+		foodFlipCounter++;
 
 		logger.debug(getModelStatus());
 	}

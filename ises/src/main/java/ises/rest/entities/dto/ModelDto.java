@@ -56,7 +56,7 @@ public class ModelDto {
 	private BigDecimal meanBiomass;
 
 	@ManyToOne
-	@JoinColumn(name = "sim_id")
+	@JoinColumn(name = "sim_id", nullable = false)
 	@JsonIgnore
 	private SimulationConfiguration config;
 
