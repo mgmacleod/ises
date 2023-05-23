@@ -1,37 +1,25 @@
 package ises.rest.entities.security;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "user")
-public class User {
+@Table(name = "sim_user")
+public class UserDto {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@Column(name = "username")
+	@Column(name = "username", nullable = false, unique = true)
 	private String username;
 
-	@Column(name = "password")
+	@Column(name = "password", nullable = false)
 	private String password;
-
-	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "user_authority", joinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "ID") }, inverseJoinColumns = {
-			@JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID") })
-	private Set<Authority> authorities;
 
 	@Column(name = "account_non_expired")
 	private Boolean accountNonExpired = true;
@@ -45,8 +33,7 @@ public class User {
 	@Column(name = "enabled")
 	private Boolean enabled = true;
 
-	public User() {
-		authorities = new HashSet<>();
+	public UserDto() {
 	}
 
 	public String getUsername() {
@@ -63,14 +50,6 @@ public class User {
 
 	public void setPassword(String password) {
 		this.password = password;
-	}
-
-	public Set<Authority> getAuthorities() {
-		return authorities;
-	}
-
-	public void setAuthorities(Set<Authority> authorities) {
-		this.authorities = authorities;
 	}
 
 	public Boolean getAccountNonExpired() {
@@ -111,10 +90,6 @@ public class User {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public void addAuthority(Authority auth) {
-		authorities.add(auth);
 	}
 
 }
