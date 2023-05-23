@@ -173,13 +173,13 @@ public class SimulationConfiguration {
 	// stress parameters
 	@NotNull
 	@Positive
-	@Column(name = "stress_1_production", nullable = false)
-	private Integer stress1Production = 25; // number of stress molecules removed per rsp activation
+	@Column(name = "stress_1_out_production", nullable = false)
+	private Integer stress1OutProduction = 25; // number of stress molecules removed per rsp activation
 
 	@NotNull
 	@Positive
-	@Column(name = "stress_2_production", nullable = false)
-	private Integer stress2Production = 25;
+	@Column(name = "stress_2_out_production", nullable = false)
+	private Integer stress2OutProduction = 25;
 
 	@NotNull
 	@Positive
@@ -279,13 +279,23 @@ public class SimulationConfiguration {
 	// simulation-side stress parameters
 	@NotNull
 	@Positive
-	@Column(name = "stress_in_production", nullable = false)
-	private Integer stressInProduction = 25; // the stress increment; number of molecules added
+	@Column(name = "stress_1_in_production", nullable = false)
+	private Integer stress1InProduction = 25; // the stress 1 increment; number of molecules added
 
 	@NotNull
 	@Positive
-	@Column(name = "stress_in_interval", nullable = false)
-	private Integer stressInInterval = 25; // number of timesteps before stress enters
+	@Column(name = "stress_1_in_interval", nullable = false)
+	private Integer stress1InInterval = 25; // number of timesteps before stress 1 enters
+
+	@NotNull
+	@Positive
+	@Column(name = "stress_2_in_production", nullable = false)
+	private Integer stress2InProduction = 25; // the stress 1 increment; number of molecules added
+
+	@NotNull
+	@Positive
+	@Column(name = "stress_2_in_interval", nullable = false)
+	private Integer stress2InInterval = 25; // number of timesteps before stress 1 enters
 
 	////////////////////////////////// GA parameters \\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
@@ -581,20 +591,20 @@ public class SimulationConfiguration {
 		biomass4Cost = cBio4;
 	}
 
-	public Integer getStress1Production() {
-		return stress1Production;
+	public Integer getStress1OutProduction() {
+		return stress1OutProduction;
 	}
 
-	public void setStress1Production(Integer pStress1) {
-		stress1Production = pStress1;
+	public void setStress1OutProduction(Integer pStress1) {
+		stress1OutProduction = pStress1;
 	}
 
-	public Integer getStress2Production() {
-		return stress2Production;
+	public Integer getStress2OutProduction() {
+		return stress2OutProduction;
 	}
 
-	public void setStress2Production(Integer pStress2) {
-		stress2Production = pStress2;
+	public void setStress2OutProduction(Integer pStress2) {
+		stress2OutProduction = pStress2;
 	}
 
 	public Integer getStress1Cost() {
@@ -741,20 +751,36 @@ public class SimulationConfiguration {
 		foodFlipInterval = iFoodFlip;
 	}
 
-	public Integer getStressInProduction() {
-		return stressInProduction;
+	public Integer getStress1InProduction() {
+		return stress1InProduction;
 	}
 
-	public void setStressInProduction(Integer pStressIn) {
-		stressInProduction = pStressIn;
+	public void setStress1InProduction(Integer pStressIn) {
+		stress1InProduction = pStressIn;
 	}
 
-	public Integer getStressInInterval() {
-		return stressInInterval;
+	public Integer getStress2InProduction() {
+		return stress2InProduction;
 	}
 
-	public void setStressInInterval(Integer iStressIn) {
-		stressInInterval = iStressIn;
+	public void setStress2InProduction(Integer stress2InProduction) {
+		this.stress2InProduction = stress2InProduction;
+	}
+
+	public Integer getStress1InInterval() {
+		return stress1InInterval;
+	}
+
+	public void setStress1InInterval(Integer iStressIn) {
+		stress1InInterval = iStressIn;
+	}
+
+	public Integer getStress2InInterval() {
+		return stress2InInterval;
+	}
+
+	public void setStress2InInterval(Integer stress2InInterval) {
+		this.stress2InInterval = stress2InInterval;
 	}
 
 	public Integer getPopulationSize() {

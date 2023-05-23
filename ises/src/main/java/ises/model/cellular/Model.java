@@ -21,7 +21,7 @@ public class Model extends Thing implements Comparable<Model> {
 
 	private Genome genome;
 	private Proteome proteome;
-	private int energy, biomass, stress;
+	private int energy, biomass, stress1, stress2;
 	private int ancestralIndex;
 	private Integer fitness;
 	private GeneRegulatoryNetwork grn;
@@ -46,7 +46,8 @@ public class Model extends Thing implements Comparable<Model> {
 		config = parent.config;
 
 		energy = parent.energy;
-		stress = parent.stress;
+		stress1 = parent.stress1;
+		stress2 = parent.stress2;
 		biomass = parent.biomass;
 		fitness = Integer.valueOf(parent.fitness.intValue());
 		highestEnergy = parent.highestEnergy;
@@ -74,8 +75,12 @@ public class Model extends Thing implements Comparable<Model> {
 		energy += e;
 	}
 
-	public void addStress() {
-		stress += config.getStressInProduction();
+	public void addStress1() {
+		stress1 += config.getStress1InProduction();
+	}
+
+	public void addStress2() {
+		stress2 += config.getStress2InProduction();
 	}
 
 	public int getNumShapes() {
@@ -124,19 +129,19 @@ public class Model extends Thing implements Comparable<Model> {
 	}
 
 	public void doRsp1() {
-		if (stress <= 0) {
+		if (stress1 <= 0) {
 			return;
 		}
-		stress -= config.getStress1Production();
+		stress1 -= config.getStress1OutProduction();
 		removeEnergy(config.getStress1Cost());
 	}
 
 	public void doRsp2() {
-		if (stress <= 0) {
+		if (stress2 <= 0) {
 			return;
 		}
 
-		stress -= config.getStress2Production();
+		stress2 -= config.getStress2OutProduction();
 		removeEnergy(config.getStress2Cost());
 	}
 
@@ -255,8 +260,12 @@ public class Model extends Thing implements Comparable<Model> {
 		return proteome;
 	}
 
-	public int getStress() {
-		return stress;
+	public int getStress1() {
+		return stress1;
+	}
+
+	public int getStress2() {
+		return stress2;
 	}
 
 	public void initGRN() {
@@ -270,7 +279,7 @@ public class Model extends Thing implements Comparable<Model> {
 		initGRN();
 		initOrders();
 		fitness = Integer.valueOf(0);
-		biomass = stress = 0;
+		biomass = stress1 = stress2 = 0;
 		highestEnergy = lowestEnergy = 0;
 		totalEnergy = totalBiomass = 0;
 		meanBiomass = meanEnergy = 0.0;
@@ -299,7 +308,7 @@ public class Model extends Thing implements Comparable<Model> {
 	}
 
 	public boolean isAlive() {
-		return (energy > 0 && stress < config.getStress1Threshold());
+		return (energy > 0 && stress1 < config.getStress1Threshold() && stress2 < config.getStress2Threshold());
 	}
 
 	public void mutate() {
@@ -361,8 +370,11 @@ public class Model extends Thing implements Comparable<Model> {
 			genome.activateNrg2();
 		}
 
-		if (stress > 0) {
+		if (stress1 > 0) {
 			genome.activateRcp1();
+		}
+
+		if (stress2 > 0) {
 			genome.activateRcp2();
 		}
 	}
