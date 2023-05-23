@@ -1,5 +1,8 @@
 package ises.sys;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
@@ -33,6 +36,66 @@ public class Simulator extends Thing {
 	public void start() {
 		running = true;
 		simulate();
+	}
+
+	public void flipFoodProbs() {
+		ArrayList<Integer> foods = new ArrayList<>();
+		ArrayList<Integer> multFoods = new ArrayList<>();
+
+		for (int i = 1; i < 10; i++) {
+			foods.add(Integer.valueOf(i));
+		}
+
+		Collections.shuffle(foods);
+
+		for (int i = 0; i < 4; i++) {
+			multFoods.add(foods.remove(i));
+		}
+
+		for (Integer i : multFoods) {
+			if (i.intValue() == 1) {
+				config.setFood1Rate(config.getFoodRateBase() * config.getFoodRateFactor());
+			} else if (i.intValue() == 2) {
+				config.setFood2Rate(config.getFoodRateBase() * config.getFoodRateFactor());
+			} else if (i.intValue() == 3) {
+				config.setFood3Rate(config.getFoodRateBase() * config.getFoodRateFactor());
+			} else if (i.intValue() == 4) {
+				config.setFood4Rate(config.getFoodRateBase() * config.getFoodRateFactor());
+			} else if (i.intValue() == 5) {
+				config.setFood5Rate(config.getFoodRateBase() * config.getFoodRateFactor());
+			} else if (i.intValue() == 6) {
+				config.setFood6Rate(config.getFoodRateBase() * config.getFoodRateFactor());
+			} else if (i.intValue() == 7) {
+				config.setFood7Rate(config.getFoodRateBase() * config.getFoodRateFactor());
+			} else if (i.intValue() == 8) {
+				config.setFood8Rate(config.getFoodRateBase() * config.getFoodRateFactor());
+			} else if (i.intValue() == 9) {
+				config.setFood9Rate(config.getFoodRateBase() * config.getFoodRateFactor());
+			}
+		}
+
+		for (Integer i : foods) {
+			if (i.intValue() == 1) {
+				config.setFood1Rate(config.getFoodRateBase() / config.getFoodRateFactor());
+			} else if (i.intValue() == 2) {
+				config.setFood2Rate(config.getFoodRateBase() / config.getFoodRateFactor());
+			} else if (i.intValue() == 3) {
+				config.setFood3Rate(config.getFoodRateBase() / config.getFoodRateFactor());
+			} else if (i.intValue() == 4) {
+				config.setFood4Rate(config.getFoodRateBase() / config.getFoodRateFactor());
+			} else if (i.intValue() == 5) {
+				config.setFood5Rate(config.getFoodRateBase() / config.getFoodRateFactor());
+			} else if (i.intValue() == 6) {
+				config.setFood6Rate(config.getFoodRateBase() / config.getFoodRateFactor());
+			} else if (i.intValue() == 7) {
+				config.setFood7Rate(config.getFoodRateBase() / config.getFoodRateFactor());
+			} else if (i.intValue() == 8) {
+				config.setFood8Rate(config.getFoodRateBase() / config.getFoodRateFactor());
+			} else if (i.intValue() == 9) {
+				config.setFood9Rate(config.getFoodRateBase() / config.getFoodRateFactor());
+			}
+		}
+
 	}
 
 	private void simulate() {
