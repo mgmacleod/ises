@@ -247,14 +247,14 @@ public class Evolver implements Runnable {
 
 	private String getModelStatus() {
 		modelStatus = "\nBest Model\n" + "----------------------------\n" + "Fitness: " + currBest.getFitness() + "\n" + "Energy: "
-				+ currBest.getEnergy() + "\n" + "Stress: " + currBest.getStress() + "\n" + "Biomass: " + currBest.getBiomass() + "\n"
-				+ "Ancestral index: " + currBest.getAncestralIndex() + "\n" + "# binding sites: " + currBest.getNumSites() + "\n" + "# genes: "
-				+ currBest.getNumGenes() + "\n\n" +
+				+ currBest.getEnergy() + "\n" + "Stress1: " + currBest.getStress1() + "\nStress2: " + currBest.getStress2() + "\n" + "Biomass: "
+				+ currBest.getBiomass() + "\n" + "Ancestral index: " + currBest.getAncestralIndex() + "\n" + "# binding sites: "
+				+ currBest.getNumSites() + "\n" + "# genes: " + currBest.getNumGenes() + "\n\n" +
 
 				"Worst Model\n" + "----------------------------\n" + "Fitness: " + currWorst.getFitness() + "\n" + "Energy: " + currWorst.getEnergy()
-				+ "\n" + "Stress: " + currWorst.getStress() + "\n" + "Biomass: " + currWorst.getBiomass() + "\n" + "Ancestral index: "
-				+ currWorst.getAncestralIndex() + "\n" + "# binding sites: " + currWorst.getNumSites() + "\n" + "# genes: " + currWorst.getNumGenes()
-				+ "\n\n";
+				+ "\n" + "Stress1: " + currWorst.getStress1() + "\nStress2: " + currWorst.getStress2() + "\n" + "Biomass: " + currWorst.getBiomass()
+				+ "\n" + "Ancestral index: " + currWorst.getAncestralIndex() + "\n" + "# binding sites: " + currWorst.getNumSites() + "\n"
+				+ "# genes: " + currWorst.getNumGenes() + "\n\n";
 
 		return modelStatus;
 	}

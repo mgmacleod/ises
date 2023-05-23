@@ -18,7 +18,7 @@ public class Simulator extends Thing {
 	private static final Logger logger = LoggerFactory.getLogger(Simulator.class);
 
 	private Model currModel;
-	private int currTime, stressCounter;
+	private int currTime, stress1Counter, stress2Counter;
 	private boolean running;
 	private SimulationConfiguration config;
 
@@ -42,7 +42,7 @@ public class Simulator extends Thing {
 		}
 
 		currTime = 1;
-		stressCounter = 0;
+		stress1Counter = stress2Counter = 0;
 
 		while (currTime <= config.getMaxTime() && currModel.isAlive()) {
 			calcStressLevels();
@@ -51,7 +51,8 @@ public class Simulator extends Thing {
 			currModel.step();
 
 			currTime++;
-			stressCounter++;
+			stress1Counter++;
+			stress2Counter++;
 		}
 
 		// calculate fitness
@@ -106,9 +107,14 @@ public class Simulator extends Thing {
 	}
 
 	private void calcStressLevels() {
-		if (stressCounter >= config.getStressInInterval()) {
-			currModel.addStress();
-			stressCounter = 0;
+		if (stress1Counter >= config.getStress1InInterval()) {
+			currModel.addStress1();
+			stress1Counter = 0;
+		}
+
+		if (stress2Counter >= config.getStress2InInterval()) {
+			currModel.addStress2();
+			stress2Counter = 0;
 		}
 	}
 
