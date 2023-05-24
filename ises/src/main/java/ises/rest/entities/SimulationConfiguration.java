@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -28,6 +30,10 @@ public class SimulationConfiguration {
 
 	@Column(name = "created_on", nullable = false, columnDefinition = "TIMESTAMP")
 	private LocalDateTime createdOn = LocalDateTime.now();
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status", nullable = false)
+	private SimulationStatus status = SimulationStatus.NEW;
 
 	////////////////////////// Model parameters \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
@@ -917,6 +923,14 @@ public class SimulationConfiguration {
 
 	public void setCreatedOn(LocalDateTime createdOn) {
 		this.createdOn = createdOn;
+	}
+
+	public SimulationStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(SimulationStatus status) {
+		this.status = status;
 	}
 
 }
