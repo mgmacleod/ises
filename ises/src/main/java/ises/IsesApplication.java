@@ -5,16 +5,23 @@ import static org.springframework.security.config.Customizer.withDefaults;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.task.AsyncTaskExecutor;
+import org.springframework.jms.annotation.EnableJms;
+import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
+import org.springframework.jms.config.JmsListenerContainerFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import jakarta.jms.ConnectionFactory;
+
 @SpringBootApplication
+@EnableJms
 public class IsesApplication {
 
 	public static void main(String[] args) {
@@ -61,5 +68,20 @@ public class IsesApplication {
 	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+
+	@Bean
+	JmsListenerContainerFactory<?> simFactory(ConnectionFactory connectionFactory, DefaultJmsListenerContainerFactoryConfigurer configurer) {
+		DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
+		configurer.configure(factory, connectionFactory);
+		return factory;
+	}
+
+//	@Bean // Serialize message content to json using TextMessage
+//	MessageConverter jacksonJmsMessageConverter() {
+//		MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
+//		converter.setTargetType(MessageType.TEXT);
+//		converter.setTypeIdPropertyName("_type");
+//		return converter;
+//	}
 
 }
