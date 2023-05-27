@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import ises.model.cellular.Model;
 import ises.rest.entities.SimulationConfiguration;
-import ises.sys.Constants;
+import ises.system.Constants;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

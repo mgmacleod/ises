@@ -1,4 +1,4 @@
-package ises.sys;
+package ises.system;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -73,7 +73,7 @@ public class Evolver implements Runnable {
 
 	@JmsListener(destination = Constants.CANCEL_QUEUE_NAME, containerFactory = "simFactory")
 	public void receiveCancelMessage(Long idToCancel) {
-		if (idToCancel.equals(config.getId())) {
+		if (config != null && idToCancel.equals(config.getId())) {
 			cancel();
 			return;
 		}
