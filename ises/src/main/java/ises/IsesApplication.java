@@ -60,7 +60,8 @@ public class IsesApplication {
 
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.authorizeHttpRequests().anyRequest().authenticated().and().httpBasic(withDefaults()).csrf(csrf -> csrf.disable());
+		http.authorizeHttpRequests().anyRequest().authenticated().and().httpBasic(withDefaults())
+				.csrf(csrf -> csrf.disable());
 		return http.build();
 	}
 
@@ -70,18 +71,11 @@ public class IsesApplication {
 	}
 
 	@Bean
-	JmsListenerContainerFactory<?> simFactory(ConnectionFactory connectionFactory, DefaultJmsListenerContainerFactoryConfigurer configurer) {
+	JmsListenerContainerFactory<?> simFactory(ConnectionFactory connectionFactory,
+			DefaultJmsListenerContainerFactoryConfigurer configurer) {
 		DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
 		configurer.configure(factory, connectionFactory);
 		return factory;
 	}
-
-//	@Bean // Serialize message content to json using TextMessage
-//	MessageConverter jacksonJmsMessageConverter() {
-//		MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
-//		converter.setTargetType(MessageType.TEXT);
-//		converter.setTypeIdPropertyName("_type");
-//		return converter;
-//	}
 
 }
