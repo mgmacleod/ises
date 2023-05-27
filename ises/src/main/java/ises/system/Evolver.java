@@ -1,4 +1,4 @@
-package ises.sys;
+package ises.system;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -9,14 +9,17 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.task.AsyncTaskExecutor;
+import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
 
 import ises.model.cellular.Model;
 import ises.model.network.GeneRegulatoryNetwork;
 import ises.rest.entities.SimulationConfiguration;
+import ises.rest.entities.SimulationStatus;
 import ises.rest.entities.dto.GrnDto;
 import ises.rest.entities.dto.ModelDto;
 import ises.rest.entities.dto.ShapeDistributionDto;
+import ises.rest.jpa.SimulationConfigurationRepository;
 import ises.stats.ShapeDistribution;
 
 /**
@@ -32,6 +35,7 @@ public class Evolver implements Runnable {
 	private final ApplicationContext applicationContext;
 	private final Simulator sim;
 	private final AsyncTaskExecutor executor;
+	private final SimulationConfigurationRepository simulationRepo;
 	private DataStorageRunner dataStorageRunner;
 	private LinkedList<Model> population, offspring;
 	private int generation, modelSampleCounter, foodFlipCounter;
@@ -41,10 +45,13 @@ public class Evolver implements Runnable {
 	private GeneRegulatoryNetwork currGRN;
 	private SimulationConfiguration config;
 
-	public Evolver(Simulator sim, @Qualifier("dataStorageExecutor") AsyncTaskExecutor executor, ApplicationContext applicationContext) {
+	public Evolver(Simulator sim, SimulationConfigurationRepository simulationRepo, @Qualifier("dataStorageExecutor") AsyncTaskExecutor executor,
+			ApplicationContext applicationContext) {
+
 		this.sim = sim;
 		this.executor = executor;
 		this.applicationContext = applicationContext;
+		this.simulationRepo = simulationRepo;
 	}
 
 	public void initializeForRun(SimulationConfiguration config) {
@@ -62,6 +69,16 @@ public class Evolver implements Runnable {
 		}
 
 		sim.initializeForRun(config);
+	}
+
+	@JmsListener(destination = Constants.CANCEL_QUEUE_NAME, containerFactory = "simFactory")
+	public void receiveCancelMessage(Long idToCancel) {
+		if (config != null && idToCancel.equals(config.getId())) {
+			cancel();
+			return;
+		}
+
+		logger.debug("Received request to cancel simulation " + idToCancel + " but my simulation is " + config.getId() + "; ignoring");
 	}
 
 	public void start() {
@@ -173,6 +190,9 @@ public class Evolver implements Runnable {
 			running = !done;
 		}
 
+		config.setStatus(SimulationStatus.DONE);
+		simulationRepo.save(config);
+
 		logger.debug("GA done");
 		logger.info("Finished run");
 	}
@@ -196,6 +216,15 @@ public class Evolver implements Runnable {
 				+ "# genes: " + currWorst.getNumGenes() + "\n\n";
 
 		return modelStatus;
+	}
+
+	private void cancel() {
+		logger.debug("Cancelling simulation " + config.getId());
+		running = false;
+		done = true;
+		config.setStatus(SimulationStatus.CANCELLED);
+		simulationRepo.save(config);
+
 	}
 
 }

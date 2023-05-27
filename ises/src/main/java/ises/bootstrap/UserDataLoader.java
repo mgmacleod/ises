@@ -4,11 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
 import ises.rest.entities.security.UserDto;
 import ises.rest.jpa.security.UserRepository;
 
-//@Component
+@Component
 public class UserDataLoader implements CommandLineRunner {
 
 	private static final Logger logger = LoggerFactory.getLogger(UserDataLoader.class);
@@ -22,10 +23,10 @@ public class UserDataLoader implements CommandLineRunner {
 	}
 
 	@Override
-	public void run(String... args) throws Exception {
-//		if (userRepository.count() == 0) {
-		loadSecurityData();
-//		}
+	public void run(String... args) {
+		if (userRepository.count() <= 0) {
+			loadSecurityData();
+		}
 
 	}
 

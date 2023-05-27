@@ -7,7 +7,7 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import ises.model.network.GeneRegulatoryNetwork;
-import ises.sys.Constants;
+import ises.system.Constants;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
