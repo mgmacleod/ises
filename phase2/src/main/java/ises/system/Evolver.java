@@ -78,7 +78,6 @@ public class Evolver implements Runnable {
 			return;
 		}
 
-		logger.debug("Received request to cancel simulation " + idToCancel + " but my simulation is " + config.getId() + "; ignoring");
 	}
 
 	public void start() {
