@@ -35,5 +35,7 @@ bin/
 build/
 .externalToolBuilders/
 
+# VSCode
+.vscode/
 
 
