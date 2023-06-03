@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import ises.model.network.GeneRegulatoryNetwork;
 import ises.rest.entities.SimulationConfiguration;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -21,6 +20,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @NoArgsConstructor
@@ -38,18 +38,20 @@ public class GrnDto {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "sim_id", nullable = false)
+	@ToString.Exclude
 	@JsonIgnore
 	private SimulationConfiguration config;
 
 	@OneToOne
 	@JoinColumn(name = "model_id", nullable = false)
+	@ToString.Exclude
 	@JsonIgnore
 	private ModelDto modelDto;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "grn")
+	@OneToMany(mappedBy = "grn")
 	private List<GrnVertexDto> vertices;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "grn")
+	@OneToMany(mappedBy = "grn")
 	private List<GrnEdgeDto> edges;
 
 	public GrnDto(GeneRegulatoryNetwork grn, SimulationConfiguration config, ModelDto modelDto) {
@@ -59,5 +61,15 @@ public class GrnDto {
 		this.config = config;
 		this.modelDto = modelDto;
 	}
+
+	public void addVertex(GrnVertexDto vertex) {
+        vertices.add(vertex);
+        vertex.setGrn(this);
+    }
+
+    public void removeVertex(GrnVertexDto vertex) {
+        vertices.remove(vertex);
+        vertex.setGrn(null);
+    }
 
 }
