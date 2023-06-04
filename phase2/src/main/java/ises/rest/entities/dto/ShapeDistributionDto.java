@@ -16,7 +16,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "shape_distro")
 public class ShapeDistributionDto {
@@ -72,9 +76,6 @@ public class ShapeDistributionDto {
 	@JsonIgnore
 	private ModelDto modelDto;
 
-	public ShapeDistributionDto() {
-	}
-
 	public ShapeDistributionDto(ShapeDistribution sd, ModelDto modelDto) {
 		config = sd.getConfig();
 		numShapes = sd.getNumEntries();
@@ -89,126 +90,6 @@ public class ShapeDistributionDto {
 		meanFreq = new BigDecimal(String.format(Constants.BIG_DECIMAL_FORMAT_STRING, sd.getMeanFreq()));
 		shapeStdDeviation = new BigDecimal(String.format(Constants.BIG_DECIMAL_FORMAT_STRING, sd.getSdShape()));
 		frequencyStdDeviation = new BigDecimal(String.format(Constants.BIG_DECIMAL_FORMAT_STRING, sd.getSdFreq()));
-		this.modelDto = modelDto;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Integer getNumShapes() {
-		return numShapes;
-	}
-
-	public void setNumShapes(Integer numShapes) {
-		this.numShapes = numShapes;
-	}
-
-	public Integer getMostCommonShape() {
-		return mostCommonShape;
-	}
-
-	public void setMostCommonShape(Integer mostCommonShape) {
-		this.mostCommonShape = mostCommonShape;
-	}
-
-	public Integer getLeastCommonShape() {
-		return LeastCommonShape;
-	}
-
-	public void setLeastCommonShape(Integer leastCommonShape) {
-		LeastCommonShape = leastCommonShape;
-	}
-
-	public Integer getHighestFreq() {
-		return highestFreq;
-	}
-
-	public void setHighestFreq(Integer highestFreq) {
-		this.highestFreq = highestFreq;
-	}
-
-	public Integer getLowestFreq() {
-		return lowestFreq;
-	}
-
-	public void setLowestFreq(Integer lowestFreq) {
-		this.lowestFreq = lowestFreq;
-	}
-
-	public Integer getNumPopulated() {
-		return numPopulated;
-	}
-
-	public void setNumPopulated(Integer numPopulated) {
-		this.numPopulated = numPopulated;
-	}
-
-	public Integer getNumUnpopulated() {
-		return numUnpopulated;
-	}
-
-	public void setNumUnpopulated(Integer numUnpopulated) {
-		this.numUnpopulated = numUnpopulated;
-	}
-
-	public BigDecimal getPopulationRatio() {
-		return populationRatio;
-	}
-
-	public void setPopulationRatio(BigDecimal populationRatio) {
-		this.populationRatio = populationRatio;
-	}
-
-	public BigDecimal getMeanShape() {
-		return meanShape;
-	}
-
-	public void setMeanShape(BigDecimal meanShape) {
-		this.meanShape = meanShape;
-	}
-
-	public BigDecimal getMeanFreq() {
-		return meanFreq;
-	}
-
-	public void setMeanFreq(BigDecimal meanFreq) {
-		this.meanFreq = meanFreq;
-	}
-
-	public BigDecimal getShapeStdDeviation() {
-		return shapeStdDeviation;
-	}
-
-	public void setShapeStdDeviation(BigDecimal shapeStdDeviation) {
-		this.shapeStdDeviation = shapeStdDeviation;
-	}
-
-	public BigDecimal getFrequencyStdDeviation() {
-		return frequencyStdDeviation;
-	}
-
-	public void setFrequencyStdDeviation(BigDecimal frequencyStdDeviation) {
-		this.frequencyStdDeviation = frequencyStdDeviation;
-	}
-
-	public SimulationConfiguration getConfig() {
-		return config;
-	}
-
-	public void setConfig(SimulationConfiguration config) {
-		this.config = config;
-	}
-
-	public ModelDto getModelDto() {
-		return modelDto;
-	}
-
-	public void setModelDto(ModelDto modelDto) {
 		this.modelDto = modelDto;
 	}
 

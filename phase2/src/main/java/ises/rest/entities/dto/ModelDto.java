@@ -15,7 +15,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "model_stats")
 public class ModelDto {
@@ -60,9 +64,6 @@ public class ModelDto {
 	@JsonIgnore
 	private SimulationConfiguration config;
 
-	public ModelDto() {
-	}
-
 	public ModelDto(Model model) {
 		energy = model.getEnergy();
 		biomass = model.getBiomass();
@@ -74,102 +75,6 @@ public class ModelDto {
 		meanEnergy = new BigDecimal(String.format(Constants.BIG_DECIMAL_FORMAT_STRING, model.getMeanEnergy()));
 		meanBiomass = new BigDecimal(String.format(Constants.BIG_DECIMAL_FORMAT_STRING, model.getMeanBiomass()));
 		config = model.getConfig();
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Integer getGeneration() {
-		return generation;
-	}
-
-	public void setGeneration(Integer generation) {
-		this.generation = generation;
-	}
-
-	public Integer getEnergy() {
-		return energy;
-	}
-
-	public void setEnergy(Integer energy) {
-		this.energy = energy;
-	}
-
-	public Integer getBiomass() {
-		return biomass;
-	}
-
-	public void setBiomass(Integer biomass) {
-		this.biomass = biomass;
-	}
-
-	public Integer getStress1() {
-		return stress1;
-	}
-
-	public void setStress1(Integer stress) {
-		stress1 = stress;
-	}
-
-	public Integer getStress2() {
-		return stress2;
-	}
-
-	public void setStress2(Integer stress2) {
-		this.stress2 = stress2;
-	}
-
-	public Integer getFitness() {
-		return fitness;
-	}
-
-	public void setFitness(Integer fitness) {
-		this.fitness = fitness;
-	}
-
-	public Integer getHighestEnergy() {
-		return highestEnergy;
-	}
-
-	public void setHighestEnergy(Integer highestEnergy) {
-		this.highestEnergy = highestEnergy;
-	}
-
-	public Integer getLowestEnergy() {
-		return lowestEnergy;
-	}
-
-	public void setLowestEnergy(Integer lowestEnergy) {
-		this.lowestEnergy = lowestEnergy;
-	}
-
-	public BigDecimal getMeanEnergy() {
-		return meanEnergy;
-	}
-
-	public void setMeanEnergy(BigDecimal meanEnergy) {
-		this.meanEnergy = meanEnergy;
-	}
-
-	public BigDecimal getMeanBiomass() {
-		return meanBiomass;
-	}
-
-	public void setMeanBiomass(BigDecimal meanBiomass) {
-		this.meanBiomass = meanBiomass;
-	}
-
-	public SimulationConfiguration getConfig() {
-		return config;
-	}
-
-	public void setConfig(SimulationConfiguration config) {
-		this.config = config;
 	}
 
 }

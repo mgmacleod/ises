@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import ises.model.network.GeneRegulatoryNetwork;
 import ises.rest.entities.SimulationConfiguration;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -19,7 +18,12 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "grn")
 public class GrnDto {
@@ -34,22 +38,21 @@ public class GrnDto {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "sim_id", nullable = false)
+	@ToString.Exclude
 	@JsonIgnore
 	private SimulationConfiguration config;
 
 	@OneToOne
 	@JoinColumn(name = "model_id", nullable = false)
+	@ToString.Exclude
 	@JsonIgnore
 	private ModelDto modelDto;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "grn")
+	@OneToMany(mappedBy = "grn")
 	private List<GrnVertexDto> vertices;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "grn")
+	@OneToMany(mappedBy = "grn")
 	private List<GrnEdgeDto> edges;
-
-	public GrnDto() {
-	}
 
 	public GrnDto(GeneRegulatoryNetwork grn, SimulationConfiguration config, ModelDto modelDto) {
 		name = grn.getName();
@@ -59,52 +62,14 @@ public class GrnDto {
 		this.modelDto = modelDto;
 	}
 
-	public Long getId() {
-		return id;
-	}
+	public void addVertex(GrnVertexDto vertex) {
+        vertices.add(vertex);
+        vertex.setGrn(this);
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public List<GrnVertexDto> getVertices() {
-		return vertices;
-	}
-
-	public void setVertices(List<GrnVertexDto> vertices) {
-		this.vertices = vertices;
-	}
-
-	public List<GrnEdgeDto> getEdges() {
-		return edges;
-	}
-
-	public void setEdges(List<GrnEdgeDto> edges) {
-		this.edges = edges;
-	}
-
-	public SimulationConfiguration getConfig() {
-		return config;
-	}
-
-	public void setConfig(SimulationConfiguration config) {
-		this.config = config;
-	}
-
-	public ModelDto getModelDto() {
-		return modelDto;
-	}
-
-	public void setModelDto(ModelDto modelDto) {
-		this.modelDto = modelDto;
-	}
+    public void removeVertex(GrnVertexDto vertex) {
+        vertices.remove(vertex);
+        vertex.setGrn(null);
+    }
 
 }
