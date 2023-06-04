@@ -23,7 +23,7 @@ import jakarta.jms.ConnectionFactory;
 @EnableJms
 public class IsesConfig {
 
-    @Bean(name = "simulationRunExecutor")
+	@Bean(name = "simulationRunExecutor")
 	@Scope("prototype")
 	AsyncTaskExecutor simulationRunExecutor(@Value("${simulation.executor.core.pool.size}") int poolSize,
 			@Value("${simulation.executor.queue.capacity}") int queueCapacity) {
@@ -55,8 +55,9 @@ public class IsesConfig {
 
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.authorizeHttpRequests().anyRequest().authenticated().and().httpBasic(withDefaults())
-				.csrf(csrf -> csrf.disable());
+		http.authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests.anyRequest().authenticated())
+				.httpBasic(withDefaults()).csrf(csrf -> csrf.disable());
+
 		return http.build();
 	}
 
@@ -72,5 +73,5 @@ public class IsesConfig {
 		configurer.configure(factory, connectionFactory);
 		return factory;
 	}
-    
+
 }
