@@ -18,12 +18,16 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "grn")
 public class GrnDto {
@@ -63,13 +67,13 @@ public class GrnDto {
 	}
 
 	public void addVertex(GrnVertexDto vertex) {
-        vertices.add(vertex);
-        vertex.setGrn(this);
-    }
+		vertices.add(vertex);
+		vertex.setGrn(this);
+	}
 
-    public void removeVertex(GrnVertexDto vertex) {
-        vertices.remove(vertex);
-        vertex.setGrn(null);
-    }
+	public void removeVertex(GrnVertexDto vertex) {
+		vertices.remove(vertex);
+		vertex.setGrn(null);
+	}
 
 }

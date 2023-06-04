@@ -20,12 +20,16 @@ import ises.model.molecular.behav.Syn3Behaviour;
 import ises.model.molecular.behav.Syn4Behaviour;
 import ises.model.network.GrnVertex;
 import ises.rest.entities.SimulationConfiguration;
+import lombok.ToString;
 
 /**
- * Represents an abstract gene in the {@link Genome} of a {@link Model}, consisting of a {@link RegulatoryRegion}, a
- * reference to the {@link ProteinSpecies} it 'encodes', and the {@link GeneBehaviour} that determines the effect it has
+ * Represents an abstract gene in the {@link Genome} of a {@link Model},
+ * consisting of a {@link RegulatoryRegion}, a
+ * reference to the {@link ProteinSpecies} it 'encodes', and the
+ * {@link GeneBehaviour} that determines the effect it has
  * when translated.
  */
+@ToString
 public class Gene extends ModelComponent {
 
 	private Genome genome;
@@ -113,7 +117,8 @@ public class Gene extends ModelComponent {
 	}
 
 	/**
-	 * calculates the regulation state of the gene (i.e., whether it should be translated or not)
+	 * calculates the regulation state of the gene (i.e., whether it should be
+	 * translated or not)
 	 */
 	public void calcRegState() {
 		regState = regRegion.calcRegState();
@@ -209,7 +214,8 @@ public class Gene extends ModelComponent {
 	}
 
 	/**
-	 * The basic method for protein translation. calls the translate() method of this Gene's Behaviour
+	 * The basic method for protein translation. calls the translate() method of
+	 * this Gene's Behaviour
 	 */
 	public void translate() {
 		behaviour.translate();

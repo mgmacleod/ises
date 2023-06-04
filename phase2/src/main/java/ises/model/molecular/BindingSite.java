@@ -3,9 +3,12 @@ package ises.model.molecular;
 import ises.rest.entities.SimulationConfiguration;
 
 /**
- * Represents an abstract binding site on the {@link RegulatoryRegion} of a {@link Gene}, consisting of a simple integer
- * {@link #shape}, a positive or negative {@link #bias} (indicating whether its effect on the gene's expression is
- * activating or inhibiting), and an {@link #occupancy} (whether or not it is bound to a transcription factor).
+ * Represents an abstract binding site on the {@link RegulatoryRegion} of a
+ * {@link Gene}, consisting of a simple integer
+ * {@link #shape}, a positive or negative {@link #bias} (indicating whether its
+ * effect on the gene's expression is
+ * activating or inhibiting), and an {@link #occupancy} (whether or not it is
+ * bound to a transcription factor).
  */
 public class BindingSite extends ModelComponent {
 	private int shape, bias, occupancy;
