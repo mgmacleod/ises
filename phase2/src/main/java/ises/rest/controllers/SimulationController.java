@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,34 +23,30 @@ import ises.rest.jpa.SimulationConfigurationRepository;
 import ises.system.Constants;
 import ises.system.Evolver;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Basic REST controller for managing simulation runs
  */
+@RequiredArgsConstructor
 @RestController
 @RequestScope
 @RequestMapping("/ises")
 public class SimulationController {
 
 	private final Evolver evolver;
-	private final AsyncTaskExecutor executor;
+	private final AsyncTaskExecutor simulationRunExecutor;
 	private final SimulationConfigurationRepository configRepository;
 	private final JmsTemplate jmsTemplate;
 
-	public SimulationController(Evolver evolver, @Qualifier("simulationRunExecutor") AsyncTaskExecutor executor,
-			SimulationConfigurationRepository configRepository, JmsTemplate jmsTemplate) {
-
-		this.evolver = evolver;
-		this.executor = executor;
-		this.configRepository = configRepository;
-		this.jmsTemplate = jmsTemplate;
-	}
-
 	/**
-	 * Takes a {@link SimulationConfiguration}; sets its created on and status values to now and Running, respectively; persists the {@code config}; and returns the 
-	 * saved config. 
+	 * Takes a {@link SimulationConfiguration}; sets its created on and status
+	 * values to now and Running, respectively; persists the {@code config}; and
+	 * returns the
+	 * saved config.
 	 * <p>
-	 * In a separate thread, it starts an {@link Evolver} and feeds it the config and makes it go. 
+	 * In a separate thread, it starts an {@link Evolver} and feeds it the config
+	 * and makes it go.
 	 *
 	 * @param config
 	 * @return
@@ -66,7 +61,7 @@ public class SimulationController {
 
 		SimulationConfiguration savedConfig = configRepository.save(config);
 		evolver.initializeForRun(savedConfig);
-		executor.execute(evolver);
+		simulationRunExecutor.execute(evolver);
 
 		return savedConfig;
 	}
@@ -93,7 +88,8 @@ public class SimulationController {
 			jmsTemplate.convertAndSend(Constants.CANCEL_QUEUE_NAME, id);
 			response = new ResponseEntity<>("Simulation " + id + " cancellation requested", HttpStatus.OK);
 		} else {
-			response = new ResponseEntity<>("Simulation " + id + " has status " + config.getStatus() + " and cannot be cancelled",
+			response = new ResponseEntity<>(
+					"Simulation " + id + " has status " + config.getStatus() + " and cannot be cancelled",
 					HttpStatus.BAD_REQUEST);
 		}
 		return response;

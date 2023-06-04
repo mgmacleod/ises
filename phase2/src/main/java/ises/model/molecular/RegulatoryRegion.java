@@ -3,10 +3,13 @@ package ises.model.molecular;
 import java.util.ArrayList;
 
 import ises.rest.entities.SimulationConfiguration;
+import lombok.ToString;
 
 /**
- * Represents the abstract regulatory region of a {@link Gene}, consisting of a collection of {@link BindingSites}
+ * Represents the abstract regulatory region of a {@link Gene}, consisting of a
+ * collection of {@link BindingSites}
  */
+@ToString
 public class RegulatoryRegion extends ModelComponent {
 
 	private ArrayList<BindingSite> sites;

@@ -3,30 +3,29 @@ package ises.system;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import ises.Thing;
 import ises.model.cellular.Model;
 import ises.rest.entities.SimulationConfiguration;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
- * Provides a basic simulation engine to evaluate the behaviour of {@link Model}s
+ * Provides a basic simulation engine to evaluate the behaviour of
+ * {@link Model}s
  */
+@Slf4j
+@NoArgsConstructor
 @Service
 @Scope("prototype")
 public class Simulator extends Thing {
-	private static final Logger logger = LoggerFactory.getLogger(Simulator.class);
 
 	private Model currModel;
 	private int currTime, stress1Counter, stress2Counter;
 	private boolean running;
 	private SimulationConfiguration config;
-
-	public Simulator() {
-	}
 
 	public void initializeForRun(SimulationConfiguration config) {
 		this.config = config;
@@ -100,7 +99,7 @@ public class Simulator extends Thing {
 
 	private void simulate() {
 		if (currModel == null) {
-			logger.debug("null Model in the simulator!! Abandon ship!!");
+			log.debug("null Model in the simulator!! Abandon ship!!");
 			throw new IllegalArgumentException("Attempted to simulate a null model");
 		}
 

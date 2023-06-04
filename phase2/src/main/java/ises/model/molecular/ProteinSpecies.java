@@ -1,12 +1,17 @@
 package ises.model.molecular;
 
 import ises.rest.entities.SimulationConfiguration;
+import lombok.ToString;
 
 /**
- * Represents an abstract protein species that is produced from the translation of a {@link Gene}. For simplicity and
- * efficiency, the number of a given protein in the model is represented by the integer variable {@link #copies};
- * likewise, the number of copies that are bound to a binding site on a gene is represented by {@link #boundCopies}.
+ * Represents an abstract protein species that is produced from the translation
+ * of a {@link Gene}. For simplicity and
+ * efficiency, the number of a given protein in the model is represented by the
+ * integer variable {@link #copies};
+ * likewise, the number of copies that are bound to a binding site on a gene is
+ * represented by {@link #boundCopies}.
  */
+@ToString
 public class ProteinSpecies extends ModelComponent {
 
 	private int prodRate, degRate, shape;
@@ -182,7 +187,8 @@ public class ProteinSpecies extends ModelComponent {
 	}
 
 	/**
-	 * Sets the boundCopies of this protein species to 0 and stochastically degrades the number of available copies.
+	 * Sets the boundCopies of this protein species to 0 and stochastically degrades
+	 * the number of available copies.
 	 */
 	public void unBindAndDeactivate() {
 		boundCopies = 0;

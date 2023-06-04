@@ -3,9 +3,6 @@ package ises.system;
 import java.util.Collections;
 import java.util.LinkedList;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.task.AsyncTaskExecutor;
@@ -21,21 +18,23 @@ import ises.rest.entities.dto.ModelDto;
 import ises.rest.entities.dto.ShapeDistributionDto;
 import ises.rest.jpa.SimulationConfigurationRepository;
 import ises.stats.ShapeDistribution;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Provides the genetic algorithm to evolve a population of model 'organisms'
  * and collect data about those organisms
  * throughout the run.
  */
+@Slf4j
+@RequiredArgsConstructor
 @Service
 @Scope("prototype")
 public class Evolver implements Runnable {
 
-	private static final Logger logger = LoggerFactory.getLogger(Evolver.class);
-
 	private final ApplicationContext applicationContext;
 	private final Simulator simulator;
-	private final AsyncTaskExecutor executor;
+	private final AsyncTaskExecutor dataStorageExecutor;
 	private final SimulationConfigurationRepository simulationRepo;
 	private DataStorageRunner dataStorageRunner;
 	private LinkedList<Model> population, offspring;
@@ -45,16 +44,6 @@ public class Evolver implements Runnable {
 	private String modelStatus;
 	private GeneRegulatoryNetwork currGRN;
 	private SimulationConfiguration config;
-
-	public Evolver(Simulator sim, SimulationConfigurationRepository simulationRepo,
-			@Qualifier("dataStorageExecutor") AsyncTaskExecutor executor,
-			ApplicationContext applicationContext) {
-
-		this.simulator = sim;
-		this.executor = executor;
-		this.applicationContext = applicationContext;
-		this.simulationRepo = simulationRepo;
-	}
 
 	public void initializeForRun(SimulationConfiguration config) {
 		this.config = config;
@@ -101,7 +90,7 @@ public class Evolver implements Runnable {
 		dataStorageRunner = applicationContext.getBean(DataStorageRunner.class);
 		dataStorageRunner.initForRun(modelDto, shapeDistroDto, grnDto);
 
-		executor.execute(dataStorageRunner);
+		dataStorageExecutor.execute(dataStorageRunner);
 	}
 
 	public boolean isRunning() {
@@ -132,7 +121,7 @@ public class Evolver implements Runnable {
 			return;
 		}
 
-		logger.info("GA running generation " + generation + "...");
+		log.info("GA running generation " + generation + "...");
 
 		// sample data
 		if (modelSampleCounter == config.getSampleModelInterval()) {
@@ -152,7 +141,7 @@ public class Evolver implements Runnable {
 		modelSampleCounter++;
 		foodFlipCounter++;
 
-		logger.debug(getModelStatus());
+		log.debug(getModelStatus());
 	}
 
 	private void createNextGenPopulation() {
@@ -189,7 +178,7 @@ public class Evolver implements Runnable {
 
 	@Override
 	public void run() {
-		logger.info("Starting run");
+		log.info("Starting run");
 		preEvolve(); // neutral evolution for config.neutralGen generations
 		start();
 
@@ -203,8 +192,8 @@ public class Evolver implements Runnable {
 		config.setStatus(SimulationStatus.DONE);
 		simulationRepo.save(config);
 
-		logger.debug("GA done");
-		logger.info("Finished run");
+		log.debug("GA done");
+		log.info("Finished run");
 	}
 
 	private void simulatePopulation() {
@@ -235,7 +224,7 @@ public class Evolver implements Runnable {
 	}
 
 	private void cancel() {
-		logger.debug("Cancelling simulation " + config.getId());
+		log.debug("Cancelling simulation " + config.getId());
 		running = false;
 		done = true;
 		config.setStatus(SimulationStatus.CANCELLED);
