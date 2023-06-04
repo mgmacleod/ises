@@ -23,7 +23,8 @@ import ises.rest.jpa.SimulationConfigurationRepository;
 import ises.stats.ShapeDistribution;
 
 /**
- * Provides the genetic algorithm to evolve a population of model 'organisms' and collect data about those organisms
+ * Provides the genetic algorithm to evolve a population of model 'organisms'
+ * and collect data about those organisms
  * throughout the run.
  */
 @Service
@@ -33,7 +34,7 @@ public class Evolver implements Runnable {
 	private static final Logger logger = LoggerFactory.getLogger(Evolver.class);
 
 	private final ApplicationContext applicationContext;
-	private final Simulator sim;
+	private final Simulator simulator;
 	private final AsyncTaskExecutor executor;
 	private final SimulationConfigurationRepository simulationRepo;
 	private DataStorageRunner dataStorageRunner;
@@ -45,10 +46,11 @@ public class Evolver implements Runnable {
 	private GeneRegulatoryNetwork currGRN;
 	private SimulationConfiguration config;
 
-	public Evolver(Simulator sim, SimulationConfigurationRepository simulationRepo, @Qualifier("dataStorageExecutor") AsyncTaskExecutor executor,
+	public Evolver(Simulator sim, SimulationConfigurationRepository simulationRepo,
+			@Qualifier("dataStorageExecutor") AsyncTaskExecutor executor,
 			ApplicationContext applicationContext) {
 
-		this.sim = sim;
+		this.simulator = sim;
 		this.executor = executor;
 		this.applicationContext = applicationContext;
 		this.simulationRepo = simulationRepo;
@@ -68,7 +70,7 @@ public class Evolver implements Runnable {
 			population.add(new Model(i, config));
 		}
 
-		sim.initializeForRun(config);
+		simulator.initializeForRun(config);
 	}
 
 	@JmsListener(destination = Constants.CANCEL_QUEUE_NAME, containerFactory = "simFactory")
@@ -77,7 +79,6 @@ public class Evolver implements Runnable {
 			cancel();
 			return;
 		}
-
 	}
 
 	public void start() {
@@ -121,37 +122,41 @@ public class Evolver implements Runnable {
 	}
 
 	private void nextGen() {
+		setupBestAndWorstModels();
+
 		if (generation > config.getMaxGeneration()) {
+			storeData(); // save the final state
 			running = false;
 			done = true;
 
 			return;
 		}
 
-		logger.debug("GA running generation " + generation + "...");
-		Model best, worst;
-
-		if (foodFlipCounter == config.getFoodFlipInterval()) {
-			sim.flipFoodProbs();
-			foodFlipCounter = 0;
-		}
-
-		offspring = new LinkedList<>();
-		Collections.sort(population);
-
-		best = population.getLast();
-		worst = population.getFirst();
-
-		currGRN = (GeneRegulatoryNetwork) best.getGRN().clone();
-		currGRN.setName("Generation " + generation);
-		currBest = new Model(best);
-		currWorst = new Model(worst);
+		logger.info("GA running generation " + generation + "...");
 
 		// sample data
 		if (modelSampleCounter == config.getSampleModelInterval()) {
 			modelSampleCounter = 0;
 			storeData();
 		}
+
+		// Update food availability probabilities
+		if (foodFlipCounter == config.getFoodFlipInterval()) {
+			simulator.flipFoodProbs();
+			foodFlipCounter = 0;
+		}
+
+		createNextGenPopulation();
+
+		generation++;
+		modelSampleCounter++;
+		foodFlipCounter++;
+
+		logger.debug(getModelStatus());
+	}
+
+	private void createNextGenPopulation() {
+		offspring = new LinkedList<>();
 
 		int n = config.getPopulationSize() / 2;
 
@@ -168,12 +173,18 @@ public class Evolver implements Runnable {
 		for (Model m : population) {
 			m.mutate();
 		}
+	}
 
-		generation++;
-		modelSampleCounter++;
-		foodFlipCounter++;
+	private void setupBestAndWorstModels() {
+		Model best, worst;
+		Collections.sort(population);
+		best = population.getLast();
+		worst = population.getFirst();
 
-		logger.debug(getModelStatus());
+		currGRN = (GeneRegulatoryNetwork) best.getGRN().clone();
+		currGRN.setName("Generation " + (generation == 1 ? generation : generation - 1));
+		currBest = new Model(best);
+		currWorst = new Model(worst);
 	}
 
 	@Override
@@ -198,20 +209,26 @@ public class Evolver implements Runnable {
 
 	private void simulatePopulation() {
 		for (Model m : population) {
-			sim.setCurrModel(m);
-			sim.start();
+			simulator.setCurrModel(m);
+			simulator.start();
 		}
 	}
 
 	private String getModelStatus() {
-		modelStatus = "\nBest Model\n" + "----------------------------\n" + "Fitness: " + currBest.getFitness() + "\n" + "Energy: "
-				+ currBest.getEnergy() + "\n" + "Stress1: " + currBest.getStress1() + "\nStress2: " + currBest.getStress2() + "\n" + "Biomass: "
-				+ currBest.getBiomass() + "\n" + "Ancestral index: " + currBest.getAncestralIndex() + "\n" + "# binding sites: "
+		modelStatus = "\nBest Model\n" + "----------------------------\n" + "Fitness: " + currBest.getFitness() + "\n"
+				+ "Energy: "
+				+ currBest.getEnergy() + "\n" + "Stress1: " + currBest.getStress1() + "\nStress2: "
+				+ currBest.getStress2() + "\n" + "Biomass: "
+				+ currBest.getBiomass() + "\n" + "Ancestral index: " + currBest.getAncestralIndex() + "\n"
+				+ "# binding sites: "
 				+ currBest.getNumSites() + "\n" + "# genes: " + currBest.getNumGenes() + "\n\n" +
 
-				"Worst Model\n" + "----------------------------\n" + "Fitness: " + currWorst.getFitness() + "\n" + "Energy: " + currWorst.getEnergy()
-				+ "\n" + "Stress1: " + currWorst.getStress1() + "\nStress2: " + currWorst.getStress2() + "\n" + "Biomass: " + currWorst.getBiomass()
-				+ "\n" + "Ancestral index: " + currWorst.getAncestralIndex() + "\n" + "# binding sites: " + currWorst.getNumSites() + "\n"
+				"Worst Model\n" + "----------------------------\n" + "Fitness: " + currWorst.getFitness() + "\n"
+				+ "Energy: " + currWorst.getEnergy()
+				+ "\n" + "Stress1: " + currWorst.getStress1() + "\nStress2: " + currWorst.getStress2() + "\n"
+				+ "Biomass: " + currWorst.getBiomass()
+				+ "\n" + "Ancestral index: " + currWorst.getAncestralIndex() + "\n" + "# binding sites: "
+				+ currWorst.getNumSites() + "\n"
 				+ "# genes: " + currWorst.getNumGenes() + "\n\n";
 
 		return modelStatus;
