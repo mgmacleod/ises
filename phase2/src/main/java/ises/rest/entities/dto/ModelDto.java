@@ -2,18 +2,13 @@ package ises.rest.entities.dto;
 
 import java.math.BigDecimal;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import ises.model.cellular.Model;
-import ises.rest.entities.SimulationConfiguration;
 import ises.system.Constants;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -63,10 +58,8 @@ public class ModelDto {
 	@Column(name = "mean_biomass", nullable = false)
 	private BigDecimal meanBiomass;
 
-	@ManyToOne
-	@JoinColumn(name = "sim_id", nullable = false)
-	@JsonIgnore
-	private SimulationConfiguration config;
+	@Column(name = "sim_id", nullable = false)
+	private Long simId;
 
 	public ModelDto(Model model) {
 		energy = model.getEnergy();
@@ -78,7 +71,7 @@ public class ModelDto {
 		lowestEnergy = model.getLowestEnergy();
 		meanEnergy = new BigDecimal(String.format(Constants.BIG_DECIMAL_FORMAT_STRING, model.getMeanEnergy()));
 		meanBiomass = new BigDecimal(String.format(Constants.BIG_DECIMAL_FORMAT_STRING, model.getMeanBiomass()));
-		config = model.getConfig();
+		simId = model.getConfig().getId();
 	}
 
 }
