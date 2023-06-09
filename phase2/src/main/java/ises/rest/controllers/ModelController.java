@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import ises.rest.entities.SimulationConfiguration;
 import ises.rest.entities.dto.ModelDto;
 import ises.rest.jpa.ModelStatsRepository;
 import ises.rest.jpa.SimulationConfigurationRepository;
@@ -24,24 +25,35 @@ public class ModelController {
 
     @GetMapping("/simulation/{id}/model/ids")
     public ResponseEntity<List<Long>> getAllModelIdsBySimulationId(@PathVariable("id") Long id) {
-        if (simulationRepository.findById(id).isEmpty()) {
+        List<ModelDto> models = getModelIdsBySimulationId(id);
+
+        if (models == null) {
             return ResponseEntity.notFound().build();
         }
-
-        List<ModelDto> models = modelRepository.findBySimId(id);
 
         return new ResponseEntity<List<Long>>(models.stream().map(m -> m.getId()).collect(Collectors.toList()),
                 HttpStatus.OK);
 
     }
 
-    @GetMapping("/simulation/{id}/model")
-    public ResponseEntity<List<ModelDto>> getAllModelsBySimulationId(@PathVariable("id") Long id) {
-        if (simulationRepository.findById(id).isEmpty()) {
-            return ResponseEntity.notFound().build();
+    private List<ModelDto> getModelIdsBySimulationId(Long id) {
+        Optional<SimulationConfiguration> configOptional = simulationRepository.findById(id);
+
+        if (configOptional.isEmpty()) {
+            return null;
         }
 
-        List<ModelDto> models = modelRepository.findBySimId(id);
+        List<ModelDto> models = modelRepository.findByConfig(configOptional.get());
+        return models;
+    }
+
+    @GetMapping("/simulation/{id}/model")
+    public ResponseEntity<List<ModelDto>> getAllModelsBySimulationId(@PathVariable("id") Long id) {
+        List<ModelDto> models = getModelIdsBySimulationId(id);
+
+        if (models == null) {
+            return ResponseEntity.notFound().build();
+        }
 
         return new ResponseEntity<List<ModelDto>>(models, HttpStatus.OK);
     }
