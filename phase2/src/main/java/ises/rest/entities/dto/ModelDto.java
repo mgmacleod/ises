@@ -67,8 +67,6 @@ public class ModelDto {
 	@JoinColumn(name = "sim_id", nullable = false)
 	@JsonIgnore
 	private SimulationConfiguration config;
-	// @Column(name = "sim_id", nullable = false)
-	// private Long simId;
 
 	public ModelDto(Model model) {
 		energy = model.getEnergy();
