@@ -45,4 +45,27 @@ public class ShapeDistributionController {
         return shapeRepository.findByConfig(configOptional.get());
     }
 
+    @GetMapping("/simulation/{id}/shape")
+    public ResponseEntity<List<ShapeDistributionDto>> getShapeDistrosBySimulationId(@PathVariable("id") Long id) {
+        List<ShapeDistributionDto> shapes = getShapeDistrosBySimId(id);
+
+        if (shapes == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return new ResponseEntity<List<ShapeDistributionDto>>(shapes, HttpStatus.OK);
+    }
+
+    @GetMapping("/shape/{id}")
+    public ResponseEntity<ShapeDistributionDto> getShapeDistroById(@PathVariable("id") Long id) {
+        Optional<ShapeDistributionDto> shapeOptional = shapeRepository.findById(id);
+
+        if (shapeOptional.isPresent()) {
+            return new ResponseEntity<>(shapeOptional.get(), HttpStatus.OK);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+
+    }
+
 }
