@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import ises.rest.entities.SimulationConfiguration;
+import ises.rest.entities.dto.ModelDto;
 import ises.rest.entities.dto.ShapeDistributionDto;
+import ises.rest.jpa.ModelStatsRepository;
 import ises.rest.jpa.ShapeDistributionRepository;
 import ises.rest.jpa.SimulationConfigurationRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ public class ShapeDistributionController {
 
     private final SimulationConfigurationRepository simulationRepository;
     private final ShapeDistributionRepository shapeRepository;
+    private final ModelStatsRepository modelStatsRepository;
 
     @GetMapping("/simulation/{id}/shape/ids")
     public ResponseEntity<List<Long>> getAllShapeDistroIdsBySimulationId(@PathVariable("id") Long id) {
@@ -66,6 +69,17 @@ public class ShapeDistributionController {
             return ResponseEntity.notFound().build();
         }
 
+    }
+
+    @GetMapping("/model/{id}/shape")
+    public ResponseEntity<ShapeDistributionDto> getShapeDistroByModelId(@PathVariable("id") Long id) {
+        Optional<ModelDto> modelOptional = modelStatsRepository.findById(id);
+
+        if (modelOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return new ResponseEntity<>(shapeRepository.findByModelDto(modelOptional.get()), HttpStatus.OK);
     }
 
 }

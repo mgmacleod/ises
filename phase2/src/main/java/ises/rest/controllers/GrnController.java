@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ises.rest.entities.SimulationConfiguration;
 import ises.rest.entities.dto.GrnDto;
+import ises.rest.entities.dto.ModelDto;
 import ises.rest.jpa.GrnRepository;
+import ises.rest.jpa.ModelStatsRepository;
 import ises.rest.jpa.SimulationConfigurationRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +24,7 @@ public class GrnController {
 
     private final SimulationConfigurationRepository simulationRepository;
     private final GrnRepository grnRepository;
+    private final ModelStatsRepository modelStatsRepository;
 
     @GetMapping("/simulation/{id}/grn/ids")
     public ResponseEntity<List<Long>> getAllGrnIdsBySimulationId(@PathVariable("id") Long id) {
@@ -56,6 +59,17 @@ public class GrnController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/model/{id}/grn")
+    public ResponseEntity<GrnDto> getGrnByModelId(@PathVariable("id") Long id) {
+        Optional<ModelDto> modelOptional = modelStatsRepository.findById(id);
+
+        if (modelOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return new ResponseEntity<GrnDto>(grnRepository.findByModelDto(modelOptional.get()), HttpStatus.OK);
     }
 
 }
