@@ -3,9 +3,6 @@ package ises.system;
 import java.util.Collections;
 import java.util.LinkedList;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.task.AsyncTaskExecutor;
@@ -21,20 +18,23 @@ import ises.rest.entities.dto.ModelDto;
 import ises.rest.entities.dto.ShapeDistributionDto;
 import ises.rest.jpa.SimulationConfigurationRepository;
 import ises.stats.ShapeDistribution;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
- * Provides the genetic algorithm to evolve a population of model 'organisms' and collect data about those organisms
+ * Provides the genetic algorithm to evolve a population of model 'organisms'
+ * and collect data about those organisms
  * throughout the run.
  */
+@Slf4j
+@RequiredArgsConstructor
 @Service
 @Scope("prototype")
-public class Evolver implements Runnable {
-
-	private static final Logger logger = LoggerFactory.getLogger(Evolver.class);
+public class EvolverImpl1 implements Evolver {
 
 	private final ApplicationContext applicationContext;
-	private final Simulator sim;
-	private final AsyncTaskExecutor executor;
+	private final Simulator simulator;
+	private final AsyncTaskExecutor dataStorageExecutor;
 	private final SimulationConfigurationRepository simulationRepo;
 	private DataStorageRunner dataStorageRunner;
 	private LinkedList<Model> population, offspring;
@@ -45,15 +45,7 @@ public class Evolver implements Runnable {
 	private GeneRegulatoryNetwork currGRN;
 	private SimulationConfiguration config;
 
-	public Evolver(Simulator sim, SimulationConfigurationRepository simulationRepo, @Qualifier("dataStorageExecutor") AsyncTaskExecutor executor,
-			ApplicationContext applicationContext) {
-
-		this.sim = sim;
-		this.executor = executor;
-		this.applicationContext = applicationContext;
-		this.simulationRepo = simulationRepo;
-	}
-
+	@Override
 	public void initializeForRun(SimulationConfiguration config) {
 		this.config = config;
 		population = new LinkedList<>();
@@ -68,46 +60,50 @@ public class Evolver implements Runnable {
 			population.add(new Model(i, config));
 		}
 
-		sim.initializeForRun(config);
+		simulator.initializeForRun(config);
 	}
 
+	@Override
 	@JmsListener(destination = Constants.CANCEL_QUEUE_NAME, containerFactory = "simFactory")
-	public void receiveCancelMessage(Long idToCancel) {
+	public void cancelSimulationWithId(Long idToCancel) {
 		if (config != null && idToCancel.equals(config.getId())) {
 			cancel();
 			return;
 		}
-
-		logger.debug("Received request to cancel simulation " + idToCancel + " but my simulation is " + config.getId() + "; ignoring");
 	}
 
+	@Override
 	public void start() {
 		running = true;
 	}
 
+	@Override
 	public void pause() {
 		running = false;
 	}
 
+	@Override
 	public void stop() {
 		running = false;
 	}
 
 	private void storeData() {
 		ModelDto modelDto = new ModelDto(currBest);
-		modelDto.setGeneration(generation);
+		modelDto.setGeneration(generation == 1 ? generation : generation - 1);
 		ShapeDistributionDto shapeDistroDto = new ShapeDistributionDto(new ShapeDistribution(currBest), modelDto);
 		GrnDto grnDto = new GrnDto(currGRN, config, modelDto);
 		dataStorageRunner = applicationContext.getBean(DataStorageRunner.class);
 		dataStorageRunner.initForRun(modelDto, shapeDistroDto, grnDto);
 
-		executor.execute(dataStorageRunner);
+		dataStorageExecutor.execute(dataStorageRunner);
 	}
 
+	@Override
 	public boolean isRunning() {
 		return running;
 	}
 
+	@Override
 	public void setRunning(boolean running) {
 		this.running = running;
 	}
@@ -122,37 +118,41 @@ public class Evolver implements Runnable {
 	}
 
 	private void nextGen() {
+		setupBestAndWorstModels();
+
 		if (generation > config.getMaxGeneration()) {
+			storeData(); // save the final state
 			running = false;
 			done = true;
 
 			return;
 		}
 
-		logger.debug("GA running generation " + generation + "...");
-		Model best, worst;
-
-		if (foodFlipCounter == config.getFoodFlipInterval()) {
-			sim.flipFoodProbs();
-			foodFlipCounter = 0;
-		}
-
-		offspring = new LinkedList<>();
-		Collections.sort(population);
-
-		best = population.getLast();
-		worst = population.getFirst();
-
-		currGRN = (GeneRegulatoryNetwork) best.getGRN().clone();
-		currGRN.setName("Generation " + generation);
-		currBest = new Model(best);
-		currWorst = new Model(worst);
+		log.info("GA running generation " + generation + "...");
 
 		// sample data
 		if (modelSampleCounter == config.getSampleModelInterval()) {
 			modelSampleCounter = 0;
 			storeData();
 		}
+
+		// Update food availability probabilities
+		if (foodFlipCounter == config.getFoodFlipInterval()) {
+			simulator.flipFoodProbs();
+			foodFlipCounter = 0;
+		}
+
+		createNextGenPopulation();
+
+		generation++;
+		modelSampleCounter++;
+		foodFlipCounter++;
+
+		log.debug(getModelStatus());
+	}
+
+	private void createNextGenPopulation() {
+		offspring = new LinkedList<>();
 
 		int n = config.getPopulationSize() / 2;
 
@@ -169,17 +169,23 @@ public class Evolver implements Runnable {
 		for (Model m : population) {
 			m.mutate();
 		}
+	}
 
-		generation++;
-		modelSampleCounter++;
-		foodFlipCounter++;
+	private void setupBestAndWorstModels() {
+		Model best, worst;
+		Collections.sort(population);
+		best = population.getLast();
+		worst = population.getFirst();
 
-		logger.debug(getModelStatus());
+		currGRN = (GeneRegulatoryNetwork) best.getGRN().clone();
+		currGRN.setName("Generation " + (generation == 1 ? generation : generation - 1));
+		currBest = new Model(best);
+		currWorst = new Model(worst);
 	}
 
 	@Override
 	public void run() {
-		logger.info("Starting run");
+		log.info("Starting run");
 		preEvolve(); // neutral evolution for config.neutralGen generations
 		start();
 
@@ -193,33 +199,39 @@ public class Evolver implements Runnable {
 		config.setStatus(SimulationStatus.DONE);
 		simulationRepo.save(config);
 
-		logger.debug("GA done");
-		logger.info("Finished run");
+		log.debug("GA done");
+		log.info("Finished run");
 	}
 
 	private void simulatePopulation() {
 		for (Model m : population) {
-			sim.setCurrModel(m);
-			sim.start();
+			simulator.setCurrModel(m);
+			simulator.start();
 		}
 	}
 
 	private String getModelStatus() {
-		modelStatus = "\nBest Model\n" + "----------------------------\n" + "Fitness: " + currBest.getFitness() + "\n" + "Energy: "
-				+ currBest.getEnergy() + "\n" + "Stress1: " + currBest.getStress1() + "\nStress2: " + currBest.getStress2() + "\n" + "Biomass: "
-				+ currBest.getBiomass() + "\n" + "Ancestral index: " + currBest.getAncestralIndex() + "\n" + "# binding sites: "
+		modelStatus = "\nBest Model\n" + "----------------------------\n" + "Fitness: " + currBest.getFitness() + "\n"
+				+ "Energy: "
+				+ currBest.getEnergy() + "\n" + "Stress1: " + currBest.getStress1() + "\nStress2: "
+				+ currBest.getStress2() + "\n" + "Biomass: "
+				+ currBest.getBiomass() + "\n" + "Ancestral index: " + currBest.getAncestralIndex() + "\n"
+				+ "# binding sites: "
 				+ currBest.getNumSites() + "\n" + "# genes: " + currBest.getNumGenes() + "\n\n" +
 
-				"Worst Model\n" + "----------------------------\n" + "Fitness: " + currWorst.getFitness() + "\n" + "Energy: " + currWorst.getEnergy()
-				+ "\n" + "Stress1: " + currWorst.getStress1() + "\nStress2: " + currWorst.getStress2() + "\n" + "Biomass: " + currWorst.getBiomass()
-				+ "\n" + "Ancestral index: " + currWorst.getAncestralIndex() + "\n" + "# binding sites: " + currWorst.getNumSites() + "\n"
+				"Worst Model\n" + "----------------------------\n" + "Fitness: " + currWorst.getFitness() + "\n"
+				+ "Energy: " + currWorst.getEnergy()
+				+ "\n" + "Stress1: " + currWorst.getStress1() + "\nStress2: " + currWorst.getStress2() + "\n"
+				+ "Biomass: " + currWorst.getBiomass()
+				+ "\n" + "Ancestral index: " + currWorst.getAncestralIndex() + "\n" + "# binding sites: "
+				+ currWorst.getNumSites() + "\n"
 				+ "# genes: " + currWorst.getNumGenes() + "\n\n";
 
 		return modelStatus;
 	}
 
 	private void cancel() {
-		logger.debug("Cancelling simulation " + config.getId());
+		log.debug("Cancelling simulation " + config.getId());
 		running = false;
 		done = true;
 		config.setStatus(SimulationStatus.CANCELLED);

@@ -2,16 +2,17 @@ package ises.rest.controllers;
 
 import java.time.LocalDateTime;
 
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.annotation.RequestScope;
 
 import ises.rest.entities.SimulationConfiguration;
 import ises.rest.entities.SimulationStatus;
 import ises.rest.jpa.SimulationConfigurationRepository;
 import ises.system.Evolver;
+import ises.system.EvolverImpl1;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -23,10 +24,9 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 @RestController
-@RequestScope
 public class SimulationRunController {
 
-	private final Evolver evolver;
+	private final ApplicationContext applicationContext;
 	private final AsyncTaskExecutor simulationRunExecutor;
 	private final SimulationConfigurationRepository configRepository;
 
@@ -36,7 +36,8 @@ public class SimulationRunController {
 	 * returns the
 	 * saved config.
 	 * <p>
-	 * In a separate thread, it starts an {@link Evolver} and feeds it the config
+	 * In a separate thread, it starts an {@link Evolver} and feeds it the
+	 * config
 	 * and makes it go.
 	 *
 	 * @param config
@@ -51,6 +52,7 @@ public class SimulationRunController {
 		config.setStatus(SimulationStatus.RUNNING);
 
 		SimulationConfiguration savedConfig = configRepository.save(config);
+		Evolver evolver = applicationContext.getBean(EvolverImpl1.class);
 		evolver.initializeForRun(savedConfig);
 		simulationRunExecutor.execute(evolver);
 
