@@ -36,7 +36,8 @@ public class SimulationRunController {
 	 * returns the
 	 * saved config.
 	 * <p>
-	 * In a separate thread, it starts an {@link Evolver} and feeds it the config
+	 * In a separate thread, it starts an {@link Evolver} and feeds it the
+	 * config
 	 * and makes it go.
 	 *
 	 * @param config
