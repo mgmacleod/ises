@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,44 +32,20 @@ public class SimulationDataController {
 
     @PostMapping("/{id}/cancel")
     public ResponseEntity<String> cancelSimulation(@PathVariable("id") long id) {
-        Optional<SimulationConfiguration> configOptional = configRepository.findById(id);
+        return ResponseEntity.of(
+                configRepository.findById(id)
+                        .filter(c -> c.getStatus() == SimulationStatus.RUNNING)
+                        .map(c -> {
+                            jmsTemplate.convertAndSend(Constants.CANCEL_QUEUE_NAME, c.getId());
+                            return String.format("Simulation %d cancellation requested", c.getId());
+                        }).or(() -> Optional
+                                .of(String.format("Simulation %d is not running and cannot be cancelled", id))));
 
-        ResponseEntity<String> response = null;
-
-        if (configOptional.isPresent()) {
-            response = cancelSimulation(id, configOptional);
-        } else {
-            response = new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        return response;
-    }
-
-    private ResponseEntity<String> cancelSimulation(Long id, Optional<SimulationConfiguration> configOptional) {
-        ResponseEntity<String> response;
-        SimulationConfiguration config = configOptional.get();
-        if (config.getStatus() == SimulationStatus.RUNNING) {
-            jmsTemplate.convertAndSend(Constants.CANCEL_QUEUE_NAME, id);
-            response = new ResponseEntity<>("Simulation " + id + " cancellation requested", HttpStatus.OK);
-        } else {
-            response = new ResponseEntity<>(
-                    "Simulation " + id + " has status " + config.getStatus() + " and cannot be cancelled",
-                    HttpStatus.BAD_REQUEST);
-        }
-        return response;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<SimulationConfiguration> findSimulation(@PathVariable("id") long id) {
-
-        Optional<SimulationConfiguration> configOptional = configRepository.findById(id);
-
-        if (configOptional.isPresent()) {
-            return new ResponseEntity<>(configOptional.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
+        return ResponseEntity.of(configRepository.findById(id));
     }
 
     @GetMapping("/status/{status}")
