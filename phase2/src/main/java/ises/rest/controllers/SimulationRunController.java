@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import ises.jpa.SimulationConfigurationRepository;
 import ises.rest.entities.SimulationConfiguration;
 import ises.rest.entities.SimulationStatus;
-import ises.rest.jpa.SimulationConfigurationRepository;
 import ises.system.Evolver;
 import ises.system.EvolverImpl1;
 import jakarta.validation.Valid;

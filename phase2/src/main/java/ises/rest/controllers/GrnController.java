@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import ises.jpa.GrnRepository;
+import ises.jpa.ModelStatsRepository;
+import ises.jpa.SimulationConfigurationRepository;
 import ises.rest.entities.dto.GrnEntity;
-import ises.rest.jpa.GrnRepository;
-import ises.rest.jpa.ModelStatsRepository;
-import ises.rest.jpa.SimulationConfigurationRepository;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

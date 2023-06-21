@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import ises.jpa.ModelStatsRepository;
+import ises.jpa.ShapeDistributionRepository;
+import ises.jpa.SimulationConfigurationRepository;
 import ises.rest.entities.dto.ShapeDistributionEntity;
-import ises.rest.jpa.ModelStatsRepository;
-import ises.rest.jpa.ShapeDistributionRepository;
-import ises.rest.jpa.SimulationConfigurationRepository;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

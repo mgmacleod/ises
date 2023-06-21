@@ -1,4 +1,4 @@
-package ises.rest.jpa;
+package ises.jpa;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

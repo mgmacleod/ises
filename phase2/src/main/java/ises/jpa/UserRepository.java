@@ -1,4 +1,4 @@
-package ises.rest.jpa.security;
+package ises.jpa;
 
 import java.util.Optional;
 

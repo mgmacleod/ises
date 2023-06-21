@@ -9,6 +9,7 @@ import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
 
+import ises.jpa.SimulationConfigurationRepository;
 import ises.model.cellular.Model;
 import ises.model.network.GeneRegulatoryNetwork;
 import ises.rest.entities.SimulationConfiguration;
@@ -16,7 +17,6 @@ import ises.rest.entities.SimulationStatus;
 import ises.rest.entities.dto.GrnEntity;
 import ises.rest.entities.dto.ModelEntity;
 import ises.rest.entities.dto.ShapeDistributionEntity;
-import ises.rest.jpa.SimulationConfigurationRepository;
 import ises.stats.ShapeDistribution;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

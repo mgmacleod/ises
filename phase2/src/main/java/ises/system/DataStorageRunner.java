@@ -9,16 +9,16 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import ises.jpa.GrnEdgeRepository;
+import ises.jpa.GrnRepository;
+import ises.jpa.GrnVertexRepository;
+import ises.jpa.ModelStatsRepository;
+import ises.jpa.ShapeDistributionRepository;
 import ises.rest.entities.dto.GrnEdgeEntity;
 import ises.rest.entities.dto.GrnEntity;
 import ises.rest.entities.dto.GrnVertexEntity;
 import ises.rest.entities.dto.ModelEntity;
 import ises.rest.entities.dto.ShapeDistributionEntity;
-import ises.rest.jpa.GrnEdgeRepository;
-import ises.rest.jpa.GrnRepository;
-import ises.rest.jpa.GrnVertexRepository;
-import ises.rest.jpa.ModelStatsRepository;
-import ises.rest.jpa.ShapeDistributionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

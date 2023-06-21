@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import ises.jpa.SimulationConfigurationRepository;
 import ises.rest.entities.SimulationConfiguration;
 import ises.rest.entities.SimulationStatus;
-import ises.rest.jpa.SimulationConfigurationRepository;
 import ises.system.Constants;
 import lombok.RequiredArgsConstructor;
 

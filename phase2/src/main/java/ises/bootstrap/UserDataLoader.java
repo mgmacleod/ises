@@ -4,8 +4,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import ises.jpa.UserRepository;
 import ises.rest.entities.security.UserEntity;
-import ises.rest.jpa.security.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
