@@ -5,13 +5,13 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import ises.rest.entities.SimulationConfiguration;
-import ises.rest.entities.dto.GrnDto;
-import ises.rest.entities.dto.ModelDto;
+import ises.rest.entities.dto.GrnEntity;
+import ises.rest.entities.dto.ModelEntity;
 
-public interface GrnRepository extends JpaRepository<GrnDto, Long> {
+public interface GrnRepository extends JpaRepository<GrnEntity, Long> {
 
-    public List<GrnDto> findByConfig(SimulationConfiguration config);
+    public List<GrnEntity> findByConfig(SimulationConfiguration config);
 
-    public GrnDto findByModelDto(ModelDto modelDto);
+    public GrnEntity findByModelDto(ModelEntity modelDto);
 
 }

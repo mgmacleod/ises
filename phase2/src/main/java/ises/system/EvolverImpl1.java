@@ -13,9 +13,9 @@ import ises.model.cellular.Model;
 import ises.model.network.GeneRegulatoryNetwork;
 import ises.rest.entities.SimulationConfiguration;
 import ises.rest.entities.SimulationStatus;
-import ises.rest.entities.dto.GrnDto;
-import ises.rest.entities.dto.ModelDto;
-import ises.rest.entities.dto.ShapeDistributionDto;
+import ises.rest.entities.dto.GrnEntity;
+import ises.rest.entities.dto.ModelEntity;
+import ises.rest.entities.dto.ShapeDistributionEntity;
 import ises.rest.jpa.SimulationConfigurationRepository;
 import ises.stats.ShapeDistribution;
 import lombok.RequiredArgsConstructor;
@@ -88,10 +88,10 @@ public class EvolverImpl1 implements Evolver {
 	}
 
 	private void storeData() {
-		ModelDto modelDto = new ModelDto(currBest);
+		ModelEntity modelDto = new ModelEntity(currBest);
 		modelDto.setGeneration(generation == 1 ? generation : generation - 1);
-		ShapeDistributionDto shapeDistroDto = new ShapeDistributionDto(new ShapeDistribution(currBest), modelDto);
-		GrnDto grnDto = new GrnDto(currGRN, config, modelDto);
+		ShapeDistributionEntity shapeDistroDto = new ShapeDistributionEntity(new ShapeDistribution(currBest), modelDto);
+		GrnEntity grnDto = new GrnEntity(currGRN, config, modelDto);
 		dataStorageRunner = applicationContext.getBean(DataStorageRunner.class);
 		dataStorageRunner.initForRun(modelDto, shapeDistroDto, grnDto);
 

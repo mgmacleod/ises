@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "model_stats")
-public class ModelDto {
+public class ModelEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -68,7 +68,7 @@ public class ModelDto {
 	@JsonIgnore
 	private SimulationConfiguration config;
 
-	public ModelDto(Model model) {
+	public ModelEntity(Model model) {
 		energy = model.getEnergy();
 		biomass = model.getBiomass();
 		stress1 = model.getStress1();

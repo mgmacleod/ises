@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import ises.rest.entities.security.UserDto;
+import ises.rest.entities.security.UserEntity;
 import ises.rest.jpa.security.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,8 +27,8 @@ public class JpaUserDetailsService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		log.debug("Getting user data from JPA");
 
-		Optional<UserDto> userOptional = userRepository.findByUsername(username);
-		UserDto user = null;
+		Optional<UserEntity> userOptional = userRepository.findByUsername(username);
+		UserEntity user = null;
 
 		if (userOptional.isPresent()) {
 			user = userOptional.get();

@@ -30,7 +30,7 @@ import lombok.ToString;
 @Builder
 @Entity
 @Table(name = "grn_edge")
-public class GrnEdgeDto {
+public class GrnEdgeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -43,22 +43,22 @@ public class GrnEdgeDto {
 	@JsonIgnore
 	@EqualsAndHashCode.Exclude
 	@ToString.Exclude
-	private GrnDto grn;
+	private GrnEntity grn;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "source_vertex_id", nullable = false)
-	private GrnVertexDto source;
+	private GrnVertexEntity source;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "target_vertex_id", nullable = false)
-	private GrnVertexDto target;
+	private GrnVertexEntity target;
 
 	@Column(name = "weight", nullable = false)
 	private BigDecimal weight;
 
-	public GrnEdgeDto(GeneRegulatoryNetwork grn, DefaultWeightedEdge edge, GrnDto grnDto) {
-		source = new GrnVertexDto(grn.getEdgeSource(edge), grnDto);
-		target = new GrnVertexDto(grn.getEdgeTarget(edge), grnDto);
+	public GrnEdgeEntity(GeneRegulatoryNetwork grn, DefaultWeightedEdge edge, GrnEntity grnDto) {
+		source = new GrnVertexEntity(grn.getEdgeSource(edge), grnDto);
+		target = new GrnVertexEntity(grn.getEdgeTarget(edge), grnDto);
 		weight = new BigDecimal(String.format(Constants.BIG_DECIMAL_FORMAT_STRING, grn.getEdgeWeight(edge)));
 		this.grn = grnDto;
 	}

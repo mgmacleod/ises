@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import ises.rest.entities.dto.ShapeDistributionDto;
+import ises.rest.entities.dto.ShapeDistributionEntity;
 import ises.rest.jpa.ModelStatsRepository;
 import ises.rest.jpa.ShapeDistributionRepository;
 import ises.rest.jpa.SimulationConfigurationRepository;
@@ -32,20 +32,20 @@ public class ShapeDistributionController {
     }
 
     @GetMapping("/simulation/{id}/shape")
-    public ResponseEntity<List<ShapeDistributionDto>> getShapeDistrosBySimulationId(@PathVariable("id") Long id) {
+    public ResponseEntity<List<ShapeDistributionEntity>> getShapeDistrosBySimulationId(@PathVariable("id") Long id) {
         return ResponseEntity.of(
                 simulationRepository.findById(id)
                         .map(c -> shapeRepository.findByConfig(c)));
     }
 
     @GetMapping("/shape/{id}")
-    public ResponseEntity<ShapeDistributionDto> getShapeDistroById(@PathVariable("id") Long id) {
+    public ResponseEntity<ShapeDistributionEntity> getShapeDistroById(@PathVariable("id") Long id) {
         return ResponseEntity.of(shapeRepository.findById(id));
 
     }
 
     @GetMapping("/model/{id}/shape")
-    public ResponseEntity<ShapeDistributionDto> getShapeDistroByModelId(@PathVariable("id") Long id) {
+    public ResponseEntity<ShapeDistributionEntity> getShapeDistroByModelId(@PathVariable("id") Long id) {
         return ResponseEntity.of(
                 modelStatsRepository.findById(id)
                         .map(m -> shapeRepository.findByModelDto(m)));

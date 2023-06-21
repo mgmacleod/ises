@@ -9,11 +9,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import ises.rest.entities.dto.GrnDto;
-import ises.rest.entities.dto.GrnEdgeDto;
-import ises.rest.entities.dto.GrnVertexDto;
-import ises.rest.entities.dto.ModelDto;
-import ises.rest.entities.dto.ShapeDistributionDto;
+import ises.rest.entities.dto.GrnEdgeEntity;
+import ises.rest.entities.dto.GrnEntity;
+import ises.rest.entities.dto.GrnVertexEntity;
+import ises.rest.entities.dto.ModelEntity;
+import ises.rest.entities.dto.ShapeDistributionEntity;
 import ises.rest.jpa.GrnEdgeRepository;
 import ises.rest.jpa.GrnRepository;
 import ises.rest.jpa.GrnVertexRepository;
@@ -34,9 +34,9 @@ public class DataStorageRunner implements Runnable {
 	private final GrnEdgeRepository edgeRepository;
 	private final GrnVertexRepository vertexRepository;
 
-	private ModelDto modelDto;
-	private ShapeDistributionDto shapeDistroDto;
-	private GrnDto grnDto;
+	private ModelEntity modelDto;
+	private ShapeDistributionEntity shapeDistroDto;
+	private GrnEntity grnDto;
 
 	@Override
 	public void run() {
@@ -54,7 +54,7 @@ public class DataStorageRunner implements Runnable {
 		}
 	}
 
-	public void initForRun(ModelDto modelDto, ShapeDistributionDto shapeDistroDto, GrnDto grnDto) {
+	public void initForRun(ModelEntity modelDto, ShapeDistributionEntity shapeDistroDto, GrnEntity grnDto) {
 		this.modelDto = modelDto;
 		this.shapeDistroDto = shapeDistroDto;
 		this.grnDto = grnDto;
@@ -69,8 +69,8 @@ public class DataStorageRunner implements Runnable {
 		// Then the messy graph
 
 		// Temporarily clear the vertices and edges
-		List<GrnVertexDto> verticesTemp = new ArrayList<>(grnDto.getVertices());
-		List<GrnEdgeDto> edgesTemp = new ArrayList<>(grnDto.getEdges());
+		List<GrnVertexEntity> verticesTemp = new ArrayList<>(grnDto.getVertices());
+		List<GrnEdgeEntity> edgesTemp = new ArrayList<>(grnDto.getEdges());
 
 		grnDto.setVertices(new ArrayList<>());
 		grnDto.setEdges(new ArrayList<>());
@@ -79,15 +79,15 @@ public class DataStorageRunner implements Runnable {
 		grnDto = grnRepository.save(grnDto);
 
 		// Save vertices and map them by their name for further edge linking
-		Map<String, GrnVertexDto> vertexMap = new HashMap<>();
-		for (GrnVertexDto vertex : verticesTemp) {
+		Map<String, GrnVertexEntity> vertexMap = new HashMap<>();
+		for (GrnVertexEntity vertex : verticesTemp) {
 			vertex.setGrn(grnDto);
-			GrnVertexDto savedVertex = vertexRepository.save(vertex);
+			GrnVertexEntity savedVertex = vertexRepository.save(vertex);
 			vertexMap.put(savedVertex.getName(), savedVertex);
 		}
 
 		// Set source and target vertices for each edge and save them
-		for (GrnEdgeDto edge : edgesTemp) {
+		for (GrnEdgeEntity edge : edgesTemp) {
 			edge.setGrn(grnDto);
 			edge.setSource(vertexMap.get(edge.getSource().getName()));
 			edge.setTarget(vertexMap.get(edge.getTarget().getName()));

@@ -30,7 +30,7 @@ import lombok.ToString;
 @Builder
 @Entity
 @Table(name = "grn")
-public class GrnDto {
+public class GrnEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -50,28 +50,28 @@ public class GrnDto {
 	@JoinColumn(name = "model_id", nullable = false)
 	@ToString.Exclude
 	@JsonIgnore
-	private ModelDto modelDto;
+	private ModelEntity modelDto;
 
 	@OneToMany(mappedBy = "grn")
-	private List<GrnVertexDto> vertices;
+	private List<GrnVertexEntity> vertices;
 
 	@OneToMany(mappedBy = "grn")
-	private List<GrnEdgeDto> edges;
+	private List<GrnEdgeEntity> edges;
 
-	public GrnDto(GeneRegulatoryNetwork grn, SimulationConfiguration config, ModelDto modelDto) {
+	public GrnEntity(GeneRegulatoryNetwork grn, SimulationConfiguration config, ModelEntity modelDto) {
 		name = grn.getName();
-		vertices = grn.vertexSet().stream().map(v -> new GrnVertexDto(v, this)).collect(Collectors.toList());
-		edges = grn.edgeSet().stream().map(e -> new GrnEdgeDto(grn, e, this)).collect(Collectors.toList());
+		vertices = grn.vertexSet().stream().map(v -> new GrnVertexEntity(v, this)).collect(Collectors.toList());
+		edges = grn.edgeSet().stream().map(e -> new GrnEdgeEntity(grn, e, this)).collect(Collectors.toList());
 		this.config = config;
 		this.modelDto = modelDto;
 	}
 
-	public void addVertex(GrnVertexDto vertex) {
+	public void addVertex(GrnVertexEntity vertex) {
 		vertices.add(vertex);
 		vertex.setGrn(this);
 	}
 
-	public void removeVertex(GrnVertexDto vertex) {
+	public void removeVertex(GrnVertexEntity vertex) {
 		vertices.remove(vertex);
 		vertex.setGrn(null);
 	}

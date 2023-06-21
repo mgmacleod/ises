@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import ises.rest.entities.dto.GrnDto;
+import ises.rest.entities.dto.GrnEntity;
 import ises.rest.jpa.GrnRepository;
 import ises.rest.jpa.ModelStatsRepository;
 import ises.rest.jpa.SimulationConfigurationRepository;
@@ -33,19 +33,19 @@ public class GrnController {
     }
 
     @GetMapping("/simulation/{id}/grn")
-    public ResponseEntity<List<GrnDto>> getAllGrnsBySimulationId(@PathVariable("id") Long id) {
+    public ResponseEntity<List<GrnEntity>> getAllGrnsBySimulationId(@PathVariable("id") Long id) {
         return ResponseEntity.of(
                 simulationRepository.findById(id)
                         .map(c -> grnRepository.findByConfig(c)));
     }
 
     @GetMapping("/grn/{id}")
-    public ResponseEntity<GrnDto> getGrnById(@PathVariable("id") Long id) {
+    public ResponseEntity<GrnEntity> getGrnById(@PathVariable("id") Long id) {
         return ResponseEntity.of(grnRepository.findById(id));
     }
 
     @GetMapping("/model/{id}/grn")
-    public ResponseEntity<GrnDto> getGrnByModelId(@PathVariable("id") Long id) {
+    public ResponseEntity<GrnEntity> getGrnByModelId(@PathVariable("id") Long id) {
         return ResponseEntity.of(
                 modelStatsRepository.findById(id)
                         .map(m -> grnRepository.findByModelDto(m)));

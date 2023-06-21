@@ -5,13 +5,13 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import ises.rest.entities.SimulationConfiguration;
-import ises.rest.entities.dto.ModelDto;
-import ises.rest.entities.dto.ShapeDistributionDto;
+import ises.rest.entities.dto.ModelEntity;
+import ises.rest.entities.dto.ShapeDistributionEntity;
 
-public interface ShapeDistributionRepository extends JpaRepository<ShapeDistributionDto, Long> {
+public interface ShapeDistributionRepository extends JpaRepository<ShapeDistributionEntity, Long> {
 
-    public List<ShapeDistributionDto> findByConfig(SimulationConfiguration config);
+    public List<ShapeDistributionEntity> findByConfig(SimulationConfiguration config);
 
-    public ShapeDistributionDto findByModelDto(ModelDto modelDto);
+    public ShapeDistributionEntity findByModelDto(ModelEntity modelDto);
 
 }

@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "shape_distro")
-public class ShapeDistributionDto {
+public class ShapeDistributionEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -78,9 +78,9 @@ public class ShapeDistributionDto {
 	@OneToOne
 	@JoinColumn(name = "model_id", nullable = false)
 	@JsonIgnore
-	private ModelDto modelDto;
+	private ModelEntity modelDto;
 
-	public ShapeDistributionDto(ShapeDistribution sd, ModelDto modelDto) {
+	public ShapeDistributionEntity(ShapeDistribution sd, ModelEntity modelDto) {
 		config = sd.getConfig();
 		numShapes = sd.getNumEntries();
 		mostCommonShape = sd.getMcShape();

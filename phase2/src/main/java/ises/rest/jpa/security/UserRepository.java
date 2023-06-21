@@ -4,10 +4,10 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import ises.rest.entities.security.UserDto;
+import ises.rest.entities.security.UserEntity;
 
-public interface UserRepository extends JpaRepository<UserDto, Long> {
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
-	public Optional<UserDto> findByUsername(String username);
+	public Optional<UserEntity> findByUsername(String username);
 
 }

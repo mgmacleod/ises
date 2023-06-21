@@ -25,7 +25,7 @@ import lombok.ToString;
 @Builder
 @Entity
 @Table(name = "grn_vertex")
-public class GrnVertexDto {
+public class GrnVertexEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -44,9 +44,9 @@ public class GrnVertexDto {
 	@EqualsAndHashCode.Exclude
 	@ToString.Exclude
 	@JsonIgnore
-	private GrnDto grn;
+	private GrnEntity grn;
 
-	public GrnVertexDto(GrnVertex vertex, GrnDto grn) {
+	public GrnVertexEntity(GrnVertex vertex, GrnEntity grn) {
 		name = vertex.getName();
 		type = vertex.getType().name();
 		this.grn = grn;
