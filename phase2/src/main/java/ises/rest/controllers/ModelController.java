@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ises.jpa.ModelStatsRepository;
 import ises.jpa.SimulationConfigurationRepository;
-import ises.rest.entities.dto.ModelEntity;
+import ises.rest.entities.ModelEntity;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

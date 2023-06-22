@@ -1,4 +1,4 @@
-package ises.rest.entities.dto;
+package ises.rest.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

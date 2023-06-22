@@ -14,11 +14,11 @@ import ises.jpa.GrnRepository;
 import ises.jpa.GrnVertexRepository;
 import ises.jpa.ModelStatsRepository;
 import ises.jpa.ShapeDistributionRepository;
-import ises.rest.entities.dto.GrnEdgeEntity;
-import ises.rest.entities.dto.GrnEntity;
-import ises.rest.entities.dto.GrnVertexEntity;
-import ises.rest.entities.dto.ModelEntity;
-import ises.rest.entities.dto.ShapeDistributionEntity;
+import ises.rest.entities.GrnEdgeEntity;
+import ises.rest.entities.GrnEntity;
+import ises.rest.entities.GrnVertexEntity;
+import ises.rest.entities.ModelEntity;
+import ises.rest.entities.ShapeDistributionEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

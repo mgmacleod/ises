@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ises.jpa.ModelStatsRepository;
 import ises.jpa.ShapeDistributionRepository;
 import ises.jpa.SimulationConfigurationRepository;
-import ises.rest.entities.dto.ShapeDistributionEntity;
+import ises.rest.entities.ShapeDistributionEntity;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

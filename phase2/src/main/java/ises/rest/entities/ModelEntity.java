@@ -1,11 +1,10 @@
-package ises.rest.entities.dto;
+package ises.rest.entities;
 
 import java.math.BigDecimal;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import ises.model.cellular.Model;
-import ises.rest.entities.SimulationConfiguration;
 import ises.system.Constants;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

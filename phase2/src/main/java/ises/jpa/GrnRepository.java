@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import ises.rest.entities.GrnEntity;
+import ises.rest.entities.ModelEntity;
 import ises.rest.entities.SimulationConfiguration;
-import ises.rest.entities.dto.GrnEntity;
-import ises.rest.entities.dto.ModelEntity;
 
 public interface GrnRepository extends JpaRepository<GrnEntity, Long> {
 

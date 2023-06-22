@@ -1,4 +1,4 @@
-package ises.rest.entities.security;
+package ises.rest.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

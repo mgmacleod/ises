@@ -1,10 +1,9 @@
-package ises.rest.entities.dto;
+package ises.rest.entities;
 
 import java.math.BigDecimal;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import ises.rest.entities.SimulationConfiguration;
 import ises.stats.ShapeDistribution;
 import ises.system.Constants;
 import jakarta.persistence.Column;

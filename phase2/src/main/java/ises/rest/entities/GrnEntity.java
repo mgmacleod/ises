@@ -1,4 +1,4 @@
-package ises.rest.entities.dto;
+package ises.rest.entities;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import ises.model.network.GeneRegulatoryNetwork;
-import ises.rest.entities.SimulationConfiguration;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
